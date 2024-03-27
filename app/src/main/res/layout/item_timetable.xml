@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="20dp"
+    app:cardCornerRadius="10dp"
+    android:layout_marginBottom="10dp"
+    android:backgroundTint="@color/timetable_recycler_item">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+       >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/textStartTime"
+                android:textColor="@color/timetable_recycler_item_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="0dp"
+                android:background="@color/timetable_recycler_item_text"
+                app:layout_constraintBottom_toTopOf="@+id/textEndTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textStartTime"
+                />
+
+            <TextView
+                android:id="@+id/textEndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="@string/textEndTime"
+                android:textColor="@color/timetable_recycler_item_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+            <TextView
+                android:id="@+id/textLessonNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/timetable_recycler_item_text"
+                android:text="@string/textLessonNumber"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100"
+                android:paddingVertical="5dp">
+                <TextView
+                    android:id="@+id/textSubjectName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/textSubjectName"
+                    android:layout_weight="50"
+                    android:textColor="@color/timetable_recycler_item_text"/>
+                <TextView
+                    android:id="@+id/textClassName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/textClassName"
+                    android:layout_weight="50"
+                    android:textColor="@color/timetable_recycler_item_text"/>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/textFacultyName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textFacultyName"
+                    android:layout_weight="50"
+                    android:textColor="@color/timetable_recycler_item_text"/>
+
+                <TextView
+                    android:id="@+id/textDuration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textDuration"
+                    android:layout_weight="25"
+                    android:textColor="@color/timetable_recycler_item_text"/>
+
+                <TextView
+                    android:id="@+id/textType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textType"
+                    android:layout_weight="25"
+                    android:gravity="end"
+                    android:textColor="@color/timetable_recycler_item_text"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

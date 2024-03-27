@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary_color">#735DA5</color>
+    <color name="secondary_color">#D3C5E5</color>
+    <color name="tab_layout_text">#A193C3</color>
+    <color name="timetable_recycler_item">#009393</color>
+    <color name="timetable_recycler_item_text">#FFFFFF</color>
+    <color name="drawer_menu_text_color">#000000</color>
 </resources>

@@ -1,0 +1,47 @@
+Collection: academic
+    Document: year+type [even or odd]
+        Field: year {number}
+        Field: type {string}
+        Collection: semester
+            Document: sem_number
+                Collection: class
+                    Document: class_name
+                        Field: batches {list}
+        Collection: faculty
+            Document: faculty_name
+                Field: subject {list}
+        Collection: time_table
+            Document: semester_number
+                Collection: class
+                    Document: weekday_name
+                        Collection: lesson
+                            Document: lesson_number
+                                Field: type {String}
+                                Field: batch_name {String} [May be NUll]
+                                Field: subject {String}
+                                Field: faculty {String}
+                                Field: room_name {String}
+                                Field: room_location {String}
+                                Field: start_time {Time}
+                                Field: end_time {Time}
+
+Collection: faculty
+    Document: faculty_name
+        Field: name {string}
+
+Collection: student
+    Document: enrollment
+        Field: name {String}
+        Field: semester {number}
+        Field: active {String}
+
+Collection: subject
+    Document: subject_name
+        Field: code {String}
+        Field: type {String} [T or TP]
+
+Collection: room
+    Document: room_name
+        Field: location {String}
+        Field: type {String}
+

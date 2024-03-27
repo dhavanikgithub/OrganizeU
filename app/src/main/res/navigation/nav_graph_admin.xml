@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_admin"
+    app:startDestination="@id/academicFragment">
+
+    <fragment
+        android:id="@+id/academicFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.AcademicFragment"
+        android:label="fragment_academic"
+        tools:layout="@layout/fragment_academic" >
+        <action
+            android:id="@+id/action_academicFragment_to_addAcademicFragment"
+            app:destination="@id/addAcademicFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAcademicFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment"
+        android:label="fragment_add_academic"
+        tools:layout="@layout/fragment_add_academic" >
+        <action
+            android:id="@+id/action_addAcademicFragment_to_addBatchFragment"
+            app:destination="@id/addBatchFragment" />
+        <action
+            android:id="@+id/action_addAcademicFragment_to_addSemFragment"
+            app:destination="@id/addSemFragment" />
+        <action
+            android:id="@+id/action_addAcademicFragment_to_addClassFragment"
+            app:destination="@id/addClassFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addBatchFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch.AddBatchFragment"
+        android:label="fragment_add_batch"
+        tools:layout="@layout/fragment_add_batch" />
+    <fragment
+        android:id="@+id/addSemFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment"
+        android:label="fragment_add_sem"
+        tools:layout="@layout/fragment_add_sem" />
+    <fragment
+        android:id="@+id/addClassFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment"
+        android:label="fragment_add_class"
+        tools:layout="@layout/fragment_add_class" />
+</navigation>

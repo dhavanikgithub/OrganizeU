@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">OrganizeU</string>
+    <string name="student_drawer_item_1">Home</string>
+    <string name="student_drawer_item_2">Available Classroom</string>
+    <string name="admin_drawer_item_1">Home</string>
+    <string name="admin_drawer_item_2">Academic</string>
+    <string name="app_launcher_image_text">Application Launcher Logo</string>
+    <string name="ic_menu_text">Menu Icon</string>
+
+
+    <string name="userImageDrawerMenu">Profile Image</string>
+    <string name="userNameTextDrawerMenu">Student Name</string>
+    <string name="AdminNameTextDrawerMenu">Admin Name</string>
+    <string name="userOtherDetailsTextDrawerMenu">Sem: 8 Class: A Lab: AB5</string>
+    <string name="textStartTime">9:05AM</string>
+    <string name="textEndTime">9:55AM</string>
+    <string name="textLessonNumber">Lesson: 1</string>
+    <string name="textSubjectName">AI</string>
+    <string name="textClassName">002 1NB</string>
+    <string name="textFacultyName">MDT</string>
+    <string name="textDuration">50 min</string>
+    <string name="textType">LAB</string>
 </resources>
