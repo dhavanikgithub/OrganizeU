@@ -10,12 +10,14 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.data_class.AcademicItem
 import com.dk.organizeu.databinding.FragmentAcademicBinding
 import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddAcademicDialog
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
 import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -40,6 +42,15 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
         viewModel = ViewModelProvider(this)[AcademicViewModel::class.java]
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.apply {
+            viewModel.apply {
+                (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

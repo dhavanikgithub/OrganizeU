@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.dk.organizeu.R
+import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.adapter.TabAdapter
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment
@@ -35,6 +37,15 @@ class AddAcademicFragment : Fragment() {
         viewModel = ViewModelProvider(this)[AddAcademicViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.apply {
+            viewModel.apply {
+                (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

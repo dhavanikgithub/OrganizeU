@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.adapter.AddSemAdapter
 import com.dk.organizeu.admin_activity.data_class.AcademicItem
@@ -63,8 +64,8 @@ class AddSemFragment : Fragment() {
         super.onResume()
         binding.apply {
             viewModel.apply {
+                (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
                 academicSemTIL.isEnabled=false
-
                 btnAddSem.isEnabled=false
                 if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
                 {

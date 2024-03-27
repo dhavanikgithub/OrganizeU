@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
@@ -51,6 +52,7 @@ class AddBatchFragment : Fragment() {
         super.onResume()
         binding.apply {
             viewModel.apply {
+                (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
                 academicSemTIL.isEnabled=false
                 academicClassTIL.isEnabled=false
                 academicBatchTIL.isEnabled=false
@@ -241,6 +243,9 @@ class AddBatchFragment : Fragment() {
                         }
                         academicBatchAdapter = AddBatchAdapter(academicBatchList)
                         recyclerView.adapter = academicBatchAdapter
+                        progressDialog.stop()
+                    }
+                    .addOnCanceledListener {
                         progressDialog.stop()
                     }
                     .addOnFailureListener {

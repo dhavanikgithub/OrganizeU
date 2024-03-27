@@ -42,10 +42,18 @@ class AdminActivity : AppCompatActivity() {
             adminNV.setNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.nav_academic -> {
-//                        navHostFragment.findNavController().popBackStack(R.id.academicFragment,false)
-//                        navHostFragment.findNavController().navigate(R.id.academicFragment)
-                        mainMenuIcon.callOnClick()
-                        true
+                        if(!isDrawerMenuSelect(R.id.nav_academic))
+                        {
+                            navHostFragment.findNavController().popBackStack(R.id.academicFragment,false)
+                            navHostFragment.findNavController().navigate(R.id.academicFragment)
+                            mainMenuIcon.callOnClick()
+                            true
+                        }
+                        else{
+                            mainMenuIcon.callOnClick()
+                            false
+                        }
+
                     }
                     else -> false
                 }
@@ -54,5 +62,19 @@ class AdminActivity : AppCompatActivity() {
     }
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    fun drawerMenuSelect(itemId:Int){
+        binding.apply {
+            val defaultMenuItem = adminNV.menu.findItem(itemId)
+            defaultMenuItem.isChecked = true
+        }
+    }
+
+    fun isDrawerMenuSelect(itemId:Int):Boolean{
+        binding.apply {
+            val defaultMenuItem = adminNV.menu.findItem(itemId)
+           return defaultMenuItem.isChecked
+        }
     }
 }
