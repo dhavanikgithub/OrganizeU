@@ -18,23 +18,15 @@ class AddSemAdapter(private val academicSemList: ArrayList<String>) :
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         val currentItem = academicSemList[position]
-        holder.textViewSem.text = "Semester: ${currentItem}"
+        holder.semNumberTxt.text = "Semester: ${currentItem}"
     }
 
     override fun getItemCount(): Int {
         return academicSemList.size
     }
 
-
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val textViewSem: TextView = itemView.findViewById(R.id.textView)
-        init {
-            itemView.setOnClickListener {
-
-            }
-        }
-
+        val semNumberTxt: TextView = itemView.findViewById(R.id.semNumberTxt)
     }
 
 }

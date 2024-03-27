@@ -18,7 +18,7 @@ class FacultyAdapter(private val facultyList: ArrayList<String>) :
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         val currentItem = facultyList[position]
-        holder.textViewFaculty.text = currentItem
+        holder.facultyNameTxt.text = currentItem
     }
 
     override fun getItemCount(): Int {
@@ -27,8 +27,7 @@ class FacultyAdapter(private val facultyList: ArrayList<String>) :
 
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val textViewFaculty: TextView = itemView.findViewById(R.id.textView)
+        val facultyNameTxt: TextView = itemView.findViewById(R.id.facultyNameTxt)
     }
 
 }

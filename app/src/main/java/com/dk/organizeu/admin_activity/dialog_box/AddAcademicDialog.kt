@@ -18,8 +18,8 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class AddAcademicDialog() : AppCompatDialogFragment() {
-    private lateinit var autoCompleteTextView: AutoCompleteTextView
-    private lateinit var autoCompleteTextView2: AutoCompleteTextView
+    private lateinit var academicYearACTV: AutoCompleteTextView
+    private lateinit var academicTypeTIL: AutoCompleteTextView
     private lateinit var addButton: MaterialButton
     private lateinit var closeButton: MaterialButton
     private lateinit var db: FirebaseFirestore
@@ -31,28 +31,23 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
         db = FirebaseFirestore.getInstance()
         academicAddListener = parentFragment as? AcademicAddListener
-        autoCompleteTextView = view.findViewById(R.id.academicYearACTV)
-        autoCompleteTextView2 = view.findViewById(R.id.academicTypeACTV)
+        academicYearACTV = view.findViewById(R.id.academicYearACTV)
+        academicTypeTIL = view.findViewById(R.id.academicTypeACTV)
         addButton = view.findViewById(R.id.btnAdd)
         closeButton = view.findViewById(R.id.btnClose)
-
-        // Get the current year
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-        // Generate academic years up to five years after the current year
         val academicYears = mutableListOf<String>()
         for (year in currentYear..currentYear + 5) {
             academicYears.add("$year-${year + 1}")
         }
 
-        // Set up the adapter for academic years dropdown
         val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)
-        autoCompleteTextView.setAdapter(academicYearsAdapter)
+        academicYearACTV.setAdapter(academicYearsAdapter)
 
-        // Set up the adapter for academic types dropdown
         val academicTypes = arrayOf(AcademicType.EVEN.name, AcademicType.ODD.name)
         val academicTypesAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypes)
-        autoCompleteTextView2.setAdapter(academicTypesAdapter)
+        academicTypeTIL.setAdapter(academicTypesAdapter)
 
         val builder = AlertDialog.Builder(requireContext())
             .setView(view)
@@ -62,15 +57,14 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
             dismiss()
         }
         addButton.setOnClickListener {
-            if(isItemSelected(autoCompleteTextView))
+            if(isItemSelected(academicYearACTV))
             {
-                if(isItemSelected(autoCompleteTextView2))
+                if(isItemSelected(academicTypeTIL))
                 {
-                    val academicDocumentId = "${autoCompleteTextView.text}_${autoCompleteTextView2.text}"
+                    val academicDocumentId = "${academicYearACTV.text}_${academicTypeTIL.text}"
                     val academicData = hashMapOf(
-                        "year" to autoCompleteTextView.text.toString(),
-                        "type" to autoCompleteTextView2.text.toString()
-
+                        "year" to academicYearACTV.text.toString(),
+                        "type" to academicTypeTIL.text.toString()
                     )
                     isAcademicDocumentExists(academicDocumentId) { exists ->
                         if(exists)
@@ -113,7 +107,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
             }
             .addOnFailureListener { exception ->
                 Log.w("TAG", "Error checking document existence", exception)
-                callback(false) // Assume document doesn't exist if there's an error
+                callback(false)
             }
     }
 

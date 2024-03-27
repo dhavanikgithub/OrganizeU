@@ -18,7 +18,7 @@ class AddClassAdapter(private val academicClassList: ArrayList<String>) :
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         val currentItem = academicClassList[position]
-        holder.textViewSem.text = "Class: ${currentItem}"
+        holder.classNameTxt.text = "Class: ${currentItem}"
     }
 
     override fun getItemCount(): Int {
@@ -29,7 +29,7 @@ class AddClassAdapter(private val academicClassList: ArrayList<String>) :
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val textViewSem: TextView = itemView.findViewById(R.id.textView)
+        val classNameTxt: TextView = itemView.findViewById(R.id.classNameTxt)
 
     }
 

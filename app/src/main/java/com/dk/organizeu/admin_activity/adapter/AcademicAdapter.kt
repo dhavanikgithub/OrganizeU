@@ -20,8 +20,8 @@ class AcademicAdapter(private val academicList: List<AcademicItem>,private val l
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         val currentItem = academicList[position]
-        holder.textViewAcademic.text = "Academic: ${currentItem.academic}"
-        holder.textViewSem.text = "Type: ${currentItem.sem}"
+        holder.academicYearTxt.text = "Academic: ${currentItem.academic}"
+        holder.academicTypeTxt.text = "Type: ${currentItem.sem}"
 
         holder.itemView.setOnClickListener {
             listener.onItemClick(position)
@@ -35,13 +35,8 @@ class AcademicAdapter(private val academicList: List<AcademicItem>,private val l
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val textViewAcademic: TextView = itemView.findViewById(R.id.textView)
-        val textViewSem: TextView = itemView.findViewById(R.id.textView2)
-        init {
-            itemView.setOnClickListener {
-
-            }
-        }
+        val academicYearTxt: TextView = itemView.findViewById(R.id.academicYearTxt)
+        val academicTypeTxt: TextView = itemView.findViewById(R.id.academicTypeTxt)
 
     }
 

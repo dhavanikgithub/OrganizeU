@@ -18,7 +18,7 @@ class AddBatchAdapter(private val academicBatchList: ArrayList<String>) :
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         val currentItem = academicBatchList[position]
-        holder.textViewSem.text = "Batch: ${currentItem}"
+        holder.batchNameTxt.text = "Batch: ${currentItem}"
     }
 
     override fun getItemCount(): Int {
@@ -29,7 +29,7 @@ class AddBatchAdapter(private val academicBatchList: ArrayList<String>) :
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val textViewSem: TextView = itemView.findViewById(R.id.textView)
+        val batchNameTxt: TextView = itemView.findViewById(R.id.batchNameTxt)
 
     }
 
