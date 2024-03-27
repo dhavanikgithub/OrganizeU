@@ -2,8 +2,11 @@
     <string name="app_name">OrganizeU</string>
     <string name="student_drawer_item_1">Home</string>
     <string name="student_drawer_item_2">Available Classroom</string>
-    <string name="admin_drawer_item_1">Home</string>
-    <string name="admin_drawer_item_2">Academic</string>
+    <string name="admin_drawer_item_1">Academic</string>
+    <string name="admin_drawer_item_2">Timetable</string>
+    <string name="admin_drawer_item_3">Faculty</string>
+    <string name="admin_drawer_item_4">Rooms</string>
+    <string name="admin_drawer_item_5">Subjects</string>
     <string name="app_launcher_image_text">Application Launcher Logo</string>
     <string name="ic_menu_text">Menu Icon</string>
 

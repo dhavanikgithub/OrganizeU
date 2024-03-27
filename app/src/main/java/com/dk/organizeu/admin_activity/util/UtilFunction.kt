@@ -19,6 +19,7 @@ class UtilFunction {
                         continuation.resume(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking academic document existence", exception)
                         continuation.resume(false)
                     }
             }
@@ -32,8 +33,8 @@ class UtilFunction {
                     callback(documentSnapshot.exists())
                 }
                 .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking document existence", exception)
-                    callback(false) // Assume document doesn't exist if there's an error
+                    Log.w("TAG", "Error checking academic document existence", exception)
+                    callback(false)
                 }
         }
     }

@@ -13,6 +13,18 @@
         <action
             android:id="@+id/action_academicFragment_to_addAcademicFragment"
             app:destination="@id/addAcademicFragment" />
+        <action
+            android:id="@+id/action_academicFragment_to_roomsFragment"
+            app:destination="@id/roomsFragment" />
+        <action
+            android:id="@+id/action_academicFragment_to_timetableFragment"
+            app:destination="@id/timetableFragment" />
+        <action
+            android:id="@+id/action_academicFragment_to_facultyFragment"
+            app:destination="@id/facultyFragment" />
+        <action
+            android:id="@+id/action_academicFragment_to_subjectsFragment"
+            app:destination="@id/subjectsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addAcademicFragment"
@@ -44,4 +56,24 @@
         android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment"
         android:label="fragment_add_class"
         tools:layout="@layout/fragment_add_class" />
+    <fragment
+        android:id="@+id/timetableFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.timetable.TimetableFragment"
+        android:label="fragment_timetable"
+        tools:layout="@layout/fragment_timetable" />
+    <fragment
+        android:id="@+id/facultyFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.faculty.FacultyFragment"
+        android:label="fragment_faculty"
+        tools:layout="@layout/fragment_faculty" />
+    <fragment
+        android:id="@+id/roomsFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.rooms.RoomsFragment"
+        android:label="fragment_rooms"
+        tools:layout="@layout/fragment_rooms" />
+    <fragment
+        android:id="@+id/subjectsFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.subjects.SubjectsFragment"
+        android:label="fragment_subjects"
+        tools:layout="@layout/fragment_subjects" />
 </navigation>

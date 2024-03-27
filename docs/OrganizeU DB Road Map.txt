@@ -7,23 +7,24 @@ Collection: academic
                 Collection: class
                     Document: class_name
                         Field: batches {list}
+                Collection: time_table
+                    Document: semester_number
+                        Collection: class
+                            Document: weekday_name
+                                Collection: lesson
+                                    Document: lesson_number
+                                        Field: type {String}
+                                        Field: batch_name {String} [May be NUll]
+                                        Field: subject {String}
+                                        Field: faculty {String}
+                                        Field: room_name {String}
+                                        Field: room_location {String}
+                                        Field: start_time {Time}
+                                        Field: end_time {Time}
         Collection: faculty
             Document: faculty_name
                 Field: subject {list}
-        Collection: time_table
-            Document: semester_number
-                Collection: class
-                    Document: weekday_name
-                        Collection: lesson
-                            Document: lesson_number
-                                Field: type {String}
-                                Field: batch_name {String} [May be NUll]
-                                Field: subject {String}
-                                Field: faculty {String}
-                                Field: room_name {String}
-                                Field: room_location {String}
-                                Field: start_time {Time}
-                                Field: end_time {Time}
+
 
 Collection: faculty
     Document: faculty_name

@@ -55,6 +55,58 @@ class AdminActivity : AppCompatActivity() {
                         }
 
                     }
+                    R.id.nav_timetable -> {
+                        if(!isDrawerMenuSelect(R.id.nav_timetable))
+                        {
+                            navHostFragment.findNavController().popBackStack(R.id.timetableFragment,false)
+                            navHostFragment.findNavController().navigate(R.id.timetableFragment)
+                            mainMenuIcon.callOnClick()
+                            true
+                        }
+                        else{
+                            mainMenuIcon.callOnClick()
+                            false
+                        }
+                    }
+                    R.id.nav_faculty -> {
+                        if(!isDrawerMenuSelect(R.id.nav_faculty))
+                        {
+                            navHostFragment.findNavController().popBackStack(R.id.facultyFragment,false)
+                            navHostFragment.findNavController().navigate(R.id.facultyFragment)
+                            mainMenuIcon.callOnClick()
+                            true
+                        }
+                        else{
+                            mainMenuIcon.callOnClick()
+                            false
+                        }
+                    }
+                    R.id.nav_room -> {
+                        if(!isDrawerMenuSelect(R.id.nav_room))
+                        {
+                            navHostFragment.findNavController().popBackStack(R.id.roomsFragment,false)
+                            navHostFragment.findNavController().navigate(R.id.roomsFragment)
+                            mainMenuIcon.callOnClick()
+                            true
+                        }
+                        else{
+                            mainMenuIcon.callOnClick()
+                            false
+                        }
+                    }
+                    R.id.nav_subject -> {
+                        if(!isDrawerMenuSelect(R.id.nav_subject))
+                        {
+                            navHostFragment.findNavController().popBackStack(R.id.subjectsFragment,false)
+                            navHostFragment.findNavController().navigate(R.id.subjectsFragment)
+                            mainMenuIcon.callOnClick()
+                            true
+                        }
+                        else{
+                            mainMenuIcon.callOnClick()
+                            false
+                        }
+                    }
                     else -> false
                 }
             }
