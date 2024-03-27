@@ -13,4 +13,6 @@
     <color name="timetable_recycler_item">#009393</color>
     <color name="timetable_recycler_item_text">#FFFFFF</color>
     <color name="drawer_menu_text_color">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="dialogBackground">#60000000</color>
 </resources>

@@ -13,4 +13,10 @@
         <!--<item name="android:statusBarColor">?attr/colorPrimaryVariant</item>-->
         <!-- Customize your theme here. -->
     </style>
+    <style name="ProgressBar">
+        <item name="android:indeterminateTint">@color/primary_color</item>
+    </style>
+    <style name="CustomDialogTheme">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 </resources>

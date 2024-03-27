@@ -11,6 +11,7 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment
 import com.dk.organizeu.databinding.FragmentAddAcademicBinding
+import com.dk.organizeu.utils.CustomProgressDialog
 
 
 class AddAcademicFragment : Fragment() {
@@ -24,6 +25,7 @@ class AddAcademicFragment : Fragment() {
     private lateinit var viewModel: AddAcademicViewModel
 
     private lateinit var binding: FragmentAddAcademicBinding
+    private lateinit var progressDialog: CustomProgressDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +33,7 @@ class AddAcademicFragment : Fragment() {
         val view = inflater.inflate(com.dk.organizeu.R.layout.fragment_add_academic, container, false)
         binding = FragmentAddAcademicBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddAcademicViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
         return view
     }
 

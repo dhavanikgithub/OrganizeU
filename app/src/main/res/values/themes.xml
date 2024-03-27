@@ -17,4 +17,10 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <style name="ProgressBar">
+        <item name="android:indeterminateTint">@color/primary_color</item>
+    </style>
+    <style name="CustomDialogTheme">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 </resources>

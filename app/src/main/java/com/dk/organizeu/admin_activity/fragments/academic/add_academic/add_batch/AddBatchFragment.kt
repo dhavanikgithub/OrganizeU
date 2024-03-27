@@ -19,6 +19,7 @@ import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
+import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -33,6 +34,7 @@ class AddBatchFragment : Fragment() {
     private lateinit var viewModel: AddBatchViewModel
     private lateinit var binding: FragmentAddBatchBinding
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +43,7 @@ class AddBatchFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_batch, container, false)
         binding = FragmentAddBatchBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddBatchViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
         return view
     }
 
@@ -222,6 +225,7 @@ class AddBatchFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
+                progressDialog.start("Loading Batches...")
                 academicBatchList.clear()
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
@@ -237,6 +241,10 @@ class AddBatchFragment : Fragment() {
                         }
                         academicBatchAdapter = AddBatchAdapter(academicBatchList)
                         recyclerView.adapter = academicBatchAdapter
+                        progressDialog.stop()
+                    }
+                    .addOnFailureListener {
+                        progressDialog.stop()
                     }
             }
         }

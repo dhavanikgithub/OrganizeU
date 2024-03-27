@@ -23,6 +23,7 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.A
 import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.admin_activity.util.UtilFunction.Companion.isAcademicDocumentExists
 import com.dk.organizeu.databinding.FragmentAddClassBinding
+import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -43,6 +44,7 @@ class AddClassFragment : Fragment() {
     private lateinit var viewModel: AddClassViewModel
     private lateinit var binding: FragmentAddClassBinding
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +53,7 @@ class AddClassFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_class, container, false)
         binding = FragmentAddClassBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddClassViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
         return view
     }
 
@@ -201,6 +204,7 @@ class AddClassFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
+                progressDialog.start("Loading Classes...")
                 academicClassList.clear()
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
@@ -214,6 +218,10 @@ class AddClassFragment : Fragment() {
                         }
                         academicClassAdapter = AddClassAdapter(academicClassList)
                         recyclerView.adapter = academicClassAdapter
+                        progressDialog.stop()
+                    }
+                    .addOnFailureListener {
+                        progressDialog.stop()
                     }
             }
         }

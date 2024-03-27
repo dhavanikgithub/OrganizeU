@@ -23,6 +23,7 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcadem
 import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.admin_activity.util.UtilFunction.Companion.isAcademicDocumentExists
 import com.dk.organizeu.databinding.FragmentAddSemBinding
+import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -45,6 +46,7 @@ class AddSemFragment : Fragment() {
     private lateinit var binding: FragmentAddSemBinding
     private lateinit var academicSemLayoutManager: LinearLayoutManager
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +55,7 @@ class AddSemFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_sem, container, false)
         binding = FragmentAddSemBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddSemViewModel::class.java]
+        progressDialog = CustomProgressDialog(requireContext())
         return view
     }
 
@@ -150,6 +153,7 @@ class AddSemFragment : Fragment() {
                     clearAcademicSemACTV()
                     academicSemList.clear()
                     academicSemAdapter.notifyDataSetChanged()
+                    progressDialog.start("Loading Semester...")
                     db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem").collection("semester")
                         .get()
                         .addOnSuccessListener { documents ->
@@ -159,9 +163,10 @@ class AddSemFragment : Fragment() {
                             academicSemAdapter.notifyDataSetChanged()
                             loadAcademicSemACTV()
                             academicSemTIL.isEnabled=true
+                            progressDialog.stop()
                         }
                         .addOnFailureListener { exception ->
-
+                            progressDialog.stop()
                         }
 
 
@@ -196,6 +201,7 @@ class AddSemFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
+                progressDialog.start("Loading Semester...")
                 academicSemList.clear()
                 academicSemLayoutManager = LinearLayoutManager(requireContext())
                 recyclerView.layoutManager = academicSemLayoutManager
@@ -208,9 +214,10 @@ class AddSemFragment : Fragment() {
                         academicSemAdapter = AddSemAdapter(academicSemList)
                         recyclerView.adapter = academicSemAdapter
                         loadAcademicSemACTV()
+                        progressDialog.stop()
                     }
                     .addOnFailureListener { exception ->
-
+                        progressDialog.stop()
                     }
 
             }

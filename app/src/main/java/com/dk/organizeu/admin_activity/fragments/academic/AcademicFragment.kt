@@ -16,6 +16,7 @@ import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddAcademicDialog
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
 import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
@@ -28,6 +29,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
     private lateinit var viewModel: AcademicViewModel
     private lateinit var binding: FragmentAcademicBinding
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +38,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
         val view = inflater.inflate(R.layout.fragment_academic, container, false)
         binding = FragmentAcademicBinding.bind(view)
         viewModel = ViewModelProvider(this)[AcademicViewModel::class.java]
+
         return view
     }
 
@@ -43,6 +46,8 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+                progressDialog = CustomProgressDialog(requireContext())
+
                 initRecyclerView()
                 btnAddAcademic.setOnClickListener {
                     val dialogFragment = AddAcademicDialog()
@@ -57,6 +62,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
+                progressDialog.start("Loading Academic Data....")
                 db.collection("academic")
                     .get()
                     .addOnSuccessListener { documents ->
@@ -72,9 +78,10 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
                         }
                         academicAdapter = AcademicAdapter(academicList,this@AcademicFragment)
                         recyclerViewAcademic.adapter = academicAdapter
+                        progressDialog.stop()
                     }
                     .addOnFailureListener { exception ->
-
+                        progressDialog.stop()
                     }
 
             }
