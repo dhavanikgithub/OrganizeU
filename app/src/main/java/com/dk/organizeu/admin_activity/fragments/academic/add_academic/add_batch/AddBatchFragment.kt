@@ -2,6 +2,8 @@ package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batc
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,13 +11,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
+import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class AddBatchFragment : Fragment() {
 
@@ -41,6 +48,10 @@ class AddBatchFragment : Fragment() {
         super.onResume()
         binding.apply {
             viewModel.apply {
+                academicSemTIL.isEnabled=false
+                academicClassTIL.isEnabled=false
+                academicBatchTIL.isEnabled=false
+                btnAddBatch.isEnabled=false
                 if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
                 {
                     if(academicYearSelectedItem==null)
@@ -65,6 +76,22 @@ class AddBatchFragment : Fragment() {
                     loadAcademicYearACTV()
                     loadAcademicTypeACTV()
                     initRecyclerView()
+                    if(academicTypeSelectedItem!=null)
+                    {
+                        academicSemTIL.isEnabled=true
+                    }
+                    if(academicSemSelectedItem!=null)
+                    {
+                        academicClassTIL.isEnabled=true
+                    }
+                    if(academicClassSelectedItem!=null)
+                    {
+                        academicBatchTIL.isEnabled=true
+                    }
+                    if(batchET.text.toString()!="")
+                    {
+                        btnAddBatch.isEnabled=true
+                    }
                 }
                 if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null)
                 {
@@ -84,51 +111,84 @@ class AddBatchFragment : Fragment() {
 
                 academicYearACTV.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicTypeTIL.isEnabled=false
+                    academicSemTIL.isEnabled=false
+                    academicClassTIL.isEnabled=false
+                    academicBatchTIL.isEnabled=false
+                    btnAddBatch.isEnabled=false
                     clearAcademicTypeACTV()
                     clearAcademicSemACTV()
                     clearAcademicClassACTV()
                     academicBatchList.clear()
                     academicBatchAdapter.notifyDataSetChanged()
 
-                    isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
-                        if(it)
-                        {
+                    val job = lifecycleScope.launch(Dispatchers.Main) {
+                        val evenExists =
+                            UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                        if (evenExists) {
                             academicTypeItemList.add(AcademicType.EVEN.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
-                    }
-                    isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
-                        if(it)
-                        {
+
+                        val oddExists =
+                            UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                        if (oddExists) {
                             academicTypeItemList.add(AcademicType.ODD.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
+
+                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                        academicTypeTIL.isEnabled=true
+                    }
+
+                    MainScope().launch{
+                        job.join()
                     }
                 }
                 academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
                     academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicSemTIL.isEnabled=false
+                    academicClassTIL.isEnabled=false
+                    academicBatchTIL.isEnabled=false
+                    btnAddBatch.isEnabled=false
                     clearAcademicSemACTV()
                     loadAcademicSemACTV()
                     clearAcademicClassACTV()
                     academicBatchList.clear()
                     academicBatchAdapter.notifyDataSetChanged()
+                    academicSemTIL.isEnabled=true
                 }
 
                 academicSemACTV.setOnItemClickListener { parent, view, position, id ->
                     academicSemSelectedItem = parent.getItemAtPosition(position).toString()
+
+                    academicClassTIL.isEnabled=false
+                    academicBatchTIL.isEnabled=false
+                    btnAddBatch.isEnabled=false
                     clearAcademicClassACTV()
                     academicBatchList.clear()
                     academicBatchAdapter.notifyDataSetChanged()
                     loadAcademicClassACTV()
+                    academicClassTIL.isEnabled=true
                 }
                 academicClassACTV.setOnItemClickListener { parent, view, position, id ->
                     academicClassSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicBatchTIL.isEnabled=false
+                    btnAddBatch.isEnabled=false
                     academicBatchList.clear()
                     academicBatchAdapter.notifyDataSetChanged()
                     initRecyclerView()
+                    academicBatchTIL.isEnabled=true
                 }
+
+                batchET.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        btnAddBatch.isEnabled = s.toString() != ""
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {}
+                })
 
                 btnAddBatch.setOnClickListener {
                     if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && academicClassSelectedItem!=null && batchET.text!!.toString().isNotBlank() && batchET.text!!.toString().isNotEmpty())
@@ -243,22 +303,28 @@ class AddBatchFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
+                academicTypeTIL.isEnabled=false
                 academicTypeItemList.clear()
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
-                    if(it)
-                    {
+                val job = lifecycleScope.launch(Dispatchers.Main) {
+                    val evenExists =
+                        UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                    if (evenExists) {
                         academicTypeItemList.add(AcademicType.EVEN.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
-                }
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
-                    if(it)
-                    {
+
+                    val oddExists =
+                        UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                    if (oddExists) {
                         academicTypeItemList.add(AcademicType.ODD.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
+
+                    academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                    academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                    academicTypeTIL.isEnabled=true
+
+                }
+                MainScope().launch{
+                    job.join()
                 }
 
             }
@@ -306,19 +372,6 @@ class AddBatchFragment : Fragment() {
                 academicClassACTV.setAdapter(academicClassItemAdapter)
             }
         }
-    }
-
-    private fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("academic")
-            .document(academicDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false) // Assume document doesn't exist if there's an error
-            }
     }
 
     private fun isBatchDocumentExists(academicBatchDocumentId:String, callback: (Boolean) -> Unit) {

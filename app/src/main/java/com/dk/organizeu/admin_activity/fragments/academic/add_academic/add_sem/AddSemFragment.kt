@@ -1,5 +1,6 @@
 package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem
 
+import android.app.ActionBar
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.os.Parcelable
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
@@ -19,8 +21,15 @@ import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.admin_activity.util.UtilFunction
+import com.dk.organizeu.admin_activity.util.UtilFunction.Companion.isAcademicDocumentExists
 import com.dk.organizeu.databinding.FragmentAddSemBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AddSemFragment : Fragment() {
 
@@ -51,6 +60,9 @@ class AddSemFragment : Fragment() {
         super.onResume()
         binding.apply {
             viewModel.apply {
+                academicSemTIL.isEnabled=false
+
+                btnAddSem.isEnabled=false
                 if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
                 {
                     if(academicYearSelectedItem==null)
@@ -66,7 +78,15 @@ class AddSemFragment : Fragment() {
                     loadAcademicYearACTV()
                     loadAcademicTypeACTV()
                     initRecyclerView()
+                    if(academicTypeSelectedItem!=null)
+                    {
 
+                        academicSemTIL.isEnabled=true
+                    }
+                    if(academicSemSelectedItem!=null)
+                    {
+                        btnAddSem.isEnabled=true
+                    }
                 }
             }
         }
@@ -76,32 +96,57 @@ class AddSemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+
                 academicYearACTV.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicSemTIL.isEnabled=false
+                    academicTypeTIL.isEnabled=false
+                    btnAddSem.isEnabled=false
                     clearAcademicTypeACTV()
                     clearAcademicSemACTV()
                     academicSemList.clear()
                     academicSemAdapter.notifyDataSetChanged()
 
-                    isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
+                    val job = lifecycleScope.launch(Dispatchers.Main) {
+                        val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                        if (evenExists) {
+                            academicTypeItemList.add(AcademicType.EVEN.name)
+                        }
+
+                        val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                        if (oddExists) {
+                            academicTypeItemList.add(AcademicType.ODD.name)
+                        }
+
+                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                        academicTypeTIL.isEnabled=true
+                    }
+
+                    MainScope().launch{
+                        job.join()
+                    }
+
+                    /*isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
                         if(it)
                         {
                             academicTypeItemList.add(AcademicType.EVEN.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
                     }
                     isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
                         if(it)
                         {
                             academicTypeItemList.add(AcademicType.ODD.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
                     }
+
+                    academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                    academicTypeACTV.setAdapter(academicTypeItemAdapter)*/
                 }
                 academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
                     academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicSemTIL.isEnabled=false
+                    btnAddSem.isEnabled=false
                     clearAcademicSemACTV()
                     academicSemList.clear()
                     academicSemAdapter.notifyDataSetChanged()
@@ -113,6 +158,7 @@ class AddSemFragment : Fragment() {
                             }
                             academicSemAdapter.notifyDataSetChanged()
                             loadAcademicSemACTV()
+                            academicSemTIL.isEnabled=true
                         }
                         .addOnFailureListener { exception ->
 
@@ -123,6 +169,7 @@ class AddSemFragment : Fragment() {
 
                 academicSemACTV.setOnItemClickListener { parent, view, position, id ->
                     academicSemSelectedItem = parent.getItemAtPosition(position).toString()
+                    btnAddSem.isEnabled=true
                 }
                 btnAddSem.setOnClickListener {
                     if(academicTypeSelectedItem!=null && academicYearSelectedItem!=null && academicSemSelectedItem!=null)
@@ -218,22 +265,26 @@ class AddSemFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
+                academicTypeTIL.isEnabled=false
                 academicTypeItemList.clear()
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
-                    if(it)
-                    {
+                val job = lifecycleScope.launch(Dispatchers.Main) {
+                    val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                    if (evenExists) {
                         academicTypeItemList.add(AcademicType.EVEN.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
-                }
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
-                    if(it)
-                    {
+
+                    val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                    if (oddExists) {
                         academicTypeItemList.add(AcademicType.ODD.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
+
+                    academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                    academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                    academicTypeTIL.isEnabled=true
+                }
+
+                MainScope().launch{
+                    job.join()
                 }
 
             }
@@ -262,16 +313,5 @@ class AddSemFragment : Fragment() {
         }
     }
 
-    private fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("academic")
-            .document(academicDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false) // Assume document doesn't exist if there's an error
-            }
-    }
+
 }

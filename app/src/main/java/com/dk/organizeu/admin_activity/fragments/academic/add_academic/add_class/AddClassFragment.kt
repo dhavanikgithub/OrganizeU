@@ -2,6 +2,8 @@ package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_clas
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.adapter.AddClassAdapter
@@ -18,8 +21,14 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcadem
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment
 import com.dk.organizeu.admin_activity.util.UtilFunction
+import com.dk.organizeu.admin_activity.util.UtilFunction.Companion.isAcademicDocumentExists
 import com.dk.organizeu.databinding.FragmentAddClassBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AddClassFragment : Fragment() {
 
@@ -49,6 +58,9 @@ class AddClassFragment : Fragment() {
         super.onResume()
         binding.apply {
             viewModel.apply {
+                academicSemTIL.isEnabled=false
+                academicClassTIL.isEnabled=false
+                btnAddClass.isEnabled=false
                 if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
                 {
                     if(academicYearSelectedItem==null)
@@ -69,7 +81,18 @@ class AddClassFragment : Fragment() {
                     loadAcademicYearACTV()
                     loadAcademicTypeACTV()
                     initRecyclerView()
-
+                    if(academicTypeSelectedItem!=null)
+                    {
+                        academicSemTIL.isEnabled=true
+                    }
+                    if(academicSemSelectedItem!=null)
+                    {
+                        academicClassTIL.isEnabled=true
+                    }
+                    if(classET.text.toString()!="")
+                    {
+                        btnAddClass.isEnabled=true
+                    }
                 }
                 if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null)
                 {
@@ -86,42 +109,67 @@ class AddClassFragment : Fragment() {
 
                 academicYearACTV.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicTypeTIL.isEnabled=false
+                    academicSemTIL.isEnabled=false
+                    academicClassTIL.isEnabled=false
+                    btnAddClass.isEnabled=false
                     clearAcademicTypeACTV()
                     clearAcademicSemACTV()
                     academicClassList.clear()
                     academicClassAdapter.notifyDataSetChanged()
 
-                    isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
-                        if(it)
-                        {
+
+                    val job = lifecycleScope.launch(Dispatchers.Main) {
+                        val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                        if (evenExists) {
                             academicTypeItemList.add(AcademicType.EVEN.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
-                    }
-                    isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
-                        if(it)
-                        {
+
+                        val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                        if (oddExists) {
                             academicTypeItemList.add(AcademicType.ODD.name)
-                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                            academicTypeACTV.setAdapter(academicTypeItemAdapter)
                         }
+
+                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                        academicTypeTIL.isEnabled=true
+                    }
+
+                    MainScope().launch{
+                        job.join()
                     }
                 }
                 academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
                     academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicSemTIL.isEnabled=false
+                    academicClassTIL.isEnabled=false
+                    btnAddClass.isEnabled=false
                     clearAcademicSemACTV()
                     loadAcademicSemACTV()
                     academicClassList.clear()
                     academicClassAdapter.notifyDataSetChanged()
+                    academicSemTIL.isEnabled=true
                 }
 
                 academicSemACTV.setOnItemClickListener { parent, view, position, id ->
                     academicSemSelectedItem = parent.getItemAtPosition(position).toString()
+                    academicClassTIL.isEnabled=false
+                    btnAddClass.isEnabled=false
                     academicClassList.clear()
                     academicClassAdapter.notifyDataSetChanged()
                     initRecyclerView()
+                    academicClassTIL.isEnabled=true
                 }
+
+                classET.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        btnAddClass.isEnabled = s.toString() != ""
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {}
+                })
 
                 btnAddClass.setOnClickListener {
                     if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && classET.text!!.toString().isNotBlank() && classET.text!!.toString().isNotEmpty())
@@ -220,22 +268,26 @@ class AddClassFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
+                academicTypeTIL.isEnabled=false
                 academicTypeItemList.clear()
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}"){
-                    if(it)
-                    {
+                val job = lifecycleScope.launch(Dispatchers.Main) {
+                    val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                    if (evenExists) {
                         academicTypeItemList.add(AcademicType.EVEN.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
-                }
-                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}"){
-                    if(it)
-                    {
+
+                    val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                    if (oddExists) {
                         academicTypeItemList.add(AcademicType.ODD.name)
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
                     }
+
+                    academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                    academicTypeACTV.setAdapter(academicTypeItemAdapter)
+                    academicTypeTIL.isEnabled=true
+                }
+
+                MainScope().launch{
+                    job.join()
                 }
 
             }
@@ -263,18 +315,6 @@ class AddClassFragment : Fragment() {
         }
     }
 
-    private fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("academic")
-            .document(academicDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false) // Assume document doesn't exist if there's an error
-            }
-    }
 
     private fun isClassDocumentExists(academicClassDocumentId:String, callback: (Boolean) -> Unit) {
         binding.apply {

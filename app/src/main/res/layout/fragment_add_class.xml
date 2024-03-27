@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="5dp"
-            app:layout_constraintBottom_toTopOf="@+id/academicTypeTIL"
+            app:layout_constraintBottom_toTopOf="@+id/academicSemTIL"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:hint="Select Academic"
-                app:layout_constraintEnd_toStartOf="@+id/academicClassTIL"
+                app:layout_constraintEnd_toStartOf="@+id/academicTypeTIL"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +59,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicClassTIL"
+                android:id="@+id/academicTypeTIL"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,14 +81,14 @@
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/academicTypeTIL"
+            android:id="@+id/academicSemTIL"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="5dp"
             android:hint="Select Sem"
-            app:layout_constraintBottom_toTopOf="@+id/innerConstraintLayout1"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -101,7 +101,7 @@
                 tools:text="8" />
         </com.google.android.material.textfield.TextInputLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/innerConstraintLayout1"
+            android:id="@+id/constraintLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -112,7 +112,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicSemTIL"
+                android:id="@+id/academicClassTIL"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -140,9 +140,9 @@
                 app:iconTint="@color/white"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="@+id/academicSemTIL"
+                app:layout_constraintBottom_toBottomOf="@+id/academicClassTIL"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/academicSemTIL" />
+                app:layout_constraintTop_toTopOf="@+id/academicClassTIL" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
