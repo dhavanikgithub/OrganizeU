@@ -7,3 +7,8 @@ interface OnAcademicItemClickListener {
 interface OnRoomItemClickListener {
     fun onItemClick(position: Int)
 }
+
+
+interface OnSubjectItemClickListener {
+    fun onItemClick(position: Int)
+}

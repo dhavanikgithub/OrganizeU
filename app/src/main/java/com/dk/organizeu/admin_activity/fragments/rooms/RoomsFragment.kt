@@ -72,7 +72,7 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
                             val roomItem = Room(document.id,document.get("location").toString(),document.get("type").toString())
                             roomList.add(roomItem)
                         }
-                        roomAdapter = RoomAdapter(roomList)
+                        roomAdapter = RoomAdapter(roomList,this@RoomsFragment)
                         roomsRecyclerView.adapter = roomAdapter
                     }
             }

@@ -8,18 +8,18 @@
     android:padding="10dp">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/roomNameTIL"
+        android:id="@+id/subjectNameTIL"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:hint="Room Name"
+        android:hint="Subject Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/roomNameET"
+            android:id="@+id/subjectNameET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -28,19 +28,19 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/roomLocationTIL"
+        android:id="@+id/subjectCodeTIL"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Room Location"
+        android:hint="Subject Code"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/roomNameTIL">
+        app:layout_constraintTop_toBottomOf="@id/subjectNameTIL">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/roomLocationET"
+            android:id="@+id/subjectCodeET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
@@ -49,31 +49,31 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/roomTypeTIL"
+        android:id="@+id/subjectTypeTIL"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
-        android:hint="Select Room Type"
-        app:layout_constraintTop_toBottomOf="@id/roomLocationTIL"
+        android:hint="Select Subject Type"
+        app:layout_constraintTop_toBottomOf="@id/subjectCodeTIL"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <AutoCompleteTextView
-            android:id="@+id/roomTypeACTV"
+            android:id="@+id/subjectTypeACTV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
-            tools:text="LAB" />
+            tools:text="Theory" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/roomTypeTIL"
+        app:layout_constraintTop_toBottomOf="@id/subjectTypeTIL"
         android:layout_marginTop="10dp">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="7dp"
+    app:cardElevation="10dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="5dp"
+    android:clickable="true"
+    android:focusable="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/subjectNameTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name: Mobile Application"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:weightSum="100">
+                <TextView
+                    android:id="@+id/subjectCodeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Code: 2CEIT401"
+                    android:layout_weight="50"/>
+                <TextView
+                    android:id="@+id/subjectTypeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Type: Theory \ Theory + Practical"
+                    android:layout_weight="50"/>
+            </LinearLayout>
+
+        </LinearLayout>
+</androidx.cardview.widget.CardView>

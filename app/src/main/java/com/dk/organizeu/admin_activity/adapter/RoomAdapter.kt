@@ -7,8 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.data_class.Room
+import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.admin_activity.listener.OnRoomItemClickListener
 
-class RoomAdapter(private val roomList: ArrayList<Room>) :
+class RoomAdapter(private val roomList: ArrayList<Room>,private val listener: OnRoomItemClickListener) :
     RecyclerView.Adapter<RoomAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
@@ -22,6 +24,9 @@ class RoomAdapter(private val roomList: ArrayList<Room>) :
         holder.roomNameTxt.text = "Name: ${currentItem.name}"
         holder.roomLocationTxt.text = "Location: ${currentItem.location}"
         holder.roomTypeTxt.text = "Type: ${currentItem.type}"
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(position)
+        }
     }
 
     override fun getItemCount(): Int {

@@ -7,3 +7,8 @@ interface AcademicAddListener {
 interface RoomAddListener {
     fun onRoomAdded(roomData: HashMap<String,String>, roomDocumentId:String)
 }
+
+
+interface SubjectAddListener {
+    fun onSubjectAdded(subjectData: HashMap<String,String>, subjectDocumentId:String)
+}
