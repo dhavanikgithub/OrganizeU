@@ -12,3 +12,7 @@ interface RoomAddListener {
 interface SubjectAddListener {
     fun onSubjectAdded(subjectData: HashMap<String,String>, subjectDocumentId:String)
 }
+
+interface LessonAddListener {
+    fun onLessonAdded(lessonData: HashMap<String,String>, lessonDocumentId:String)
+}

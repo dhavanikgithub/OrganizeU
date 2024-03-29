@@ -60,7 +60,11 @@
         android:id="@+id/timetableFragment"
         android:name="com.dk.organizeu.admin_activity.fragments.timetable.TimetableFragment"
         android:label="fragment_timetable"
-        tools:layout="@layout/fragment_timetable" />
+        tools:layout="@layout/fragment_timetable" >
+        <action
+            android:id="@+id/action_timetableFragment_to_addTimetableFragment"
+            app:destination="@id/addTimetableFragment" />
+    </fragment>
     <fragment
         android:id="@+id/facultyFragment"
         android:name="com.dk.organizeu.admin_activity.fragments.faculty.FacultyFragment"
@@ -76,4 +80,9 @@
         android:name="com.dk.organizeu.admin_activity.fragments.subjects.SubjectsFragment"
         android:label="fragment_subjects"
         tools:layout="@layout/fragment_subjects" />
+    <fragment
+        android:id="@+id/addTimetableFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.timetable.add_timetable.AddTimetableFragment"
+        android:label="fragment_add_timetable"
+        tools:layout="@layout/fragment_add_timetable" />
 </navigation>
