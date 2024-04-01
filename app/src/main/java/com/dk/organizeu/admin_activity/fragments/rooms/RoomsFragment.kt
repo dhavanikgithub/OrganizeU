@@ -92,6 +92,5 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        TODO("Not yet implemented")
     }
 }

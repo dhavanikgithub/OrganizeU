@@ -85,6 +85,5 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
     }
 
     override fun onItemClick(position: Int) {
-        TODO("Not yet implemented")
     }
 }
