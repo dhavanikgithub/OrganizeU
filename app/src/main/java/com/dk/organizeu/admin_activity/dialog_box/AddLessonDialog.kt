@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class AddLessonDialog : AppCompatDialogFragment() {
+class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFragment() {
     private lateinit var binding: AddLessonDialogLayoutBinding
 
     private lateinit var db: FirebaseFirestore
@@ -52,10 +52,14 @@ class AddLessonDialog : AppCompatDialogFragment() {
 
     private var selectedLessonType:String?=null
 
+    interface LessonListener {
+        fun onAddLesson()
+    }
 
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_lesson_dialog_layout, null)
         binding = AddLessonDialogLayoutBinding.bind(view)
@@ -183,6 +187,18 @@ class AddLessonDialog : AppCompatDialogFragment() {
                                     .document(selectedRoom!!)
                                     .get()
                                     .addOnSuccessListener {roomDoc->
+                                        val dataSet = hashMapOf(
+                                            "class_name" to className,
+                                            "subject_name" to selectedSubject,
+                                            "subject_code" to subjectDoc.get("code"),
+                                            "location" to "$selectedRoom - ${roomDoc.get("location")}",
+                                            "start_time" to startTimeET.text.toString(),
+                                            "end_time" to endTimeEL.text.toString(),
+                                            "faculty" to selectedFaculty,
+                                            "type" to selectedLessonType,
+                                            "batch" to selectedBatch.toString(),
+                                            "duration" to calculateLessonDuration(startTimeET.text.toString(),endTimeEL.text.toString())
+                                        )
                                         db.collection("academic")
                                             .document("${academicYear}_${academicType}")
                                             .collection("semester")
@@ -192,23 +208,28 @@ class AddLessonDialog : AppCompatDialogFragment() {
                                             .collection("timetable")
                                             .document(Weekday.getWeekdayNameByNumber((selectedTab+1)))
                                             .collection("weekday")
-
-                                            .document()
-                                            .set(hashMapOf(
-                                                "class_name" to className,
-                                                "subject_name" to selectedSubject,
-                                                "subject_code" to subjectDoc.get("code"),
-                                                "location" to roomDoc.get("location"),
-                                                "start_time" to startTimeET.text.toString(),
-                                                "end_time" to endTimeEL.text.toString(),
-                                                "faculty" to selectedFaculty,
-                                                "type" to selectedLessonType,
-                                                "batch" to selectedBatch.toString(),
-                                                "duration" to calculateLessonDuration(startTimeET.text.toString(),endTimeEL.text.toString())
-                                            ))
-                                            .addOnSuccessListener {
-                                                btnClose.callOnClick()
+                                            .whereEqualTo("start_time", startTimeET.text.toString())
+                                            .get()
+                                            .addOnSuccessListener { documents ->
+                                                if (documents.isEmpty) {
+                                                    db.collection("academic")
+                                                        .document("${academicYear}_${academicType}")
+                                                        .collection("semester")
+                                                        .document(semesterNumber)
+                                                        .collection("class")
+                                                        .document(className)
+                                                        .collection("timetable")
+                                                        .document(Weekday.getWeekdayNameByNumber((selectedTab+1)))
+                                                        .collection("weekday")
+                                                        .document()
+                                                        .set(dataSet)
+                                                        .addOnSuccessListener {
+                                                            listener.onAddLesson()
+                                                            btnClose.callOnClick()
+                                                        }
+                                                }
                                             }
+
                                     }
 
                             }

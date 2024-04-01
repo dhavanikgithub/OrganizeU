@@ -7,14 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.dialog_box.AddLessonDialog
 import com.dk.organizeu.admin_activity.dialog_box.AddSubjectDialog
+import com.dk.organizeu.admin_activity.enum_class.Weekday
 import com.dk.organizeu.databinding.FragmentAddTimetableBinding
+import com.dk.organizeu.student_activity.adapter.TimetableAdapter
+import com.dk.organizeu.student_activity.data_class.TimetableItem
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.firestore.FirebaseFirestore
 
-class AddTimetableFragment : Fragment() {
+class AddTimetableFragment : Fragment(),AddLessonDialog.LessonListener {
 
     companion object {
         lateinit var academicYear:String
@@ -28,6 +33,7 @@ class AddTimetableFragment : Fragment() {
     private lateinit var viewModel: AddTimetableViewModel
     private lateinit var binding: FragmentAddTimetableBinding
     private lateinit var progressDialog: CustomProgressDialog
+    private lateinit var db: FirebaseFirestore
 
 
     override fun onCreateView(
@@ -38,6 +44,7 @@ class AddTimetableFragment : Fragment() {
         binding = FragmentAddTimetableBinding.bind(view)
         viewModel = ViewModelProvider(this)[AddTimetableViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
+        db = FirebaseFirestore.getInstance()
         return view
     }
 
@@ -53,15 +60,18 @@ class AddTimetableFragment : Fragment() {
                         className = getString("academic_class",null)
                     }
                 }
+                initRecyclerView()
+                initLesson(1)
                 btnAddLesson.setOnClickListener {
-                    val dialogFragment = AddLessonDialog()
+                    val dialogFragment = AddLessonDialog(this@AddTimetableFragment)
                     dialogFragment.show(childFragmentManager, "customDialog")
                 }
 
                 weekDayTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         selectedTab = tab.position
-                        when (tab.position) {
+                        initLesson(selectedTab+1)
+                        /*when (tab.position) {
                             0 -> {
 
                             }
@@ -83,7 +93,7 @@ class AddTimetableFragment : Fragment() {
                             6 -> {
 
                             }
-                        }
+                        }*/
                     }
 
                     override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -95,5 +105,63 @@ class AddTimetableFragment : Fragment() {
                 })
             }
         }
+    }
+
+    private fun initRecyclerView()
+    {
+        binding.apply {
+            viewModel.apply {
+                timetableData.clear()
+                lessonRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                timetableAdapter = TimetableAdapter(timetableData)
+                lessonRecyclerView.adapter = timetableAdapter
+            }
+        }
+    }
+    private fun initLesson(weekDay:Int)
+    {
+        binding.apply {
+            viewModel.apply {
+                timetableData.clear()
+                db.collection("academic")
+                    .document("${academicYear}_${academicType}")
+                    .collection("semester")
+                    .document(semesterNumber)
+                    .collection("class")
+                    .document(className)
+                    .collection("timetable")
+                    .document(Weekday.getWeekdayNameByNumber(weekDay))
+                    .collection("weekday")
+                    .orderBy("start_time")
+                    .get()
+                    .addOnSuccessListener {documents->
+                        var counter:Int = 1
+                        for(document in documents)
+                        {
+                            val lessonItem = TimetableItem(
+                                document.get("class_name").toString(),
+                                document.get("subject_name").toString(),
+                                document.get("subject_code").toString(),
+                                document.get("location").toString(),
+                                document.get("start_time").toString(),
+                                document.get("end_time").toString(),
+                                document.get("duration").toString(),
+                                document.get("type").toString(),
+                                document.get("faculty").toString(),
+                                counter
+                            )
+                            counter++
+                            timetableData.add(lessonItem)
+
+                        }
+                        timetableAdapter = TimetableAdapter(timetableData)
+                        lessonRecyclerView.adapter = timetableAdapter
+                    }
+            }
+        }
+    }
+
+    override fun onAddLesson() {
+        initLesson(selectedTab+1)
     }
 }

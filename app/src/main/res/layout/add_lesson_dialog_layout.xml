@@ -129,7 +129,8 @@
                 android:drawableStart="@drawable/ic_start_time"
                 android:drawablePadding="10dp"
                 android:focusable="false"
-                android:inputType="none" />
+                android:inputType="none"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
 
