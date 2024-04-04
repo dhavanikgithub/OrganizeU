@@ -16,7 +16,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/subjectNameTxt"
+                android:id="@+id/txtSubjectName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Name: Mobile Application"
@@ -29,13 +29,13 @@
                 android:layout_marginTop="5dp"
                 android:weightSum="100">
                 <TextView
-                    android:id="@+id/subjectCodeTxt"
+                    android:id="@+id/txtSubjectCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Code: 2CEIT401"
                     android:layout_weight="50"/>
                 <TextView
-                    android:id="@+id/subjectTypeTxt"
+                    android:id="@+id/txtSubjectType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Type: Theory \ Theory + Practical"

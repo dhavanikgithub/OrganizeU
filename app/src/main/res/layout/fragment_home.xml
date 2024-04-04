@@ -2,20 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/frameLayout2"
+    android:id="@+id/layoutMainHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".student_activity.fragments.HomeFragment">
 
     <LinearLayout
-        android:id="@+id/upperLayoutWeekDayTab"
+        android:id="@+id/layoutTabLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/weekDayTabLayout"
+            android:id="@+id/tbLayoutWeekDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -27,7 +27,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/upperCardViewTabLayout2"
+            android:id="@+id/cvTabLayout"
             android:layout_width="@dimen/_150sdp"
             android:layout_height="wrap_content"
             app:cardCornerRadius="20dp"
@@ -41,7 +41,7 @@
             android:layout_margin="10dp">
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout2"
+                android:id="@+id/tbLayoutAction"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:visibility="gone"
@@ -61,14 +61,14 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/upperLayoutLessionRecyclerView"
+        android:id="@+id/layoutRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upperLayoutWeekDayTab">
+        app:layout_constraintTop_toBottomOf="@+id/layoutTabLayout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/lessionRecyclerView"
+            android:id="@+id/rvLesson"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"

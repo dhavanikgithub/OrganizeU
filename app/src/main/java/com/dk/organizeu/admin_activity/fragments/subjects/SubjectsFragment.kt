@@ -58,7 +58,7 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
         binding.apply {
             viewModel.apply {
                 subjectList.clear()
-                subjectRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                rvSubjects.layoutManager = LinearLayoutManager(requireContext())
                 db.collection("subject")
                     .get()
                     .addOnSuccessListener {documents->
@@ -68,7 +68,7 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
                             subjectList.add(subjectItem)
                         }
                         subjectAdapter = SubjectAdapter(subjectList,this@SubjectsFragment)
-                        subjectRecyclerView.adapter = subjectAdapter
+                        rvSubjects.adapter = subjectAdapter
                     }
             }
         }

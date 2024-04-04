@@ -8,7 +8,7 @@
     tools:context=".admin_activity.fragments.timetable.TimetableFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/academicYearTIL"
+        android:id="@+id/tlAcademicYear"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
-            android:id="@+id/academicYearACTV"
+            android:id="@+id/actAcademicYear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -29,7 +29,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/academicTypeTIL"
+        android:id="@+id/tlAcademicType"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,10 +38,10 @@
         android:hint="Select Academic Type"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/academicYearTIL">
+        app:layout_constraintTop_toBottomOf="@id/tlAcademicYear">
 
         <AutoCompleteTextView
-            android:id="@+id/academicTypeACTV"
+            android:id="@+id/actAcademicType"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -59,7 +59,7 @@
         android:hint="Select Semester"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/academicTypeTIL">
+        app:layout_constraintTop_toBottomOf="@id/tlAcademicType">
 
         <AutoCompleteTextView
             android:id="@+id/semACTV"

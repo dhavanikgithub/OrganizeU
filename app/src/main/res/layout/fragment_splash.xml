@@ -5,29 +5,29 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/appLauncherIV"
+        android:id="@+id/ivAppLauncher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_launcher_image_text"
         android:scaleType="center"
         android:src="@drawable/ic_launcher"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/appNameTV"
+        app:layout_constraintBottom_toTopOf="@+id/tvAppName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/appNameTV"
+        android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textSize="@dimen/_20sdp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/appLauncherIV"
-        app:layout_constraintStart_toStartOf="@+id/appLauncherIV"
-        app:layout_constraintTop_toBottomOf="@+id/appLauncherIV" />
+        app:layout_constraintEnd_toEndOf="@+id/ivAppLauncher"
+        app:layout_constraintStart_toStartOf="@+id/ivAppLauncher"
+        app:layout_constraintTop_toBottomOf="@+id/ivAppLauncher" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStudentScreen"

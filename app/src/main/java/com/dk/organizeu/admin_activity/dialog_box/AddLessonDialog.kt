@@ -11,17 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.RoomType
-import com.dk.organizeu.admin_activity.enum_class.SubjectType
 import com.dk.organizeu.admin_activity.enum_class.Weekday
-import com.dk.organizeu.admin_activity.fragments.timetable.add_timetable.AddTimetableFragment
+import com.dk.organizeu.admin_activity.fragments.timetable.add_timetable.AddLessonFragment
 import com.dk.organizeu.admin_activity.listener.LessonAddListener
-import com.dk.organizeu.admin_activity.listener.SubjectAddListener
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -178,7 +174,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     endTimeEL.text.toString().isNotEmpty() &&
                     ((selectedLessonType.equals(RoomType.LAB.name) && selectedBatch!=null) || (selectedLessonType.equals(RoomType.CLASS.name))))
                 {
-                    AddTimetableFragment.apply {
+                    AddLessonFragment.apply {
                         db.collection("subject")
                             .document(selectedSubject!!)
                             .get()
@@ -368,7 +364,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
     private fun initSubjectDropDown()
     {
         binding.apply {
-            AddTimetableFragment.apply {
+            AddLessonFragment.apply {
                 subjectTIL.isEnabled=false
                 subjectList.clear()
                 if(academicYear!=null && academicType!=null && semesterNumber!=null && className!=null){
@@ -410,7 +406,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         binding.apply {
             batchTIL.isEnabled=false
             batchList.clear()
-            AddTimetableFragment.apply {
+            AddLessonFragment.apply {
                 db.collection("academic")
                     .document("${academicYear}_$academicType")
                     .collection("semester")

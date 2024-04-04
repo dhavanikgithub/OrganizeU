@@ -53,7 +53,7 @@ class TimetableFragment : Fragment() {
 
                 if (selectedAcademicTypeItem==null)
                 {
-                    academicTypeTIL.isEnabled=false
+                    tlAcademicType.isEnabled=false
                 }
                 else{
                     if(selectedAcademicYearItem!=null)
@@ -100,7 +100,7 @@ class TimetableFragment : Fragment() {
             viewModel.apply {
 
 
-                academicYearACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     selectedAcademicYearItem = parent.getItemAtPosition(position).toString()
                     clearAcademicType()
                     clearSemester()
@@ -112,7 +112,7 @@ class TimetableFragment : Fragment() {
                     btnGoToTimetable.isEnabled=false
                 }
 
-                academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicType.setOnItemClickListener { parent, view, position, id ->
                     selectedAcademicTypeItem = parent.getItemAtPosition(position).toString()
                     clearSemester()
                     clearClass()
@@ -189,8 +189,8 @@ class TimetableFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicTypeTIL.isEnabled=false
-                academicTypeACTV.setText("")
+                tlAcademicType.isEnabled=false
+                actAcademicType.setText("")
                 academicTypeList.clear()
                 if(academicTypeAdapter!=null)
                 {
@@ -220,7 +220,7 @@ class TimetableFragment : Fragment() {
                     }
 
                 academicYearAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,academicYearList)
-                academicYearACTV.setAdapter(academicYearAdapter)
+                actAcademicYear.setAdapter(academicYearAdapter)
             }
         }
     }
@@ -230,7 +230,7 @@ class TimetableFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicTypeTIL.isEnabled=false
+                tlAcademicType.isEnabled=false
                 academicTypeList.clear()
                 val job = lifecycleScope.launch(Dispatchers.Main) {
                     val evenExists =
@@ -246,8 +246,8 @@ class TimetableFragment : Fragment() {
                     }
 
                     academicTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeList)
-                    academicTypeACTV.setAdapter(academicTypeAdapter)
-                    academicTypeTIL.isEnabled=true
+                    actAcademicType.setAdapter(academicTypeAdapter)
+                    tlAcademicType.isEnabled=true
 
                 }
 

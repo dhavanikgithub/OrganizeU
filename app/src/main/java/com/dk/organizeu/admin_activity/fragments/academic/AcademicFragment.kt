@@ -78,7 +78,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
                     .get()
                     .addOnSuccessListener { documents ->
                         academicList.clear()
-                        recyclerViewAcademic.layoutManager = LinearLayoutManager(requireContext())
+                        rvAcademic.layoutManager = LinearLayoutManager(requireContext())
                         for (document in documents) {
                             // Get the document ID
                             val documentId = document.id
@@ -88,7 +88,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
 
                         }
                         academicAdapter = AcademicAdapter(academicList,this@AcademicFragment)
-                        recyclerViewAcademic.adapter = academicAdapter
+                        rvAcademic.adapter = academicAdapter
                         progressDialog.stop()
                     }
                     .addOnFailureListener { exception ->

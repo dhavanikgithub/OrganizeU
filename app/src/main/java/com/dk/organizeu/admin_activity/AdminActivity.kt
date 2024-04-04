@@ -30,7 +30,7 @@ class AdminActivity : AppCompatActivity() {
 
             navController = navHostFragment.findNavController()
 
-            val mainMenuIcon = findViewById<ImageView>(R.id.menuIV)
+            val mainMenuIcon = findViewById<ImageView>(R.id.iconMenu)
             mainMenuIcon.setOnClickListener {
                 if (adminDL.isDrawerOpen(GravityCompat.START)) {
                     adminDL.closeDrawer(GravityCompat.START)

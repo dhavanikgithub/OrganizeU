@@ -60,14 +60,14 @@ class HomeFragment : Fragment() {
                 loadTabs()
 
                 if (savedInstanceState != null) {
-                    lessionRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-                    lessionRecyclerView.adapter = timetableAdapter
+                    rvLesson.layoutManager = LinearLayoutManager(requireContext())
+                    rvLesson.adapter = timetableAdapter
                 }
                 else{
                     initLessonRecyclerView()
                 }
 
-                tabLayout2.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                tbLayoutAction.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         viewModel.selectedTab = tab.position
                         when (tab.position) {
@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
                                         //timetableAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.count())
                                         currentDayTimeTableData.addAll(timetableData[dayOfWeek]!!)
                                         timetableAdapter = TimetableAdapter(currentDayTimeTableData)
-                                        lessionRecyclerView.adapter = timetableAdapter
+                                        rvLesson.adapter = timetableAdapter
                                         //timetableAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.count())
                                     }
                                 }
@@ -103,7 +103,7 @@ class HomeFragment : Fragment() {
 
                 })
 
-                weekDayTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                tbLayoutWeekDay.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         viewModel.selectedWeekDayTab = tab.position
                         loadTimeTable(tab.position+1)
@@ -150,7 +150,7 @@ class HomeFragment : Fragment() {
                     {
                         currentDayTimeTableData.addAll(timetableData[position]!!)
                         timetableAdapter = TimetableAdapter(currentDayTimeTableData)
-                        lessionRecyclerView.adapter = timetableAdapter
+                        rvLesson.adapter = timetableAdapter
                     }
                 }
                 else{
@@ -165,14 +165,14 @@ class HomeFragment : Fragment() {
 
                 if(dayOfWeek==position)
                 {
-                    tabLayout2.visibility= View.VISIBLE
-                    if(tabLayout2.getTabAt(0)!!.isSelected)
+                    tbLayoutAction.visibility= View.VISIBLE
+                    if(tbLayoutAction.getTabAt(0)!!.isSelected)
                     {
                         loadCurrentLesson()
                     }
                 }
                 else{
-                    tabLayout2.visibility= View.GONE
+                    tbLayoutAction.visibility= View.GONE
                 }
             }
         }
@@ -216,7 +216,7 @@ class HomeFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                lessionRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                rvLesson.layoutManager = LinearLayoutManager(requireContext())
                 currentDayTimeTableData.clear()
                 if(timetableData[selectedWeekDayTab+1]!=null)
                 {
@@ -226,11 +226,11 @@ class HomeFragment : Fragment() {
                     currentDayTimeTableData.addAll(ArrayList<TimetableItem>())
                 }
                 timetableAdapter = TimetableAdapter(currentDayTimeTableData)
-                if(tabLayout2.selectedTabPosition==0 && selectedTab==0)
+                if(tbLayoutAction.selectedTabPosition==0 && selectedTab==0)
                 {
                     loadCurrentLesson()
                 }
-                lessionRecyclerView.adapter = timetableAdapter
+                rvLesson.adapter = timetableAdapter
             }
         }
     }
@@ -243,26 +243,26 @@ class HomeFragment : Fragment() {
 
                 for(i in 0 .. 6)
                 {
-                    currentTab = weekDayTabLayout.newTab().setText(getDayOfWeek(i))
-                    weekDayTabLayout.addTab(currentTab)
+                    currentTab = tbLayoutWeekDay.newTab().setText(getDayOfWeek(i))
+                    tbLayoutWeekDay.addTab(currentTab)
                     if(selectedWeekDayTab==i)
                     {
-                        weekDayTabLayout.selectTab(currentTab)
+                        tbLayoutWeekDay.selectTab(currentTab)
                     }
                 }
-                currentTab = tabLayout2.newTab().setText("Current")
-                tabLayout2.addTab(currentTab)
-                currentTab = tabLayout2.newTab().setText("  All  ")
-                tabLayout2.addTab(currentTab)
-                currentTab = tabLayout2.getTabAt(selectedTab)
-                tabLayout2.selectTab(currentTab)
+                currentTab = tbLayoutAction.newTab().setText("Current")
+                tbLayoutAction.addTab(currentTab)
+                currentTab = tbLayoutAction.newTab().setText("  All  ")
+                tbLayoutAction.addTab(currentTab)
+                currentTab = tbLayoutAction.getTabAt(selectedTab)
+                tbLayoutAction.selectTab(currentTab)
 
-                if(dayOfWeek-1 == weekDayTabLayout.selectedTabPosition)
+                if(dayOfWeek-1 == tbLayoutWeekDay.selectedTabPosition)
                 {
-                    tabLayout2.visibility= View.VISIBLE
+                    tbLayoutAction.visibility= View.VISIBLE
                 }
                 else{
-                    tabLayout2.visibility= View.GONE
+                    tbLayoutAction.visibility= View.GONE
                 }
             }
         }

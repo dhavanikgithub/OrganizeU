@@ -8,7 +8,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/userImageDrawerMenu"
+        android:id="@+id/ivAdminUser"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:src="@mipmap/ic_launcher"
@@ -18,7 +18,7 @@
         />
 
     <TextView
-        android:id="@+id/userNameTextDrawerMenu"
+        android:id="@+id/txtAdminName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Admin Name"

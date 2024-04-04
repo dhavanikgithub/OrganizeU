@@ -29,7 +29,7 @@ class AddClassAdapter(private val academicClassList: ArrayList<String>) :
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val classNameTxt: TextView = itemView.findViewById(R.id.classNameTxt)
+        val classNameTxt: TextView = itemView.findViewById(R.id.txtClassName)
 
     }
 

@@ -68,8 +68,8 @@ class AddBatchFragment : Fragment() {
                         academicTypeSelectedItem = AddAcademicFragment.academicType
                     }
 
-                    academicYearACTV.setText(academicYearSelectedItem)
-                    academicTypeACTV.setText(academicTypeSelectedItem)
+                    actAcademicYear.setText(academicYearSelectedItem)
+                    actAcademicType.setText(academicTypeSelectedItem)
                     if(academicSemSelectedItem!=null)
                     {
                         academicSemACTV.setText(academicSemSelectedItem)
@@ -78,8 +78,8 @@ class AddBatchFragment : Fragment() {
                     {
                         academicClassACTV.setText(academicClassSelectedItem)
                     }
-                    loadAcademicYearACTV()
-                    loadAcademicTypeACTV()
+                    loadactAcademicYear()
+                    loadactAcademicType()
                     initRecyclerView()
                     if(academicTypeSelectedItem!=null)
                     {
@@ -114,14 +114,14 @@ class AddBatchFragment : Fragment() {
             viewModel.apply {
 
 
-                academicYearACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
-                    academicTypeTIL.isEnabled=false
+                    tlAcademicType.isEnabled=false
                     academicSemTIL.isEnabled=false
                     academicClassTIL.isEnabled=false
                     academicBatchTIL.isEnabled=false
                     btnAddBatch.isEnabled=false
-                    clearAcademicTypeACTV()
+                    clearactAcademicType()
                     clearAcademicSemACTV()
                     clearAcademicClassACTV()
                     academicBatchList.clear()
@@ -141,15 +141,15 @@ class AddBatchFragment : Fragment() {
                         }
 
                         academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
-                        academicTypeTIL.isEnabled=true
+                        actAcademicType.setAdapter(academicTypeItemAdapter)
+                        tlAcademicType.isEnabled=true
                     }
 
                     MainScope().launch{
                         job.join()
                     }
                 }
-                academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicType.setOnItemClickListener { parent, view, position, id ->
                     academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
                     academicSemTIL.isEnabled=false
                     academicClassTIL.isEnabled=false
@@ -256,14 +256,14 @@ class AddBatchFragment : Fragment() {
     }
 
 
-    private fun clearAcademicTypeACTV()
+    private fun clearactAcademicType()
     {
         binding.apply {
             viewModel.apply {
                 academicTypeSelectedItem=null
                 academicTypeItemList.clear()
                 academicTypeItemAdapter.notifyDataSetChanged()
-                academicTypeACTV.setText("")
+                actAcademicType.setText("")
             }
         }
     }
@@ -292,7 +292,7 @@ class AddBatchFragment : Fragment() {
         }
     }
 
-    private fun loadAcademicYearACTV()
+    private fun loadactAcademicYear()
     {
         binding.apply {
             viewModel.apply {
@@ -306,17 +306,17 @@ class AddBatchFragment : Fragment() {
                         }
                     }
                     academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
-                    academicYearACTV.setAdapter(academicYearItemAdapter)
+                    actAcademicYear.setAdapter(academicYearItemAdapter)
                 }
             }
         }
     }
 
-    private fun loadAcademicTypeACTV()
+    private fun loadactAcademicType()
     {
         binding.apply {
             viewModel.apply {
-                academicTypeTIL.isEnabled=false
+                tlAcademicType.isEnabled=false
                 academicTypeItemList.clear()
                 val job = lifecycleScope.launch(Dispatchers.Main) {
                     val evenExists =
@@ -332,8 +332,8 @@ class AddBatchFragment : Fragment() {
                     }
 
                     academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                    academicTypeACTV.setAdapter(academicTypeItemAdapter)
-                    academicTypeTIL.isEnabled=true
+                    actAcademicType.setAdapter(academicTypeItemAdapter)
+                    tlAcademicType.isEnabled=true
 
                 }
                 MainScope().launch{

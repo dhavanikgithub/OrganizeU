@@ -67,12 +67,12 @@ class AddAcademicFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                val tab1 = tabLayout.newTab().setText("Sem")
-                val tab2 = tabLayout.newTab().setText("Class")
-                val tab3 = tabLayout.newTab().setText("Batch")
-                tabLayout.addTab(tab1)
-                tabLayout.addTab(tab2)
-                tabLayout.addTab(tab3)
+                val tab1 = tbLayoutAcademicData.newTab().setText("Sem")
+                val tab2 = tbLayoutAcademicData.newTab().setText("Class")
+                val tab3 = tbLayoutAcademicData.newTab().setText("Batch")
+                tbLayoutAcademicData.addTab(tab1)
+                tbLayoutAcademicData.addTab(tab2)
+                tbLayoutAcademicData.addTab(tab3)
             }
         }
     }
@@ -84,8 +84,8 @@ class AddAcademicFragment : Fragment() {
                 adapter.addFragment(AddSemFragment.newInstance(viewModel), "Sem")
                 adapter.addFragment(AddClassFragment.newInstance(viewModel), "Class")
                 adapter.addFragment(AddBatchFragment.newInstance(), "Batch")
-                viewPager.adapter = adapter
-                tabLayout.setupWithViewPager(viewPager)
+                vpAcademicData.adapter = adapter
+                tbLayoutAcademicData.setupWithViewPager(vpAcademicData)
             }
         }
     }

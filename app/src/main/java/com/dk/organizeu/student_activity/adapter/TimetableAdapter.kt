@@ -51,14 +51,14 @@ class TimetableAdapter(private val timetableItems: ArrayList<TimetableItem>) : R
     }
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: TimetableItem) {
-            itemView.findViewById<TextView>(R.id.textClassName).text = "${item.className} ${item.location}"
-            itemView.findViewById<TextView>(R.id.textSubjectName).text = item.subjectName
-            itemView.findViewById<TextView>(R.id.textStartTime).text = item.startTime
-            itemView.findViewById<TextView>(R.id.textEndTime).text = item.endTime
-            itemView.findViewById<TextView>(R.id.textDuration).text = item.duration
-            itemView.findViewById<TextView>(R.id.textType).text = item.type
-            itemView.findViewById<TextView>(R.id.textFacultyName).text = item.facultyName
-            itemView.findViewById<TextView>(R.id.textLessonNumber).text = "Lesson: ${item.lessonNumber}"
+            itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
+            itemView.findViewById<TextView>(R.id.txtLessonSubjectName).text = item.subjectName
+            itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime
+            itemView.findViewById<TextView>(R.id.txtEndTime).text = item.endTime
+            itemView.findViewById<TextView>(R.id.txtLessonDuration).text = item.duration
+            itemView.findViewById<TextView>(R.id.txtLessonType).text = item.type
+            itemView.findViewById<TextView>(R.id.txtLessonFacultyName).text = item.facultyName
+            itemView.findViewById<TextView>(R.id.txtLessonNumber).text = "Lesson: ${item.lessonNumber}"
         }
     }
     class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

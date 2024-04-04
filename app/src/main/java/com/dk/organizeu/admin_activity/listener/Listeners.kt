@@ -16,3 +16,15 @@ interface SubjectAddListener {
 interface LessonAddListener {
     fun onLessonAdded(lessonData: HashMap<String,String>, lessonDocumentId:String)
 }
+
+interface OnAcademicItemClickListener {
+    fun onItemClick(position: Int)
+}
+
+interface OnRoomItemClickListener {
+    fun onItemClick(position: Int)
+}
+
+interface OnSubjectItemClickListener {
+    fun onItemClick(position: Int)
+}

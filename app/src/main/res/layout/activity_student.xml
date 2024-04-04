@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/studentToolbar"
+            android:id="@+id/toolbarStudent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/menuIV"
+                android:id="@+id/iconMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -30,7 +30,7 @@
                 app:tint="@color/white"/>
 
             <TextView
-                android:id="@+id/appNameText"
+                android:id="@+id/txtAppName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -39,18 +39,18 @@
         </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentCSA"
+            android:id="@+id/fragmentContainerViewStudent"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studentToolbar"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarStudent"
             app:navGraph="@navigation/nav_graph_student" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/studentNV"
+        android:id="@+id/navigationViewStudent"
         android:layout_width="@dimen/_250sdp"
         android:layout_height="match_parent"
         android:layout_gravity="start"

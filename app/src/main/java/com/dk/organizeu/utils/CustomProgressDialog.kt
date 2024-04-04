@@ -39,8 +39,8 @@ class CustomProgressDialog(context: Context) {
         val inflater =  LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.progress_dialog_view, null)
 
-        cpTitle = view.findViewById(R.id.cp_title)
-        progressBar = view.findViewById(R.id.cp_pbar)
+        cpTitle = view.findViewById(R.id.txtCPTitle)
+        progressBar = view.findViewById(R.id.pbCP)
 
         // Card Color
         //cpCardView.setCardBackgroundColor(Color.parseColor("#00000000"))

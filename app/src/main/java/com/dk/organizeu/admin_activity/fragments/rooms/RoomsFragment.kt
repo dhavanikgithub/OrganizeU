@@ -63,7 +63,7 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
         binding.apply {
             viewModel.apply {
                 roomList.clear()
-                roomsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                rvRooms.layoutManager = LinearLayoutManager(requireContext())
                 db.collection("room")
                     .get()
                     .addOnSuccessListener {documents->
@@ -73,7 +73,7 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
                             roomList.add(roomItem)
                         }
                         roomAdapter = RoomAdapter(roomList,this@RoomsFragment)
-                        roomsRecyclerView.adapter = roomAdapter
+                        rvRooms.adapter = roomAdapter
                     }
             }
         }

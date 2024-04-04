@@ -31,8 +31,8 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
         db = FirebaseFirestore.getInstance()
         academicAddListener = parentFragment as? AcademicAddListener
-        academicYearACTV = view.findViewById(R.id.academicYearACTV)
-        academicTypeTIL = view.findViewById(R.id.academicTypeACTV)
+        academicYearACTV = view.findViewById(R.id.actAcademicYear)
+        academicTypeTIL = view.findViewById(R.id.actAcademicType)
         addButton = view.findViewById(R.id.btnAdd)
         closeButton = view.findViewById(R.id.btnClose)
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)

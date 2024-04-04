@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.data_class.Room
-import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
 import com.dk.organizeu.admin_activity.listener.OnRoomItemClickListener
 
 class RoomAdapter(private val roomList: ArrayList<Room>,private val listener: OnRoomItemClickListener) :
@@ -34,9 +33,9 @@ class RoomAdapter(private val roomList: ArrayList<Room>,private val listener: On
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val roomNameTxt: TextView = itemView.findViewById(R.id.roomNameTxt)
-        val roomLocationTxt: TextView = itemView.findViewById(R.id.roomLocationTxt)
-        val roomTypeTxt: TextView = itemView.findViewById(R.id.roomTypeTxt)
+        val roomNameTxt: TextView = itemView.findViewById(R.id.txtRoomName)
+        val roomLocationTxt: TextView = itemView.findViewById(R.id.txtRoomLocation)
+        val roomTypeTxt: TextView = itemView.findViewById(R.id.txtRoomType)
     }
 
 }

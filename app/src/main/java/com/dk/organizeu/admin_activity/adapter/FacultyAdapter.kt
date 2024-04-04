@@ -27,7 +27,7 @@ class FacultyAdapter(private val facultyList: ArrayList<String>) :
 
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val facultyNameTxt: TextView = itemView.findViewById(R.id.facultyNameTxt)
+        val facultyNameTxt: TextView = itemView.findViewById(R.id.txtFacultyName)
     }
 
 }

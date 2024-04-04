@@ -33,9 +33,9 @@ class SubjectAdapter(private val subjectList: ArrayList<Subject>,private val lis
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val subjectNameTxt: TextView = itemView.findViewById(R.id.subjectNameTxt)
-        val subjectCodeTxt: TextView = itemView.findViewById(R.id.subjectCodeTxt)
-        val subjectTypeTxt: TextView = itemView.findViewById(R.id.subjectTypeTxt)
+        val subjectNameTxt: TextView = itemView.findViewById(R.id.txtSubjectName)
+        val subjectCodeTxt: TextView = itemView.findViewById(R.id.txtSubjectCode)
+        val subjectTypeTxt: TextView = itemView.findViewById(R.id.txtSubjectType)
     }
 
 }

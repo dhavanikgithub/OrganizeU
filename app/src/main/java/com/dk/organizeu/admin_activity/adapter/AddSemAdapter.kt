@@ -26,7 +26,7 @@ class AddSemAdapter(private val academicSemList: ArrayList<String>) :
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val semNumberTxt: TextView = itemView.findViewById(R.id.semNumberTxt)
+        val semNumberTxt: TextView = itemView.findViewById(R.id.txtSemesterNumber)
     }
 
 }

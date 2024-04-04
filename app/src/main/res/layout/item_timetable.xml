@@ -18,7 +18,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textStartTime"
+                android:id="@+id/txtStartTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
@@ -32,14 +32,14 @@
                 android:layout_width="2dp"
                 android:layout_height="0dp"
                 android:background="@color/timetable_recycler_item_text"
-                app:layout_constraintBottom_toTopOf="@+id/textEndTime"
+                app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textStartTime"
+                app:layout_constraintTop_toBottomOf="@+id/txtStartTime"
                 />
 
             <TextView
-                android:id="@+id/textEndTime"
+                android:id="@+id/txtEndTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
@@ -56,7 +56,7 @@
             android:padding="10dp"
             >
             <TextView
-                android:id="@+id/textLessonNumber"
+                android:id="@+id/txtLessonNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/timetable_recycler_item_text"
@@ -69,7 +69,7 @@
                 android:weightSum="100"
                 android:paddingVertical="5dp">
                 <TextView
-                    android:id="@+id/textSubjectName"
+                    android:id="@+id/txtLessonSubjectName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -77,7 +77,7 @@
                     android:layout_weight="50"
                     android:textColor="@color/timetable_recycler_item_text"/>
                 <TextView
-                    android:id="@+id/textClassName"
+                    android:id="@+id/txtLessonClassName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
@@ -96,7 +96,7 @@
                 android:weightSum="100">
 
                 <TextView
-                    android:id="@+id/textFacultyName"
+                    android:id="@+id/txtLessonFacultyName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/textFacultyName"
@@ -104,7 +104,7 @@
                     android:textColor="@color/timetable_recycler_item_text"/>
 
                 <TextView
-                    android:id="@+id/textDuration"
+                    android:id="@+id/txtLessonDuration"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/textDuration"
@@ -112,7 +112,7 @@
                     android:textColor="@color/timetable_recycler_item_text"/>
 
                 <TextView
-                    android:id="@+id/textType"
+                    android:id="@+id/txtLessonType"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/textType"

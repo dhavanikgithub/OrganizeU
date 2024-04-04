@@ -77,14 +77,14 @@ class AddClassFragment : Fragment() {
                         academicTypeSelectedItem = AddAcademicFragment.academicType
                     }
 
-                    academicYearACTV.setText(academicYearSelectedItem)
-                    academicTypeACTV.setText(academicTypeSelectedItem)
+                    actAcademicYear.setText(academicYearSelectedItem)
+                    actAcademicType.setText(academicTypeSelectedItem)
                     if(academicSemSelectedItem!=null)
                     {
                         academicSemACTV.setText(academicSemSelectedItem)
                     }
-                    loadAcademicYearACTV()
-                    loadAcademicTypeACTV()
+                    loadactAcademicYear()
+                    loadactAcademicType()
                     initRecyclerView()
                     if(academicTypeSelectedItem!=null)
                     {
@@ -112,13 +112,13 @@ class AddClassFragment : Fragment() {
         binding.apply {
             viewModel.apply {
 
-                academicYearACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
-                    academicTypeTIL.isEnabled=false
+                    tlAcademicType.isEnabled=false
                     academicSemTIL.isEnabled=false
                     academicClassTIL.isEnabled=false
                     btnAddClass.isEnabled=false
-                    clearAcademicTypeACTV()
+                    clearactAcademicType()
                     clearAcademicSemACTV()
                     academicClassList.clear()
                     academicClassAdapter.notifyDataSetChanged()
@@ -136,15 +136,15 @@ class AddClassFragment : Fragment() {
                         }
 
                         academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        academicTypeACTV.setAdapter(academicTypeItemAdapter)
-                        academicTypeTIL.isEnabled=true
+                        actAcademicType.setAdapter(academicTypeItemAdapter)
+                        tlAcademicType.isEnabled=true
                     }
 
                     MainScope().launch{
                         job.join()
                     }
                 }
-                academicTypeACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicType.setOnItemClickListener { parent, view, position, id ->
                     academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
                     academicSemTIL.isEnabled=false
                     academicClassTIL.isEnabled=false
@@ -230,14 +230,14 @@ class AddClassFragment : Fragment() {
     }
 
 
-    private fun clearAcademicTypeACTV()
+    private fun clearactAcademicType()
     {
         binding.apply {
             viewModel.apply {
                 academicTypeSelectedItem=null
                 academicTypeItemList.clear()
                 academicTypeItemAdapter.notifyDataSetChanged()
-                academicTypeACTV.setText("")
+                actAcademicType.setText("")
             }
         }
     }
@@ -254,7 +254,7 @@ class AddClassFragment : Fragment() {
         }
     }
 
-    private fun loadAcademicYearACTV()
+    private fun loadactAcademicYear()
     {
         binding.apply {
             viewModel.apply {
@@ -268,17 +268,17 @@ class AddClassFragment : Fragment() {
                         }
                     }
                     academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
-                    academicYearACTV.setAdapter(academicYearItemAdapter)
+                    actAcademicYear.setAdapter(academicYearItemAdapter)
                 }
             }
         }
     }
 
-    private fun loadAcademicTypeACTV()
+    private fun loadactAcademicType()
     {
         binding.apply {
             viewModel.apply {
-                academicTypeTIL.isEnabled=false
+                tlAcademicType.isEnabled=false
                 academicTypeItemList.clear()
                 val job = lifecycleScope.launch(Dispatchers.Main) {
                     val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
@@ -292,8 +292,8 @@ class AddClassFragment : Fragment() {
                     }
 
                     academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                    academicTypeACTV.setAdapter(academicTypeItemAdapter)
-                    academicTypeTIL.isEnabled=true
+                    actAcademicType.setAdapter(academicTypeItemAdapter)
+                    tlAcademicType.isEnabled=true
                 }
 
                 MainScope().launch{

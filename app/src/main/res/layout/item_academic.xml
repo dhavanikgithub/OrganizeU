@@ -16,13 +16,13 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/academicYearTxt"
+                android:id="@+id/txtAcademicYear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Academic: 2023-2024" />
 
             <TextView
-                android:id="@+id/academicTypeTxt"
+                android:id="@+id/txtAcademicType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Type: Even (2, 4, 6, 8)" />

@@ -45,17 +45,18 @@ class FacultyFragment : Fragment() {
                 initRecyclerView()
 
                 btnAddFaculty.setOnClickListener {
-                    if(facultyET.text.toString()!="")
+                    val txtFacultyName = etFacultyName.text.toString()
+                    if(txtFacultyName!="")
                     {
                         db.collection("faculty")
-                            .document(facultyET.text.toString())
+                            .document(txtFacultyName)
                             .set(hashMapOf(
-                                "name" to facultyET.text.toString()
+                                "name" to txtFacultyName
                             ))
                             .addOnSuccessListener {
-                                facultyList.add(facultyET.text.toString())
+                                facultyList.add(txtFacultyName)
                                 facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
-                                facultyET.setText("")
+                                etFacultyName.setText("")
                                 Toast.makeText(requireContext(),"Faculty Added", Toast.LENGTH_SHORT).show()
                             }
                     }
@@ -70,7 +71,7 @@ class FacultyFragment : Fragment() {
             viewModel.apply {
                 progressDialog.start("Loading Faculty...")
                 facultyList.clear()
-                facultyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                rvFaculty.layoutManager = LinearLayoutManager(requireContext())
                 db.collection("faculty")
                     .get()
                     .addOnSuccessListener {documents ->
@@ -78,7 +79,7 @@ class FacultyFragment : Fragment() {
                             facultyList.add(document.id)
                         }
                         facultyAdapter = FacultyAdapter(facultyList)
-                        facultyRecyclerView.adapter = facultyAdapter
+                        rvFaculty.adapter = facultyAdapter
                         progressDialog.stop()
                     }
                     .addOnCanceledListener {

@@ -35,8 +35,8 @@ class AcademicAdapter(private val academicList: List<AcademicItem>,private val l
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val academicYearTxt: TextView = itemView.findViewById(R.id.academicYearTxt)
-        val academicTypeTxt: TextView = itemView.findViewById(R.id.academicTypeTxt)
+        val academicYearTxt: TextView = itemView.findViewById(R.id.txtAcademicYear)
+        val academicTypeTxt: TextView = itemView.findViewById(R.id.txtAcademicType)
 
     }
 

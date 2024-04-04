@@ -5,10 +5,10 @@
     android:id="@+id/frameLayout7"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin_activity.fragments.timetable.add_timetable.AddTimetableFragment">
+    tools:context=".admin_activity.fragments.timetable.add_timetable.AddLessonFragment">
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/weekDayTabLayout"
+        android:id="@+id/tbLayoutWeekDay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -61,7 +61,7 @@
         android:textColor="@color/white"
         app:iconTint="@color/white"
         android:backgroundTint="@color/primary_color"
-        app:layout_constraintTop_toBottomOf="@id/weekDayTabLayout"
+        app:layout_constraintTop_toBottomOf="@id/tbLayoutWeekDay"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="10dp"/>
 

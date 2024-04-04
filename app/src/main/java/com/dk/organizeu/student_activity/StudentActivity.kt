@@ -20,7 +20,7 @@ class StudentActivity : AppCompatActivity() {
         binding = ActivityStudentBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
-            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentCSA) as NavHostFragment
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerViewStudent) as NavHostFragment
 
             appBarConfiguration = AppBarConfiguration.Builder(
                 setOf(
@@ -30,7 +30,7 @@ class StudentActivity : AppCompatActivity() {
 
             navController = navHostFragment.findNavController()
 
-            val mainMenuIcon = findViewById<ImageView>(R.id.menuIV)
+            val mainMenuIcon = findViewById<ImageView>(R.id.iconMenu)
             mainMenuIcon.setOnClickListener {
                 if (studentDL.isDrawerOpen(GravityCompat.START)) {
                     studentDL.closeDrawer(GravityCompat.START)
@@ -41,7 +41,7 @@ class StudentActivity : AppCompatActivity() {
 
 
 
-            studentNV.setNavigationItemSelectedListener { menuItem ->
+            navigationViewStudent.setNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.nav_home -> {
                         navHostFragment.findNavController().popBackStack(R.id.homeFragment,false)
@@ -65,7 +65,7 @@ class StudentActivity : AppCompatActivity() {
 
     fun drawerMenuSelect(itemId:Int){
         binding.apply {
-            val defaultMenuItem = studentNV.menu.findItem(itemId)
+            val defaultMenuItem = navigationViewStudent.menu.findItem(itemId)
             defaultMenuItem.isChecked = true
         }
     }

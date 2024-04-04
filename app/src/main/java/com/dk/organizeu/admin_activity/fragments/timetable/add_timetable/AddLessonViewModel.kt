@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
 import com.dk.organizeu.student_activity.data_class.TimetableItem
 
-class AddTimetableViewModel : ViewModel() {
+class AddLessonViewModel : ViewModel() {
     lateinit var timetableAdapter: TimetableAdapter
     var timetableData: ArrayList<TimetableItem> = ArrayList()
 }

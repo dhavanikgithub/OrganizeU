@@ -29,7 +29,7 @@ class AddBatchAdapter(private val academicBatchList: ArrayList<String>) :
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val batchNameTxt: TextView = itemView.findViewById(R.id.batchNameTxt)
+        val batchNameTxt: TextView = itemView.findViewById(R.id.txtBatchName)
 
     }
 

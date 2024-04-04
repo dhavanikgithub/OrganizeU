@@ -16,7 +16,7 @@
             android:padding="20dp">
 
             <TextView
-                android:id="@+id/classNameTxt"
+                android:id="@+id/txtClassName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Class: CEIT-A"

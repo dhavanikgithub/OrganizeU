@@ -16,7 +16,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/roomNameTxt"
+                android:id="@+id/txtRoomName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Name/Number: 102"
@@ -29,13 +29,13 @@
                 android:layout_marginTop="5dp"
                 android:weightSum="100">
                 <TextView
-                    android:id="@+id/roomLocationTxt"
+                    android:id="@+id/txtRoomLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Location: 1NB"
                     android:layout_weight="50"/>
                 <TextView
-                    android:id="@+id/roomTypeTxt"
+                    android:id="@+id/txtRoomType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Type: Class"
