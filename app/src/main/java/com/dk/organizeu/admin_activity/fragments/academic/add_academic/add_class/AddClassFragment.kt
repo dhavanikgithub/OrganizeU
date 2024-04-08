@@ -1,36 +1,36 @@
 package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.adapter.AddClassAdapter
-import com.dk.organizeu.admin_activity.adapter.AddSemAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
-import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment
-import com.dk.organizeu.admin_activity.util.UtilFunction
-import com.dk.organizeu.admin_activity.util.UtilFunction.Companion.isAcademicDocumentExists
 import com.dk.organizeu.databinding.FragmentAddClassBinding
+import com.dk.organizeu.model.AcademicPojo
+import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
+import com.dk.organizeu.model.ClassPojo
+import com.dk.organizeu.model.ClassPojo.Companion.isClassDocumentExists
+import com.dk.organizeu.model.SemesterPojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.withContext
 
 class AddClassFragment : Fragment() {
 
@@ -44,8 +44,10 @@ class AddClassFragment : Fragment() {
 
     private lateinit var viewModel: AddClassViewModel
     private lateinit var binding: FragmentAddClassBinding
-    private val db = FirebaseFirestore.getInstance()
     private lateinit var progressDialog: CustomProgressDialog
+    var academicDocumentId:String? = null
+    var semesterDocumentId:String? = null
+    var classDocumentId:String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -179,22 +181,27 @@ class AddClassFragment : Fragment() {
                 btnAddClass.setOnClickListener {
                     if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && classET.text!!.toString().isNotBlank() && classET.text!!.toString().isNotEmpty())
                     {
-                        isClassDocumentExists(classET.text.toString()){
+
+                        academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
+                        semesterDocumentId = academicSemSelectedItem
+                        classDocumentId = classET.text.toString()
+                        isClassDocumentExists(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!){
                             if(!it)
                             {
-                                db.collection("academic").document("${academicYearSelectedItem}_${academicTypeSelectedItem}")
-                                    .collection("semester")
-                                    .document("$academicSemSelectedItem")
-                                    .collection("class")
-                                    .document(classET.text.toString())
-                                    .set(hashMapOf(
+                                MainScope().launch(Dispatchers.IO)
+                                {
+                                    val inputHashMap = hashMapOf(
                                         "class" to classET.text.toString()
-                                    )).addOnSuccessListener {
+                                    )
+                                    ClassPojo.insertClassDocument(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!,inputHashMap,{
                                         academicClassList.add(classET.text.toString())
                                         academicClassAdapter.notifyItemInserted(academicClassAdapter.itemCount)
                                         classET.setText("")
                                         Toast.makeText(requireContext(),"Class Added", Toast.LENGTH_SHORT).show()
-                                    }
+                                    },{
+
+                                    })
+                                }
                             }
                         }
                     }
@@ -207,24 +214,27 @@ class AddClassFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 progressDialog.start("Loading Classes...")
-                academicClassList.clear()
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
-                    .collection("semester")
-                    .document(academicSemSelectedItem.toString())
-                    .collection("class")
-                    .get()
-                    .addOnSuccessListener { documents ->
+                MainScope().launch(Dispatchers.IO)
+                {
+                    academicClassList.clear()
+                    academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                    semesterDocumentId = academicSemSelectedItem
+                    if(academicDocumentId!=null && semesterDocumentId!=null)
+                    {
+                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {
                             academicClassList.add(document.id)
                         }
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         academicClassAdapter = AddClassAdapter(academicClassList)
                         recyclerView.adapter = academicClassAdapter
                         progressDialog.stop()
                     }
-                    .addOnFailureListener {
-                        progressDialog.stop()
-                    }
+                }
+
             }
         }
     }
@@ -258,8 +268,10 @@ class AddClassFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
+
                 academicYearItemList.clear()
-                db.collection("academic").get().addOnSuccessListener { documents ->
+                MainScope().launch(Dispatchers.IO){
+                    val documents = AcademicPojo.getAllAcademicDocuments()
                     for (document in documents) {
                         val academicItem = document.id.split('_')
                         if(!academicYearItemList.contains(academicItem[0]))
@@ -267,8 +279,11 @@ class AddClassFragment : Fragment() {
                             academicYearItemList.add(academicItem[0])
                         }
                     }
-                    academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
-                    actAcademicYear.setAdapter(academicYearItemAdapter)
+                    withContext(Dispatchers.Main)
+                    {
+                        academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
+                        actAcademicYear.setAdapter(academicYearItemAdapter)
+                    }
                 }
             }
         }
@@ -308,42 +323,22 @@ class AddClassFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicSemItemList.clear()
-                db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
-                    .collection("semester")
-                    .get()
-                    .addOnSuccessListener { documents ->
-
-                        for (document in documents) {
-                            academicSemItemList.add(document.id.toInt())
-                        }
+                MainScope().launch(Dispatchers.IO)
+                {
+                    academicSemItemList.clear()
+                    val academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                    val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId)
+                    for (document in documents) {
+                        academicSemItemList.add(document.id.toInt())
                     }
-
-                academicSemItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicSemItemList)
-                academicSemACTV.setAdapter(academicSemItemAdapter)
+                    withContext(Dispatchers.Main)
+                    {
+                        academicSemItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicSemItemList)
+                        academicSemACTV.setAdapter(academicSemItemAdapter)
+                    }
+                }
             }
         }
     }
 
-
-    private fun isClassDocumentExists(academicClassDocumentId:String, callback: (Boolean) -> Unit) {
-        binding.apply {
-            viewModel.apply {
-                db.collection("academic")
-                    .document("${academicYearSelectedItem}_${academicTypeSelectedItem}")
-                    .collection("semester")
-                    .document("$academicSemSelectedItem")
-                    .collection("class")
-                    .document(academicClassDocumentId)
-                    .get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
-                        callback(false) // Assume document doesn't exist if there's an error
-                    }
-            }
-        }
-    }
 }

@@ -13,7 +13,6 @@ import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
 import com.dk.organizeu.student_activity.data_class.TimetableItem
-import com.dk.organizeu.student_activity.test_data.TestData.Companion.loadTimetableData
 import com.dk.organizeu.student_activity.util.UtilFunc
 import com.dk.organizeu.student_activity.util.UtilFunc.Companion.checkLessonStatus
 import com.dk.organizeu.student_activity.util.UtilFunc.Companion.getDayOfWeek
@@ -55,7 +54,7 @@ class HomeFragment : Fragment() {
                 }
 
 
-                setTimetableData(loadTimetableData())
+                loadTimeTableData()
 
                 loadTabs()
 
@@ -136,6 +135,15 @@ class HomeFragment : Fragment() {
                     }
 
                 })
+            }
+        }
+    }
+
+    private fun loadTimeTableData()
+    {
+        binding.apply {
+            viewModel.apply {
+
             }
         }
     }

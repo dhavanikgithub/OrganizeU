@@ -12,8 +12,13 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
+import com.dk.organizeu.model.AcademicPojo
+import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -22,14 +27,13 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
     private lateinit var academicTypeTIL: AutoCompleteTextView
     private lateinit var addButton: MaterialButton
     private lateinit var closeButton: MaterialButton
-    private lateinit var db: FirebaseFirestore
     private var academicAddListener: AcademicAddListener? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
-        db = FirebaseFirestore.getInstance()
+
         academicAddListener = parentFragment as? AcademicAddListener
         academicYearACTV = view.findViewById(R.id.actAcademicYear)
         academicTypeTIL = view.findViewById(R.id.actAcademicType)
@@ -66,13 +70,21 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         "year" to academicYearACTV.text.toString(),
                         "type" to academicTypeTIL.text.toString()
                     )
+
                     isAcademicDocumentExists(academicDocumentId) { exists ->
                         if(exists)
                         {
                             closeButton.callOnClick()
                             return@isAcademicDocumentExists
                         }
-                        addNewAcademic(academicDocumentId,academicData)
+                        MainScope().launch(Dispatchers.IO){
+                            AcademicPojo.insertAcademicDocuments(academicDocumentId,academicData,{
+                                academicAddListener?.onAcademicAdded(academicDocumentId)
+                                closeButton.callOnClick()
+                            },{
+
+                            })
+                        }
                     }
 
                 }
@@ -82,34 +94,8 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         return builder.create()
     }
 
-    private fun addNewAcademic(academicDocumentId:String,academicData:HashMap<String,String>)
-    {
-        db.collection("academic")
-            .document(academicDocumentId)
-            .set(academicData)
-            .addOnSuccessListener {
-                Log.d("TAG", "Academic document added successfully with ID: $academicDocumentId")
-                academicAddListener?.onAcademicAdded(academicDocumentId)
-                closeButton.callOnClick()
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding academic document", e)
-                closeButton.callOnClick()
-            }
-    }
 
-    private fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("academic")
-            .document(academicDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false)
-            }
-    }
+
 
 
     private fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {

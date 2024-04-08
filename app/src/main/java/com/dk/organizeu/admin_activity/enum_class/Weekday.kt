@@ -22,5 +22,18 @@ enum class Weekday(val displayName: String) {
                 else -> throw IllegalArgumentException("Invalid day number: $dayNumber. Day number should be between 1 and 7.")
             }
         }
+
+        fun getWeekdayNumberByName(dayName: String): Int {
+            return when (dayName) {
+                MONDAY.displayName -> 1
+                TUESDAY.displayName -> 2
+                WEDNESDAY.displayName -> 3
+                THURSDAY.displayName -> 4
+                FRIDAY.displayName -> 5
+                SATURDAY.displayName -> 6
+                SUNDAY.displayName -> 7
+                else -> throw IllegalArgumentException("Invalid day name: $dayName.")
+            }
+        }
     }
 }

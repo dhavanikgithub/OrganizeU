@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.fragments.timetable.add_timetable
+package com.dk.organizeu.admin_activity.fragments.timetable.add_lesson
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

@@ -17,10 +17,15 @@ import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddAcademicDialog
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
 import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.model.AcademicPojo
 import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickListener {
 
@@ -74,27 +79,27 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
         binding.apply {
             viewModel.apply {
                 progressDialog.start("Loading Academic Data....")
-                db.collection("academic")
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        academicList.clear()
-                        rvAcademic.layoutManager = LinearLayoutManager(requireContext())
-                        for (document in documents) {
-                            // Get the document ID
-                            val documentId = document.id
-                            val academicItem = documentId.split('_')
+                rvAcademic.layoutManager = LinearLayoutManager(requireContext())
+                MainScope().launch(Dispatchers.IO)
+                {
+                    academicList.clear()
 
-                            academicList.add(AcademicItem("${academicItem[0]}", "${academicItem[1]}"))
+                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    for (document in documents) {
+                        // Get the document ID
+                        val documentId = document.id
+                        val academicItem = documentId.split('_')
 
-                        }
+                        academicList.add(AcademicItem("${academicItem[0]}", "${academicItem[1]}"))
+
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         academicAdapter = AcademicAdapter(academicList,this@AcademicFragment)
                         rvAcademic.adapter = academicAdapter
                         progressDialog.stop()
                     }
-                    .addOnFailureListener { exception ->
-                        progressDialog.stop()
-                    }
-
+                }
             }
         }
     }

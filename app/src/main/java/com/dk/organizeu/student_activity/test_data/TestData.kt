@@ -5,13 +5,13 @@ import com.dk.organizeu.student_activity.data_class.TimetableItem
 
 class TestData {
     companion object{
-        fun loadTimetableData(): Map<Int,ArrayList<TimetableItem>> {
+        /*fun loadTimetableData(): Map<Int,ArrayList<TimetableItem>> {
             val mondayTimeTableData = ArrayList<TimetableItem>()
             val tuesdayTimeTableData = ArrayList<TimetableItem>()
-            /*val wednesdayTimeTableData = ArrayList<TimetableItem>()
+            val wednesdayTimeTableData = ArrayList<TimetableItem>()
             val thursdayTimeTableData = ArrayList<TimetableItem>()
             val fridayTimeTableData = ArrayList<TimetableItem>()
-            val sundayTimeTableData = ArrayList<TimetableItem>()*/
+            val sundayTimeTableData = ArrayList<TimetableItem>()
             val timetableData = HashMap<Int,ArrayList<TimetableItem>>()
             mondayTimeTableData.add(
                 TimetableItem(
@@ -19,8 +19,8 @@ class TestData {
                     subjectCode = "2CEIT702",
                     subjectName = "BDA",
                     location = "2NB",
-                    startTime = "09:05 AM",
-                    endTime = "09:55 AM",
+                    startTime = "09:05",
+                    endTime = "09:55",
                     duration = "50 min",
                     type = "Class",
                     facultyName = "PMS",
@@ -33,8 +33,8 @@ class TestData {
                     subjectName = "CD",
                     subjectCode = "2CEIT701",
                     location = "2NB",
-                    startTime = "11:00 PM",
-                    endTime = "11:50 PM",
+                    startTime = "11:00",
+                    endTime = "11:50",
                     duration = "50 min",
                     type = "Class",
                     facultyName = "RU",
@@ -48,8 +48,8 @@ class TestData {
                     subjectName = "CD",
                     subjectCode = "2CEIT701",
                     location = "2NB",
-                    startTime = "09:00 AM",
-                    endTime = "09:55 AM",
+                    startTime = "09:00",
+                    endTime = "09:55",
                     duration = "50 min",
                     type = "Class",
                     facultyName = "RU",
@@ -62,8 +62,8 @@ class TestData {
                     subjectCode = "2CEIT702",
                     subjectName = "BDA",
                     location = "2NB",
-                    startTime = "09:55 AM",
-                    endTime = "10:45 AM",
+                    startTime = "09:55",
+                    endTime = "10:45",
                     duration = "50 min",
                     type = "Class",
                     facultyName = "PMS",
@@ -75,6 +75,6 @@ class TestData {
             timetableData[1] = mondayTimeTableData
             timetableData[2] = tuesdayTimeTableData
             return timetableData
-        }
+        }*/
     }
 }

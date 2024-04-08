@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.RoomType
 import com.dk.organizeu.admin_activity.enum_class.Weekday
-import com.dk.organizeu.admin_activity.fragments.timetable.add_timetable.AddLessonFragment
+import com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.admin_activity.listener.LessonAddListener
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
 import com.google.android.material.textfield.TextInputEditText

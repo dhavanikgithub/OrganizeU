@@ -14,6 +14,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.databinding.FragmentTimetableBinding
+import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -234,13 +235,13 @@ class TimetableFragment : Fragment() {
                 academicTypeList.clear()
                 val job = lifecycleScope.launch(Dispatchers.Main) {
                     val evenExists =
-                        UtilFunction.isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.EVEN.name}")
+                        isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.EVEN.name}")
                     if (evenExists) {
                         academicTypeList.add(AcademicType.EVEN.name)
                     }
 
                     val oddExists =
-                        UtilFunction.isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.ODD.name}")
+                        isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.ODD.name}")
                     if (oddExists) {
                         academicTypeList.add(AcademicType.ODD.name)
                     }

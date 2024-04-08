@@ -10,7 +10,7 @@ class UtilFunc {
         val calendar = Calendar.getInstance()
 
         val dateFormat = SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH)
-        val timeFormat = SimpleDateFormat("hh:mm a",Locale.ENGLISH)
+        val timeFormat = SimpleDateFormat("hh:mm",Locale.ENGLISH)
 
         fun getCurrentDate():String
         {

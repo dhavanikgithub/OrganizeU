@@ -1,16 +1,16 @@
 package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
@@ -18,13 +18,17 @@ import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
-import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
+import com.dk.organizeu.model.AcademicPojo
+import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
+import com.dk.organizeu.model.BatchPojo
+import com.dk.organizeu.model.BatchPojo.Companion.insertBatchDocument
+import com.dk.organizeu.model.BatchPojo.Companion.isBatchDocumentExists
+import com.dk.organizeu.model.ClassPojo
+import com.dk.organizeu.model.SemesterPojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AddBatchFragment : Fragment() {
 
@@ -34,8 +38,11 @@ class AddBatchFragment : Fragment() {
 
     private lateinit var viewModel: AddBatchViewModel
     private lateinit var binding: FragmentAddBatchBinding
-    private val db = FirebaseFirestore.getInstance()
     private lateinit var progressDialog: CustomProgressDialog
+    var academicDocumentId:String? = null
+    var semesterDocumentId:String? = null
+    var classDocumentId:String? = null
+    var batchDocumentId:String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -129,13 +136,13 @@ class AddBatchFragment : Fragment() {
 
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         val evenExists =
-                            UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                            isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
                         if (evenExists) {
                             academicTypeItemList.add(AcademicType.EVEN.name)
                         }
 
                         val oddExists =
-                            UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                            isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
                         if (oddExists) {
                             academicTypeItemList.add(AcademicType.ODD.name)
                         }
@@ -198,26 +205,39 @@ class AddBatchFragment : Fragment() {
                 btnAddBatch.setOnClickListener {
                     if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && academicClassSelectedItem!=null && batchET.text!!.toString().isNotBlank() && batchET.text!!.toString().isNotEmpty())
                     {
-                        isBatchDocumentExists(batchET.text.toString()){
-                            if(!it)
-                            {
-                                db.collection("academic").document("${academicYearSelectedItem}_${academicTypeSelectedItem}")
-                                    .collection("semester")
-                                    .document("$academicSemSelectedItem")
-                                    .collection("class")
-                                    .document(academicClassSelectedItem.toString())
-                                    .collection("batch")
-                                    .document(batchET.text.toString())
-                                    .set(hashMapOf(
-                                        "batch" to batchET.text.toString()
-                                    )).addOnSuccessListener {
-                                        academicBatchList.add(batchET.text.toString())
-                                        academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
-                                        batchET.setText("")
-                                        Toast.makeText(requireContext(),"Batch Added", Toast.LENGTH_SHORT).show()
+                        academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
+                        semesterDocumentId = academicSemSelectedItem
+                        classDocumentId = academicClassSelectedItem
+                        batchDocumentId = batchET.text.toString()
+                        if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!=null)
+                        {
+                            isBatchDocumentExists(academicDocumentId!!,
+                                semesterDocumentId!!, classDocumentId!!, batchDocumentId!!
+                            ){
+                                if(!it)
+                                {
+                                    val job = MainScope().launch(Dispatchers.IO) {
+                                        val inputHashMap = hashMapOf(
+                                            "batch" to batchET.text.toString()
+                                        )
+                                        insertBatchDocument(academicDocumentId!!,
+                                            semesterDocumentId!!,
+                                            classDocumentId!!, batchDocumentId!!,inputHashMap,{
+                                            academicBatchList.add(batchET.text.toString())
+                                            academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
+                                            Toast.makeText(requireContext(),"Batch Added", Toast.LENGTH_SHORT).show()
+                                            batchET.setText("")
+                                        },{
+
+                                        })
                                     }
+                                    runBlocking {
+                                        job.join()
+                                    }
+                                }
                             }
                         }
+
                     }
                 }
             }
@@ -228,29 +248,29 @@ class AddBatchFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 progressDialog.start("Loading Batches...")
-                academicBatchList.clear()
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
-                    .collection("semester")
-                    .document(academicSemSelectedItem.toString())
-                    .collection("class")
-                    .document(academicClassSelectedItem.toString())
-                    .collection("batch")
-                    .get()
-                    .addOnSuccessListener { documents ->
+                MainScope().launch(Dispatchers.IO)
+                {
+                    academicBatchList.clear()
+                    recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+                    academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
+                    semesterDocumentId = academicSemSelectedItem
+                    classDocumentId = academicClassSelectedItem
+                    if(academicDocumentId!=null && semesterDocumentId != null && classDocumentId!=null)
+                    {
+                        val documents = BatchPojo.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
                         for (document in documents) {
                             academicBatchList.add(document.id)
                         }
+                    }
+
+                    withContext(Dispatchers.Main)
+                    {
                         academicBatchAdapter = AddBatchAdapter(academicBatchList)
                         recyclerView.adapter = academicBatchAdapter
                         progressDialog.stop()
                     }
-                    .addOnCanceledListener {
-                        progressDialog.stop()
-                    }
-                    .addOnFailureListener {
-                        progressDialog.stop()
-                    }
+                }
             }
         }
     }
@@ -296,8 +316,9 @@ class AddBatchFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicYearItemList.clear()
-                db.collection("academic").get().addOnSuccessListener { documents ->
+                MainScope().launch(Dispatchers.IO){
+                    academicYearItemList.clear()
+                    val documents = AcademicPojo.getAllAcademicDocuments()
                     for (document in documents) {
                         val academicItem = document.id.split('_')
                         if(!academicYearItemList.contains(academicItem[0]))
@@ -305,9 +326,12 @@ class AddBatchFragment : Fragment() {
                             academicYearItemList.add(academicItem[0])
                         }
                     }
-                    academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
-                    actAcademicYear.setAdapter(academicYearItemAdapter)
+                    withContext(Dispatchers.Main){
+                        academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
+                        actAcademicYear.setAdapter(academicYearItemAdapter)
+                    }
                 }
+
             }
         }
     }
@@ -320,13 +344,13 @@ class AddBatchFragment : Fragment() {
                 academicTypeItemList.clear()
                 val job = lifecycleScope.launch(Dispatchers.Main) {
                     val evenExists =
-                        UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                        isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
                     if (evenExists) {
                         academicTypeItemList.add(AcademicType.EVEN.name)
                     }
 
                     val oddExists =
-                        UtilFunction.isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                        isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
                     if (oddExists) {
                         academicTypeItemList.add(AcademicType.ODD.name)
                     }
@@ -348,19 +372,23 @@ class AddBatchFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicSemItemList.clear()
-                db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
-                    .collection("semester")
-                    .get()
-                    .addOnSuccessListener { documents ->
-
+                MainScope().launch(Dispatchers.IO)
+                {
+                    academicSemItemList.clear()
+                    academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                    if(academicDocumentId!=null)
+                    {
+                        val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId!!)
                         for (document in documents) {
                             academicSemItemList.add(document.id.toInt())
                         }
                     }
-
-                academicSemItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicSemItemList)
-                academicSemACTV.setAdapter(academicSemItemAdapter)
+                    withContext(Dispatchers.Main)
+                    {
+                        academicSemItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicSemItemList)
+                        academicSemACTV.setAdapter(academicSemItemAdapter)
+                    }
+                }
             }
         }
     }
@@ -369,45 +397,28 @@ class AddBatchFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicClassItemList.clear()
-                db.collection("academic").document("${academicYearSelectedItem}_$academicTypeSelectedItem")
-                    .collection("semester")
-                    .document(academicSemSelectedItem.toString())
-                    .collection("class")
-                    .get()
-                    .addOnSuccessListener { documents ->
+                MainScope().launch(Dispatchers.IO)
+                {
+
+                    academicClassItemList.clear()
+                    academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                    semesterDocumentId = academicSemSelectedItem
+                    if(academicDocumentId!=null && semesterDocumentId!=null)
+                    {
+                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {
                             academicClassItemList.add(document.id)
                         }
-
                     }
-                academicClassItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicClassItemList)
-                academicClassACTV.setAdapter(academicClassItemAdapter)
+                    withContext(Dispatchers.Main)
+                    {
+                        academicClassItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicClassItemList)
+                        academicClassACTV.setAdapter(academicClassItemAdapter)
+                    }
+                }
             }
         }
     }
 
-    private fun isBatchDocumentExists(academicBatchDocumentId:String, callback: (Boolean) -> Unit) {
-        binding.apply {
-            viewModel.apply {
-                db.collection("academic")
-                    .document("${academicYearSelectedItem}_${academicTypeSelectedItem}")
-                    .collection("semester")
-                    .document("$academicSemSelectedItem")
-                    .collection("class")
-                    .document(academicClassSelectedItem.toString())
-                    .collection("batch")
-                    .document(academicBatchDocumentId)
-                    .get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
-                        callback(false) // Assume document doesn't exist if there's an error
-                    }
-            }
-        }
-    }
 
 }

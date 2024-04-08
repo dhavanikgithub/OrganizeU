@@ -82,7 +82,7 @@
         tools:layout="@layout/fragment_subjects" />
     <fragment
         android:id="@+id/addTimetableFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.timetable.add_timetable.AddLessonFragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment"
         android:label="fragment_add_timetable"
         tools:layout="@layout/fragment_add_lesson" />
 </navigation>
