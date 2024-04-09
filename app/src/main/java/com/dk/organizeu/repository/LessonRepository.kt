@@ -1,18 +1,15 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
-import com.dk.organizeu.model.AcademicPojo.Companion.db
-import com.dk.organizeu.student_activity.data_class.TimetableItem
+import com.dk.organizeu.student_activity.pojo.TimetableItem
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
-import java.sql.Time
 
-class LessonPojo {
+class LessonRepository {
     companion object{
         fun lessonCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String): CollectionReference {
-            return TimeTablePojo.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).collection(WEEKDAY_COLLECTION)
+            return TimeTableRepository.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).collection(WEEKDAY_COLLECTION)
         }
 
         suspend fun getAllLessonDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String): MutableList<DocumentSnapshot> {
@@ -60,7 +57,7 @@ class LessonPojo {
 
         fun isLessonDocumentExistByField(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String,fieldName:String,fieldValue:String, callback: (Boolean) -> Unit)
         {
-            TimeTablePojo.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
+            TimeTableRepository.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
                 .collection("weekday")
                 .whereEqualTo(fieldName, fieldValue)
                 .get()

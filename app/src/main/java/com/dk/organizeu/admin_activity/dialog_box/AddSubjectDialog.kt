@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.SubjectType
 import com.dk.organizeu.admin_activity.listener.SubjectAddListener
-import com.dk.organizeu.model.SubjectPojo
-import com.dk.organizeu.model.SubjectPojo.Companion.isSubjectDocumentExists
+import com.dk.organizeu.repository.SubjectRepository
+import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.hideKeyboard
 import com.dk.organizeu.utils.UtilFunction.Companion.isItemSelected
 import com.google.android.material.button.MaterialButton
@@ -84,7 +84,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
 
     private fun addNewSubject(subjectDocumentId:String, subjectData:HashMap<String,String>)
     {
-        SubjectPojo.insertSubjectDocument(subjectDocumentId,subjectData,{
+        SubjectRepository.insertSubjectDocument(subjectDocumentId,subjectData,{
             Log.d("TAG", "Subject document added successfully with ID: $subjectDocumentId")
             subjectAddListener?.onSubjectAdded(subjectData,subjectDocumentId)
             closeButton.callOnClick()

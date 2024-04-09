@@ -2,7 +2,7 @@ package com.dk.organizeu.student_activity.fragments
 
 import androidx.lifecycle.ViewModel
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
-import com.dk.organizeu.student_activity.data_class.TimetableItem
+import com.dk.organizeu.student_activity.pojo.TimetableItem
 import kotlin.properties.Delegates
 
 class HomeViewModel : ViewModel() {

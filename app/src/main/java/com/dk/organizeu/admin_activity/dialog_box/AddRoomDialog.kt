@@ -12,13 +12,11 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.RoomType
 import com.dk.organizeu.admin_activity.listener.RoomAddListener
-import com.dk.organizeu.model.RoomPojo
+import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideKeyboard
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
 import kotlin.collections.HashMap
 
 class AddRoomDialog() : AppCompatDialogFragment() {
@@ -65,7 +63,7 @@ class AddRoomDialog() : AppCompatDialogFragment() {
                     "type" to roomTypeACTV.text.toString()
 
                 )
-                RoomPojo.isRoomDocumentExists(roomName) { exists ->
+                RoomRepository.isRoomDocumentExists(roomName) { exists ->
                     if(exists)
                     {
                         closeButton.callOnClick()
@@ -82,7 +80,7 @@ class AddRoomDialog() : AppCompatDialogFragment() {
 
     private fun addNewRoom(roomDocumentId:String, roomData:HashMap<String,String>)
     {
-        RoomPojo.insertRoomDocument(roomDocumentId,roomData,{
+        RoomRepository.insertRoomDocument(roomDocumentId,roomData,{
             Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
             roomAddListener?.onRoomAdded(roomData,roomDocumentId)
             closeButton.callOnClick()

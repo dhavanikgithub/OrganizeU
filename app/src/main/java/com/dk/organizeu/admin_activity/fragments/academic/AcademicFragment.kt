@@ -6,22 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.data_class.AcademicItem
+import com.dk.organizeu.admin_activity.pojo.AcademicPojo
 import com.dk.organizeu.databinding.FragmentAcademicBinding
 import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddAcademicDialog
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
 import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.student_activity.StudentActivity
+import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -84,13 +81,13 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
                 {
                     academicList.clear()
 
-                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    val documents = AcademicRepository.getAllAcademicDocuments()
                     for (document in documents) {
                         // Get the document ID
                         val documentId = document.id
                         val academicItem = documentId.split('_')
 
-                        academicList.add(AcademicItem("${academicItem[0]}", "${academicItem[1]}"))
+                        academicList.add(AcademicPojo("${academicItem[0]}", "${academicItem[1]}"))
 
                     }
                     withContext(Dispatchers.Main)
@@ -109,7 +106,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
         binding.apply {
             viewModel.apply {
                 val academicItem = academicDocumentId.split('_')
-                academicList.add(AcademicItem("${academicItem[0]}", "${academicItem[1]}"))
+                academicList.add(AcademicPojo("${academicItem[0]}", "${academicItem[1]}"))
                 academicAdapter.notifyItemInserted(academicAdapter.itemCount)
             }
         }

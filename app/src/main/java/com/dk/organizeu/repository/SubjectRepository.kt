@@ -1,16 +1,15 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.admin_activity.data_class.Subject
+import com.dk.organizeu.admin_activity.pojo.SubjectPojo
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
-import com.dk.organizeu.model.AcademicPojo.Companion.db
+import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.tasks.await
 
-class SubjectPojo {
+class SubjectRepository {
     companion object{
         fun subjectCollectionRef(): CollectionReference{
             return db.collection(SUBJECT_COLLECTION)
@@ -51,12 +50,12 @@ class SubjectPojo {
             }
         }
 
-        fun subjectDocumentToSubjectObj(document: DocumentSnapshot): Subject {
-            return Subject(document.id,document.get("code").toString(),document.get("type").toString())
+        fun subjectDocumentToSubjectObj(document: DocumentSnapshot): SubjectPojo {
+            return SubjectPojo(document.id,document.get("code").toString(),document.get("type").toString())
         }
 
-        fun subjectDocumentToSubjectObj(subjectDocumentId: String,subjectData: HashMap<String, String>): Subject {
-            return Subject(subjectDocumentId,subjectData["code"].toString(),subjectData["type"].toString())
+        fun subjectDocumentToSubjectObj(subjectDocumentId: String,subjectData: HashMap<String, String>): SubjectPojo {
+            return SubjectPojo(subjectDocumentId,subjectData["code"].toString(),subjectData["type"].toString())
         }
 
         fun isSubjectDocumentExists(subjectDocumentId: String, callback: (Boolean) -> Unit) {

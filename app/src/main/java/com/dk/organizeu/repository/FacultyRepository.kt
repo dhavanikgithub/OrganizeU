@@ -1,13 +1,13 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
-import com.dk.organizeu.model.AcademicPojo.Companion.db
+import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.FACULTY_COLLECTION
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
 
-class FacultyPojo {
+class FacultyRepository {
     companion object{
         fun facultyCollectionRef(): CollectionReference {
             return db.collection(FACULTY_COLLECTION)

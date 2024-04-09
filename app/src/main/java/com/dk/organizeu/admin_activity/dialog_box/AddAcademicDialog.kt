@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -12,16 +11,14 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.isItemSelected
 import com.google.android.material.button.MaterialButton
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.HashMap
 
 class AddAcademicDialog() : AppCompatDialogFragment() {
     private lateinit var academicYearACTV: AutoCompleteTextView
@@ -79,7 +76,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                             return@isAcademicDocumentExists
                         }
                         MainScope().launch(Dispatchers.IO){
-                            AcademicPojo.insertAcademicDocuments(academicDocumentId,academicData,{
+                            AcademicRepository.insertAcademicDocuments(academicDocumentId,academicData,{
                                 academicAddListener?.onAcademicAdded(academicDocumentId)
                                 closeButton.callOnClick()
                             },{

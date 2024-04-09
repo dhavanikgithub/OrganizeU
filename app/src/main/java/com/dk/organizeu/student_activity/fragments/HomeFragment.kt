@@ -1,6 +1,5 @@
 package com.dk.organizeu.student_activity.fragments
 
-import android.os.Binder
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +11,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
-import com.dk.organizeu.student_activity.data_class.TimetableItem
+import com.dk.organizeu.student_activity.pojo.TimetableItem
 import com.dk.organizeu.utils.UtilFunction
 import com.google.android.material.tabs.TabLayout
 import java.util.*

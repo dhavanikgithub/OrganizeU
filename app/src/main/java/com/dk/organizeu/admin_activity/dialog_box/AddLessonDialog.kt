@@ -10,7 +10,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.RoomType
@@ -18,24 +17,21 @@ import com.dk.organizeu.admin_activity.enum_class.Weekday
 import com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.admin_activity.listener.LessonAddListener
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
-import com.dk.organizeu.model.BatchPojo
-import com.dk.organizeu.model.FacultyPojo
-import com.dk.organizeu.model.LessonPojo
-import com.dk.organizeu.model.LessonPojo.Companion.isLessonDocumentExistByField
-import com.dk.organizeu.model.RoomPojo
-import com.dk.organizeu.model.RoomPojo.Companion.getRoomDocumentsByField
-import com.dk.organizeu.model.SubjectPojo
+import com.dk.organizeu.repository.BatchRepository
+import com.dk.organizeu.repository.FacultyRepository
+import com.dk.organizeu.repository.LessonRepository
+import com.dk.organizeu.repository.LessonRepository.Companion.isLessonDocumentExistByField
+import com.dk.organizeu.repository.RoomRepository
+import com.dk.organizeu.repository.RoomRepository.Companion.getRoomDocumentsByField
+import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.calculateLessonDuration
 import com.dk.organizeu.utils.UtilFunction.Companion.validateTime
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFragment() {
     private lateinit var binding: AddLessonDialogLayoutBinding
@@ -188,8 +184,8 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                         AddLessonFragment.apply {
                             val subjectDocumentId = selectedSubject!!
                             val roomDocumentId = selectedRoom!!
-                            val subjectData = SubjectPojo.subjectDocumentToSubjectObj(SubjectPojo.getSubjectDocumentById(subjectDocumentId)!!)
-                            val roomData = RoomPojo.roomDocumentToRoomObj(RoomPojo.getRoomDocumentById(roomDocumentId)!!)
+                            val subjectData = SubjectRepository.subjectDocumentToSubjectObj(SubjectRepository.getSubjectDocumentById(subjectDocumentId)!!)
+                            val roomData = RoomRepository.roomDocumentToRoomObj(RoomRepository.getRoomDocumentById(roomDocumentId)!!)
 
                             val dataSet = hashMapOf(
                                 "class_name" to className,
@@ -208,7 +204,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                             val classDocumentId = className
                             val timetableDocumentId = Weekday.getWeekdayNameByNumber((selectedTab+1))
                             isLessonDocumentExistByField(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,"start_time",startTimeET.text.toString()) {
-                                LessonPojo.insertLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,dataSet,{
+                                LessonRepository.insertLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,dataSet,{
                                     listener.onAddLesson()
                                     btnClose.callOnClick()
                                 },{
@@ -327,7 +323,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                 {
                     subjectList.clear()
                     if(academicYear!=null && academicType!=null && semesterNumber!=null && className!=null){
-                        val documents = SubjectPojo.getAllSubjectDocuments()
+                        val documents = SubjectRepository.getAllSubjectDocuments()
                         for(document in documents)
                         {
                             subjectList.add(document.id)
@@ -350,7 +346,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
             MainScope().launch(Dispatchers.IO)
             {
                 facultyList.clear()
-                val documents = FacultyPojo.getAllFacultyDocuments()
+                val documents = FacultyRepository.getAllFacultyDocuments()
                 for(document in documents)
                 {
                     facultyList.add(document.id)
@@ -376,7 +372,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     val classDocumentId = className
                     if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null)
                     {
-                        val documents = BatchPojo.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+                        val documents = BatchRepository.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
                         for (document in documents)
                         {
                             batchList.add(document.id)

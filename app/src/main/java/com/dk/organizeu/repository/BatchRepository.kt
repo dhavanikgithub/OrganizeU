@@ -1,14 +1,14 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
-import com.dk.organizeu.model.ClassPojo.Companion.classDocumentRef
+import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
 
-class BatchPojo {
+class BatchRepository {
     companion object{
         fun batchCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): CollectionReference
         {

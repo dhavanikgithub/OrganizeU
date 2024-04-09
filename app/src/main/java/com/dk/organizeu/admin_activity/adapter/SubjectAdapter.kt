@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.data_class.Subject
+import com.dk.organizeu.admin_activity.pojo.SubjectPojo
 import com.dk.organizeu.admin_activity.listener.OnSubjectItemClickListener
 
-class SubjectAdapter(private val subjectList: ArrayList<Subject>,private val listener: OnSubjectItemClickListener) :
+class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, private val listener: OnSubjectItemClickListener) :
     RecyclerView.Adapter<SubjectAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
@@ -19,7 +19,7 @@ class SubjectAdapter(private val subjectList: ArrayList<Subject>,private val lis
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
-        val currentItem = subjectList[position]
+        val currentItem = subjectPojoList[position]
         holder.subjectNameTxt.text = "Name: ${currentItem.name}"
         holder.subjectCodeTxt.text = "Code: ${currentItem.code}"
         holder.subjectTypeTxt.text = "Type: ${currentItem.type}"
@@ -29,7 +29,7 @@ class SubjectAdapter(private val subjectList: ArrayList<Subject>,private val lis
     }
 
     override fun getItemCount(): Int {
-        return subjectList.size
+        return subjectPojoList.size
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -1,13 +1,13 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
 import com.dk.organizeu.firebase.FirebaseConfig
-import com.dk.organizeu.model.AcademicPojo.Companion.academicDocumentRef
+import com.dk.organizeu.repository.AcademicRepository.Companion.academicDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
 
-class SemesterPojo {
+class SemesterRepository {
     companion object{
         fun semesterCollectionRef(academicDocumentId: String): CollectionReference {
             return academicDocumentRef(academicDocumentId).collection(FirebaseConfig.SEMESTER_COLLECTION)

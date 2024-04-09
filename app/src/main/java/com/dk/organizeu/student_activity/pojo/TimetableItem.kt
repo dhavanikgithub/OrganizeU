@@ -1,4 +1,4 @@
-package com.dk.organizeu.student_activity.data_class
+package com.dk.organizeu.student_activity.pojo
 
 
 data class TimetableItem(

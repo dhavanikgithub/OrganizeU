@@ -3,7 +3,6 @@ package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_clas
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +19,12 @@ import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.databinding.FragmentAddClassBinding
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
-import com.dk.organizeu.model.ClassPojo
-import com.dk.organizeu.model.ClassPojo.Companion.isClassDocumentExists
-import com.dk.organizeu.model.SemesterPojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
+import com.dk.organizeu.repository.ClassRepository
+import com.dk.organizeu.repository.ClassRepository.Companion.isClassDocumentExists
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -193,7 +191,7 @@ class AddClassFragment : Fragment() {
                                     val inputHashMap = hashMapOf(
                                         "class" to classET.text.toString()
                                     )
-                                    ClassPojo.insertClassDocument(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!,inputHashMap,{
+                                    ClassRepository.insertClassDocument(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!,inputHashMap,{
                                         academicClassList.add(classET.text.toString())
                                         academicClassAdapter.notifyItemInserted(academicClassAdapter.itemCount)
                                         classET.setText("")
@@ -222,7 +220,7 @@ class AddClassFragment : Fragment() {
                     semesterDocumentId = academicSemSelectedItem
                     if(academicDocumentId!=null && semesterDocumentId!=null)
                     {
-                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
+                        val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {
                             academicClassList.add(document.id)
                         }
@@ -271,7 +269,7 @@ class AddClassFragment : Fragment() {
 
                 academicYearItemList.clear()
                 MainScope().launch(Dispatchers.IO){
-                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    val documents = AcademicRepository.getAllAcademicDocuments()
                     for (document in documents) {
                         val academicItem = document.id.split('_')
                         if(!academicYearItemList.contains(academicItem[0]))
@@ -327,7 +325,7 @@ class AddClassFragment : Fragment() {
                 {
                     academicSemItemList.clear()
                     val academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                    val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId)
+                    val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
                     for (document in documents) {
                         academicSemItemList.add(document.id.toInt())
                     }

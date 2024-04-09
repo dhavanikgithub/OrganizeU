@@ -1,6 +1,5 @@
 package com.dk.organizeu.admin_activity.fragments.faculty
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,9 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
-import com.dk.organizeu.model.FacultyPojo
+import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -52,7 +50,7 @@ class FacultyFragment : Fragment() {
                     if(txtFacultyName!="")
                     {
                         val inputHashMap = hashMapOf("name" to txtFacultyName)
-                        FacultyPojo.insertFacultyDocument(txtFacultyName,inputHashMap,{
+                        FacultyRepository.insertFacultyDocument(txtFacultyName,inputHashMap,{
                             facultyList.add(txtFacultyName)
                             facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
                             etFacultyName.setText("")
@@ -74,7 +72,7 @@ class FacultyFragment : Fragment() {
                 MainScope().launch(Dispatchers.IO){
                     facultyList.clear()
                     rvFaculty.layoutManager = LinearLayoutManager(requireContext())
-                    val documents = FacultyPojo.getAllFacultyDocuments()
+                    val documents = FacultyRepository.getAllFacultyDocuments()
                     for (document in documents) {
                         facultyList.add(document.id)
                     }

@@ -11,10 +11,9 @@ import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.dialog_box.AddLessonDialog
 import com.dk.organizeu.admin_activity.enum_class.Weekday
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
-import com.dk.organizeu.model.LessonPojo
-import com.dk.organizeu.model.LessonPojo.Companion.lessonDocumentToLessonObj
+import com.dk.organizeu.repository.LessonRepository
+import com.dk.organizeu.repository.LessonRepository.Companion.lessonDocumentToLessonObj
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
-import com.dk.organizeu.student_activity.data_class.TimetableItem
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
@@ -137,7 +136,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                     if(semesterDocumentId != null && classDocumentId !=null && timetableDocumentId != null)
                     {
 
-                        val documents = LessonPojo.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
+                        val documents = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
                         var counter = 1
                         for(document in documents)
                         {

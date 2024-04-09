@@ -1,4 +1,4 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
@@ -10,7 +10,7 @@ import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AcademicPojo {
+class AcademicRepository {
     companion object{
         val db = FirebaseFirestore.getInstance()
 

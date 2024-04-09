@@ -1,7 +1,5 @@
 package com.dk.organizeu.student_activity.test_data
 
-import com.dk.organizeu.student_activity.data_class.TimetableItem
-
 
 class TestData {
     companion object{

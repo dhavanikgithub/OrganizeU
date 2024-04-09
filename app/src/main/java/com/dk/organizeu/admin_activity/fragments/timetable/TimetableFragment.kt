@@ -12,12 +12,11 @@ import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.databinding.FragmentTimetableBinding
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
-import com.dk.organizeu.model.ClassPojo
-import com.dk.organizeu.model.SemesterPojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
+import com.dk.organizeu.repository.ClassRepository
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -208,7 +207,7 @@ class TimetableFragment : Fragment() {
                 {
 
                     academicYearList.clear()
-                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    val documents = AcademicRepository.getAllAcademicDocuments()
                     for(document in documents)
                     {
                         val academicItem = document.id.split('_')
@@ -273,7 +272,7 @@ class TimetableFragment : Fragment() {
                 {
                     MainScope().launch(Dispatchers.IO)
                     {
-                        val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId)
+                        val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
                         for(document in documents)
                         {
                             semesterList.add(document.id)
@@ -302,7 +301,7 @@ class TimetableFragment : Fragment() {
                 {
                     MainScope().launch(Dispatchers.IO)
                     {
-                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId,semesterDocumentId)
+                        val documents = ClassRepository.getAllClassDocuments(academicDocumentId,semesterDocumentId)
                         for(document in documents)
                         {
                             classList.add(document.id)

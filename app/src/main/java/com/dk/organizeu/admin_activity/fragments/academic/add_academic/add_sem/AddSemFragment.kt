@@ -18,9 +18,9 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcadem
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddSemBinding
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
-import com.dk.organizeu.model.SemesterPojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import kotlinx.coroutines.*
 
@@ -154,7 +154,7 @@ class AddSemFragment : Fragment() {
                         academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                         if(academicDocumentId!=null)
                         {
-                            val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId!!)
+                            val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
                             for (document in documents) {
                                 academicSemList.add(document.id)
                             }
@@ -185,7 +185,7 @@ class AddSemFragment : Fragment() {
                                 val inputHashMap = hashMapOf(
                                     "sem" to academicSemSelectedItem!!
                                 )
-                                SemesterPojo.insertSemesterDocuments(academicDocumentId!!,semesterDocumentId!!, inputHashMap,{
+                                SemesterRepository.insertSemesterDocuments(academicDocumentId!!,semesterDocumentId!!, inputHashMap,{
                                     academicSemList.add(academicSemSelectedItem!!)
                                     academicSemAdapter.notifyItemInserted(academicSemAdapter.itemCount)
                                     clearAcademicSemACTV()
@@ -217,7 +217,7 @@ class AddSemFragment : Fragment() {
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                     if(academicDocumentId!=null)
                     {
-                        val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId!!)
+                        val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
                         for (document in documents) {
                             academicSemList.add(document.id)
                         }
@@ -265,7 +265,7 @@ class AddSemFragment : Fragment() {
                 academicYearItemList.clear()
                 MainScope().launch(Dispatchers.IO)
                 {
-                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    val documents = AcademicRepository.getAllAcademicDocuments()
                     for (document in documents) {
                         val academicItem = document.id.split('_')
                         if(!academicYearItemList.contains(academicItem[0]))

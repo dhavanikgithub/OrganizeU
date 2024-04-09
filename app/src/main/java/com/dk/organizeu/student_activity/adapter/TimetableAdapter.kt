@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.student_activity.data_class.TimetableItem
+import com.dk.organizeu.student_activity.pojo.TimetableItem
 
 class TimetableAdapter(private val timetableItems: ArrayList<TimetableItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_EMPTY = 0

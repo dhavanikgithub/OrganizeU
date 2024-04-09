@@ -3,7 +3,6 @@ package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batc
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +18,14 @@ import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
-import com.dk.organizeu.model.AcademicPojo
-import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
-import com.dk.organizeu.model.BatchPojo
-import com.dk.organizeu.model.BatchPojo.Companion.insertBatchDocument
-import com.dk.organizeu.model.BatchPojo.Companion.isBatchDocumentExists
-import com.dk.organizeu.model.ClassPojo
-import com.dk.organizeu.model.SemesterPojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
+import com.dk.organizeu.repository.BatchRepository
+import com.dk.organizeu.repository.BatchRepository.Companion.insertBatchDocument
+import com.dk.organizeu.repository.BatchRepository.Companion.isBatchDocumentExists
+import com.dk.organizeu.repository.ClassRepository
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 
 class AddBatchFragment : Fragment() {
@@ -258,7 +256,7 @@ class AddBatchFragment : Fragment() {
                     classDocumentId = academicClassSelectedItem
                     if(academicDocumentId!=null && semesterDocumentId != null && classDocumentId!=null)
                     {
-                        val documents = BatchPojo.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
+                        val documents = BatchRepository.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
                         for (document in documents) {
                             academicBatchList.add(document.id)
                         }
@@ -318,7 +316,7 @@ class AddBatchFragment : Fragment() {
             viewModel.apply {
                 MainScope().launch(Dispatchers.IO){
                     academicYearItemList.clear()
-                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    val documents = AcademicRepository.getAllAcademicDocuments()
                     for (document in documents) {
                         val academicItem = document.id.split('_')
                         if(!academicYearItemList.contains(academicItem[0]))
@@ -378,7 +376,7 @@ class AddBatchFragment : Fragment() {
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                     if(academicDocumentId!=null)
                     {
-                        val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId!!)
+                        val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
                         for (document in documents) {
                             academicSemItemList.add(document.id.toInt())
                         }
@@ -405,7 +403,7 @@ class AddBatchFragment : Fragment() {
                     semesterDocumentId = academicSemSelectedItem
                     if(academicDocumentId!=null && semesterDocumentId!=null)
                     {
-                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
+                        val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {
                             academicClassItemList.add(document.id)
                         }
