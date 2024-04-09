@@ -44,7 +44,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_academic -> {
                         if(!isDrawerMenuSelect(R.id.nav_academic))
                         {
-                            navHostFragment.findNavController().popBackStack(R.id.academicFragment,false)
+                            navHostFragment.findNavController().popBackStack(R.id.academicFragment,true)
                             navHostFragment.findNavController().navigate(R.id.academicFragment)
                             mainMenuIcon.callOnClick()
                             true
@@ -58,7 +58,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_timetable -> {
                         if(!isDrawerMenuSelect(R.id.nav_timetable))
                         {
-                            navHostFragment.findNavController().popBackStack(R.id.timetableFragment,false)
+                            navHostFragment.findNavController().popBackStack(R.id.timetableFragment,true)
                             navHostFragment.findNavController().navigate(R.id.timetableFragment)
                             mainMenuIcon.callOnClick()
                             true
@@ -71,7 +71,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_faculty -> {
                         if(!isDrawerMenuSelect(R.id.nav_faculty))
                         {
-                            navHostFragment.findNavController().popBackStack(R.id.facultyFragment,false)
+                            navHostFragment.findNavController().popBackStack(R.id.facultyFragment,true)
                             navHostFragment.findNavController().navigate(R.id.facultyFragment)
                             mainMenuIcon.callOnClick()
                             true
@@ -84,7 +84,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_room -> {
                         if(!isDrawerMenuSelect(R.id.nav_room))
                         {
-                            navHostFragment.findNavController().popBackStack(R.id.roomsFragment,false)
+                            navHostFragment.findNavController().popBackStack(R.id.roomsFragment,true)
                             navHostFragment.findNavController().navigate(R.id.roomsFragment)
                             mainMenuIcon.callOnClick()
                             true
@@ -97,7 +97,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_subject -> {
                         if(!isDrawerMenuSelect(R.id.nav_subject))
                         {
-                            navHostFragment.findNavController().popBackStack(R.id.subjectsFragment,false)
+                            navHostFragment.findNavController().popBackStack(R.id.subjectsFragment,true)
                             navHostFragment.findNavController().navigate(R.id.subjectsFragment)
                             mainMenuIcon.callOnClick()
                             true

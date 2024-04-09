@@ -246,11 +246,10 @@ class AddBatchFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 progressDialog.start("Loading Batches...")
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 MainScope().launch(Dispatchers.IO)
                 {
                     academicBatchList.clear()
-                    recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
                     academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
                     semesterDocumentId = academicSemSelectedItem
                     classDocumentId = academicClassSelectedItem
