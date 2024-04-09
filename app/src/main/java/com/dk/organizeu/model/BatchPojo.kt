@@ -1,6 +1,7 @@
 package com.dk.organizeu.model
 
 import android.util.Log
+import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.model.ClassPojo.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference

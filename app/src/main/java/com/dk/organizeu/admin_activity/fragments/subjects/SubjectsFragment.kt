@@ -14,8 +14,13 @@ import com.dk.organizeu.admin_activity.dialog_box.AddSubjectDialog
 import com.dk.organizeu.admin_activity.listener.OnSubjectItemClickListener
 import com.dk.organizeu.admin_activity.listener.SubjectAddListener
 import com.dk.organizeu.databinding.FragmentSubjectsBinding
+import com.dk.organizeu.model.SubjectPojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListener {
 
@@ -57,19 +62,22 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
     {
         binding.apply {
             viewModel.apply {
-                subjectList.clear()
                 rvSubjects.layoutManager = LinearLayoutManager(requireContext())
-                db.collection("subject")
-                    .get()
-                    .addOnSuccessListener {documents->
-                        for(document in documents)
-                        {
-                            val subjectItem = Subject(document.id,document.get("code").toString(),document.get("type").toString())
-                            subjectList.add(subjectItem)
-                        }
+                MainScope().launch(Dispatchers.IO)
+                {
+                    subjectList.clear()
+                    val documents = SubjectPojo.getAllSubjectDocuments()
+                    for(document in documents)
+                    {
+                        val subjectItem = SubjectPojo.subjectDocumentToSubjectObj(document)
+                        subjectList.add(subjectItem)
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         subjectAdapter = SubjectAdapter(subjectList,this@SubjectsFragment)
                         rvSubjects.adapter = subjectAdapter
                     }
+                }
             }
         }
     }
@@ -77,7 +85,7 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
     override fun onSubjectAdded(subjectData: HashMap<String, String>, subjectDocumentId: String) {
         binding.apply {
             viewModel.apply {
-                val subjectItem = Subject(subjectDocumentId,subjectData["code"].toString(),subjectData["type"].toString())
+                val subjectItem = SubjectPojo.subjectDocumentToSubjectObj(subjectDocumentId,subjectData)
                 subjectList.add(subjectItem)
                 subjectAdapter.notifyItemInserted(subjectAdapter.itemCount)
             }

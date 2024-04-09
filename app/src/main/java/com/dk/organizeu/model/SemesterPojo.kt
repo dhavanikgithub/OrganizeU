@@ -1,5 +1,6 @@
 package com.dk.organizeu.model
 
+import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.model.AcademicPojo.Companion.academicDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference

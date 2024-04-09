@@ -1,7 +1,7 @@
 package com.dk.organizeu.model
 
 import android.util.Log
-import com.dk.organizeu.admin_activity.util.UtilFunction
+import com.dk.organizeu.firebase.FirebaseConfig
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -26,7 +26,7 @@ class AcademicPojo {
             return academicCollectionRef().get().await().documents
         }
 
-        suspend fun insertAcademicDocuments(
+        fun insertAcademicDocuments(
             academicDocumentId: String,
             inputHashMap:HashMap<String,String>,
             successCallback: (HashMap<String, String>) -> Unit,

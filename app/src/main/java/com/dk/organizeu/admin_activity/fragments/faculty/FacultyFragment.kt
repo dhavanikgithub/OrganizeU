@@ -12,8 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
+import com.dk.organizeu.model.FacultyPojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FacultyFragment : Fragment() {
 
@@ -24,8 +29,6 @@ class FacultyFragment : Fragment() {
     private lateinit var viewModel: FacultyViewModel
     private lateinit var binding: FragmentFacultyBinding
     private lateinit var progressDialog: CustomProgressDialog
-    private lateinit var db: FirebaseFirestore
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,7 +37,7 @@ class FacultyFragment : Fragment() {
         binding = FragmentFacultyBinding.bind(view)
         viewModel = ViewModelProvider(this)[FacultyViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        db = FirebaseFirestore.getInstance()
+
         return view
     }
 
@@ -48,17 +51,15 @@ class FacultyFragment : Fragment() {
                     val txtFacultyName = etFacultyName.text.toString()
                     if(txtFacultyName!="")
                     {
-                        db.collection("faculty")
-                            .document(txtFacultyName)
-                            .set(hashMapOf(
-                                "name" to txtFacultyName
-                            ))
-                            .addOnSuccessListener {
-                                facultyList.add(txtFacultyName)
-                                facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
-                                etFacultyName.setText("")
-                                Toast.makeText(requireContext(),"Faculty Added", Toast.LENGTH_SHORT).show()
-                            }
+                        val inputHashMap = hashMapOf("name" to txtFacultyName)
+                        FacultyPojo.insertFacultyDocument(txtFacultyName,inputHashMap,{
+                            facultyList.add(txtFacultyName)
+                            facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
+                            etFacultyName.setText("")
+                            Toast.makeText(requireContext(),"Faculty Added", Toast.LENGTH_SHORT).show()
+                        },{
+
+                        })
                     }
                 }
             }
@@ -70,25 +71,20 @@ class FacultyFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 progressDialog.start("Loading Faculty...")
-                facultyList.clear()
-                rvFaculty.layoutManager = LinearLayoutManager(requireContext())
-                db.collection("faculty")
-                    .get()
-                    .addOnSuccessListener {documents ->
-                        for (document in documents) {
-                            facultyList.add(document.id)
-                        }
+                MainScope().launch(Dispatchers.IO){
+                    facultyList.clear()
+                    rvFaculty.layoutManager = LinearLayoutManager(requireContext())
+                    val documents = FacultyPojo.getAllFacultyDocuments()
+                    for (document in documents) {
+                        facultyList.add(document.id)
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         facultyAdapter = FacultyAdapter(facultyList)
                         rvFaculty.adapter = facultyAdapter
                         progressDialog.stop()
                     }
-                    .addOnCanceledListener {
-                        progressDialog.stop()
-                    }
-                    .addOnFailureListener {
-                        progressDialog.stop()
-                    }
-
+                }
             }
         }
     }

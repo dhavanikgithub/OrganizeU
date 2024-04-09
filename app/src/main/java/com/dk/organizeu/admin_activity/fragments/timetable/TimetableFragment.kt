@@ -1,6 +1,5 @@
 package com.dk.organizeu.admin_activity.fragments.timetable
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,14 +11,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
-import com.dk.organizeu.admin_activity.util.UtilFunction
 import com.dk.organizeu.databinding.FragmentTimetableBinding
+import com.dk.organizeu.model.AcademicPojo
 import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
+import com.dk.organizeu.model.ClassPojo
+import com.dk.organizeu.model.SemesterPojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TimetableFragment : Fragment() {
 
@@ -30,7 +32,6 @@ class TimetableFragment : Fragment() {
     private lateinit var viewModel: TimetableViewModel
     private lateinit var binding: FragmentTimetableBinding
     private lateinit var progressDialog: CustomProgressDialog
-    private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +41,6 @@ class TimetableFragment : Fragment() {
         binding = FragmentTimetableBinding.bind(view)
         viewModel = ViewModelProvider(this)[TimetableViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        db = FirebaseFirestore.getInstance()
         return view
     }
 
@@ -99,8 +99,6 @@ class TimetableFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-
-
                 actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     selectedAcademicYearItem = parent.getItemAtPosition(position).toString()
                     clearAcademicType()
@@ -206,22 +204,26 @@ class TimetableFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                academicYearList.clear()
-                db.collection("academic")
-                    .get()
-                    .addOnSuccessListener {  documents ->
-                        for(document in documents)
+                MainScope().launch(Dispatchers.IO)
+                {
+
+                    academicYearList.clear()
+                    val documents = AcademicPojo.getAllAcademicDocuments()
+                    for(document in documents)
+                    {
+                        val academicItem = document.id.split('_')
+                        if(!academicYearList.contains(academicItem[0]))
                         {
-                            val academicItem = document.id.split('_')
-                            if(!academicYearList.contains(academicItem[0]))
-                            {
-                                academicYearList.add(academicItem[0])
-                            }
+                            academicYearList.add(academicItem[0])
                         }
                     }
 
-                academicYearAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,academicYearList)
-                actAcademicYear.setAdapter(academicYearAdapter)
+                    withContext(Dispatchers.Main)
+                    {
+                        academicYearAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,academicYearList)
+                        actAcademicYear.setAdapter(academicYearAdapter)
+                    }
+                }
             }
         }
     }
@@ -266,19 +268,24 @@ class TimetableFragment : Fragment() {
             viewModel.apply {
                 semTIL.isEnabled=false
                 semesterList.clear()
-                db.collection("academic")
-                    .document("${selectedAcademicYearItem}_${selectedAcademicTypeItem}")
-                    .collection("semester")
-                    .get()
-                    .addOnSuccessListener {documents->
+                val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
+                if(academicDocumentId!=null)
+                {
+                    MainScope().launch(Dispatchers.IO)
+                    {
+                        val documents = SemesterPojo.getAllSemesterDocuments(academicDocumentId)
                         for(document in documents)
                         {
                             semesterList.add(document.id)
                         }
-                        semesterAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,semesterList)
-                        semACTV.setAdapter(semesterAdapter)
-                        semTIL.isEnabled=true
+                        withContext(Dispatchers.Main)
+                        {
+                            semesterAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,semesterList)
+                            semACTV.setAdapter(semesterAdapter)
+                            semTIL.isEnabled=true
+                        }
                     }
+                }
             }
         }
     }
@@ -289,21 +296,25 @@ class TimetableFragment : Fragment() {
             viewModel.apply {
                 classTIL.isEnabled=false
                 classList.clear()
-                db.collection("academic")
-                    .document("${selectedAcademicYearItem}_${selectedAcademicTypeItem}")
-                    .collection("semester")
-                    .document(selectedSemesterItem.toString())
-                    .collection("class")
-                    .get()
-                    .addOnSuccessListener {documents->
+                val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
+                val semesterDocumentId = selectedSemesterItem
+                if(academicDocumentId!=null && semesterDocumentId!=null)
+                {
+                    MainScope().launch(Dispatchers.IO)
+                    {
+                        val documents = ClassPojo.getAllClassDocuments(academicDocumentId,semesterDocumentId)
                         for(document in documents)
                         {
                             classList.add(document.id)
                         }
-                        classAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,classList)
-                        classACTV.setAdapter(classAdapter)
-                        classTIL.isEnabled=true
+                        withContext(Dispatchers.Main){
+                            classAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,classList)
+                            classACTV.setAdapter(classAdapter)
+                            classTIL.isEnabled=true
+                        }
                     }
+                }
+
             }
         }
     }

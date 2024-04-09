@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.RoomType
 import com.dk.organizeu.admin_activity.listener.RoomAddListener
+import com.dk.organizeu.model.RoomPojo
+import com.dk.organizeu.utils.UtilFunction
+import com.dk.organizeu.utils.UtilFunction.Companion.hideKeyboard
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,15 +27,13 @@ class AddRoomDialog() : AppCompatDialogFragment() {
     private lateinit var roomLocationET: TextInputEditText
     private lateinit var addButton: MaterialButton
     private lateinit var closeButton: MaterialButton
-
-    private lateinit var db: FirebaseFirestore
     private var roomAddListener: RoomAddListener? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_room_dialog_layout, null)
-        db = FirebaseFirestore.getInstance()
+
         roomAddListener = parentFragment as? RoomAddListener
         roomTypeACTV = view.findViewById(R.id.roomTypeACTV)
         roomLocationET = view.findViewById(R.id.roomLocationET)
@@ -48,25 +49,29 @@ class AddRoomDialog() : AppCompatDialogFragment() {
             .setView(view)
             .setTitle("Add Room")
 
+        roomTypeACTV.setOnClickListener {
+            requireContext().hideKeyboard(view)
+        }
+
         closeButton.setOnClickListener {
             dismiss()
         }
         addButton.setOnClickListener {
-            if(isItemSelected(roomTypeACTV) && roomNameET.text.toString()!="" && roomLocationET.text.toString()!="")
+            if(UtilFunction.isItemSelected(roomTypeACTV) && roomNameET.text.toString()!="" && roomLocationET.text.toString()!="")
             {
-
+                val roomName = roomNameET.text.toString()
                 val roomData = hashMapOf(
                     "location" to roomLocationET.text.toString(),
                     "type" to roomTypeACTV.text.toString()
 
                 )
-                isRoomDocumentExists(roomNameET.text.toString()) { exists ->
+                RoomPojo.isRoomDocumentExists(roomName) { exists ->
                     if(exists)
                     {
                         closeButton.callOnClick()
                         return@isRoomDocumentExists
                     }
-                    addNewRoom(roomNameET.text.toString(),roomData)
+                    addNewRoom(roomName,roomData)
                 }
 
             }
@@ -77,43 +82,14 @@ class AddRoomDialog() : AppCompatDialogFragment() {
 
     private fun addNewRoom(roomDocumentId:String, roomData:HashMap<String,String>)
     {
-        db.collection("room")
-            .document(roomDocumentId)
-            .set(roomData)
-            .addOnSuccessListener {
-                Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
-                roomAddListener?.onRoomAdded(roomData,roomDocumentId)
-                closeButton.callOnClick()
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding room document", e)
-                closeButton.callOnClick()
-            }
-    }
-
-    private fun isRoomDocumentExists(roomDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("room")
-            .document(roomDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false)
-            }
-    }
-
-
-    private fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {
-        val selectedItem = autoCompleteTextView.text.toString().trim()
-        val adapter = autoCompleteTextView.adapter as ArrayAdapter<String>
-        for (i in 0 until adapter.count) {
-            if (selectedItem == adapter.getItem(i)) {
-                return true
-            }
-        }
-        return false
+        RoomPojo.insertRoomDocument(roomDocumentId,roomData,{
+            Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
+            roomAddListener?.onRoomAdded(roomData,roomDocumentId)
+            closeButton.callOnClick()
+        },{
+            Log.w("TAG", "Error adding room document", it)
+            closeButton.callOnClick()
+        })
     }
 
 }

@@ -11,11 +11,17 @@ import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.dialog_box.AddLessonDialog
 import com.dk.organizeu.admin_activity.enum_class.Weekday
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
+import com.dk.organizeu.model.LessonPojo
+import com.dk.organizeu.model.LessonPojo.Companion.lessonDocumentToLessonObj
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
 import com.dk.organizeu.student_activity.data_class.TimetableItem
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
 
@@ -120,41 +126,33 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
     {
         binding.apply {
             viewModel.apply {
-                timetableData.clear()
-                db.collection("academic")
-                    .document("${academicYear}_${academicType}")
-                    .collection("semester")
-                    .document(semesterNumber)
-                    .collection("class")
-                    .document(className)
-                    .collection("timetable")
-                    .document(Weekday.getWeekdayNameByNumber(weekDay))
-                    .collection("weekday")
-                    .orderBy("start_time")
-                    .get()
-                    .addOnSuccessListener {documents->
-                        var counter:Int = 1
+                MainScope().launch(Dispatchers.IO){
+
+                    timetableData.clear()
+                    val academicDocumentId = "${academicYear}_${academicType}"
+                    val semesterDocumentId = semesterNumber
+                    val classDocumentId = className
+                    val timetableDocumentId = Weekday.getWeekdayNameByNumber(weekDay)
+
+                    if(semesterDocumentId != null && classDocumentId !=null && timetableDocumentId != null)
+                    {
+
+                        val documents = LessonPojo.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
+                        var counter = 1
                         for(document in documents)
                         {
-                            val lessonItem = TimetableItem(
-                                document.get("class_name").toString(),
-                                document.get("subject_name").toString(),
-                                document.get("subject_code").toString(),
-                                document.get("location").toString(),
-                                document.get("start_time").toString(),
-                                document.get("end_time").toString(),
-                                document.get("duration").toString(),
-                                document.get("type").toString(),
-                                document.get("faculty").toString(),
-                                counter
-                            )
+                            val lessonItem = lessonDocumentToLessonObj(document,counter)
                             counter++
                             timetableData.add(lessonItem)
-
                         }
+
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         timetableAdapter = TimetableAdapter(timetableData)
                         lessonRecyclerView.adapter = timetableAdapter
                     }
+                }
             }
         }
     }

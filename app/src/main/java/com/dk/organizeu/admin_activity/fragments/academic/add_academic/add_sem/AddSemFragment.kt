@@ -16,13 +16,12 @@ import com.dk.organizeu.admin_activity.adapter.AddSemAdapter
 import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
-import com.dk.organizeu.admin_activity.util.UtilFunction
+import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddSemBinding
 import com.dk.organizeu.model.AcademicPojo
 import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
 import com.dk.organizeu.model.SemesterPojo
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 
 class AddSemFragment : Fragment() {

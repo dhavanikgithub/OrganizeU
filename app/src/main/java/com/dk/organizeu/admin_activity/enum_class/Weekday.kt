@@ -35,5 +35,6 @@ enum class Weekday(val displayName: String) {
                 else -> throw IllegalArgumentException("Invalid day name: $dayName.")
             }
         }
+
     }
 }

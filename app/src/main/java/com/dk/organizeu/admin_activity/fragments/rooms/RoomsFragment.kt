@@ -19,8 +19,14 @@ import com.dk.organizeu.admin_activity.listener.OnRoomItemClickListener
 import com.dk.organizeu.admin_activity.listener.RoomAddListener
 import com.dk.organizeu.databinding.FragmentFacultyBinding
 import com.dk.organizeu.databinding.FragmentRoomsBinding
+import com.dk.organizeu.model.RoomPojo
+import com.dk.organizeu.model.RoomPojo.Companion.roomDocumentToRoomObj
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
 
@@ -62,19 +68,22 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
     {
         binding.apply {
             viewModel.apply {
-                roomList.clear()
+
                 rvRooms.layoutManager = LinearLayoutManager(requireContext())
-                db.collection("room")
-                    .get()
-                    .addOnSuccessListener {documents->
-                        for(document in documents)
-                        {
-                            val roomItem = Room(document.id,document.get("location").toString(),document.get("type").toString())
-                            roomList.add(roomItem)
-                        }
+                MainScope().launch(Dispatchers.IO){
+                    roomList.clear()
+                    val documents = RoomPojo.getAllRoomDocument()
+                    for(document in documents)
+                    {
+                        val roomItem = roomDocumentToRoomObj(document)
+                        roomList.add(roomItem)
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         roomAdapter = RoomAdapter(roomList,this@RoomsFragment)
                         rvRooms.adapter = roomAdapter
                     }
+                }
             }
         }
     }
@@ -82,8 +91,7 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
     override fun onRoomAdded(roomData: HashMap<String,String>,roomDocumentId:String) {
         binding.apply {
             viewModel.apply {
-                val roomItem = Room(roomDocumentId,
-                    roomData["location"].toString(), roomData["type"].toString())
+                val roomItem = roomDocumentToRoomObj(roomDocumentId,roomData)
                 roomList.add(roomItem)
                 roomAdapter.notifyItemInserted(roomAdapter.itemCount)
             }

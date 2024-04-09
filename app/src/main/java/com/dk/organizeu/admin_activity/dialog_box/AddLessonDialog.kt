@@ -18,8 +18,21 @@ import com.dk.organizeu.admin_activity.enum_class.Weekday
 import com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.admin_activity.listener.LessonAddListener
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
+import com.dk.organizeu.model.BatchPojo
+import com.dk.organizeu.model.FacultyPojo
+import com.dk.organizeu.model.LessonPojo
+import com.dk.organizeu.model.LessonPojo.Companion.isLessonDocumentExistByField
+import com.dk.organizeu.model.RoomPojo
+import com.dk.organizeu.model.RoomPojo.Companion.getRoomDocumentsByField
+import com.dk.organizeu.model.SubjectPojo
+import com.dk.organizeu.utils.UtilFunction.Companion.calculateLessonDuration
+import com.dk.organizeu.utils.UtilFunction.Companion.validateTime
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -27,7 +40,6 @@ import java.util.Locale
 class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFragment() {
     private lateinit var binding: AddLessonDialogLayoutBinding
 
-    private lateinit var db: FirebaseFirestore
     private var lessonAddListener: LessonAddListener? = null
 
     private var selectedSubject:String?=null
@@ -59,7 +71,6 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_lesson_dialog_layout, null)
         binding = AddLessonDialogLayoutBinding.bind(view)
-        db = FirebaseFirestore.getInstance()
         lessonAddListener = parentFragment as? LessonAddListener
         subjectList = ArrayList()
         facultyList = ArrayList()
@@ -132,7 +143,6 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     startTimeTIL.isEnabled=false
                     endTimeTIL.isEnabled=false
                     btnAdd.isEnabled=false
-
                 }
                 else{
                     batchTIL.visibility = View.GONE
@@ -174,64 +184,40 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     endTimeEL.text.toString().isNotEmpty() &&
                     ((selectedLessonType.equals(RoomType.LAB.name) && selectedBatch!=null) || (selectedLessonType.equals(RoomType.CLASS.name))))
                 {
-                    AddLessonFragment.apply {
-                        db.collection("subject")
-                            .document(selectedSubject!!)
-                            .get()
-                            .addOnSuccessListener {subjectDoc->
-                                db.collection("room")
-                                    .document(selectedRoom!!)
-                                    .get()
-                                    .addOnSuccessListener {roomDoc->
-                                        val dataSet = hashMapOf(
-                                            "class_name" to className,
-                                            "subject_name" to selectedSubject,
-                                            "subject_code" to subjectDoc.get("code"),
-                                            "location" to "$selectedRoom - ${roomDoc.get("location")}",
-                                            "start_time" to startTimeET.text.toString(),
-                                            "end_time" to endTimeEL.text.toString(),
-                                            "faculty" to selectedFaculty,
-                                            "type" to selectedLessonType,
-                                            "batch" to selectedBatch.toString(),
-                                            "duration" to calculateLessonDuration(startTimeET.text.toString(),endTimeEL.text.toString())
-                                        )
-                                        db.collection("academic")
-                                            .document("${academicYear}_${academicType}")
-                                            .collection("semester")
-                                            .document(semesterNumber)
-                                            .collection("class")
-                                            .document(className)
-                                            .collection("timetable")
-                                            .document(Weekday.getWeekdayNameByNumber((selectedTab+1)))
-                                            .collection("weekday")
-                                            .whereEqualTo("start_time", startTimeET.text.toString())
-                                            .get()
-                                            .addOnSuccessListener { documents ->
-                                                if (documents.isEmpty) {
-                                                    db.collection("academic")
-                                                        .document("${academicYear}_${academicType}")
-                                                        .collection("semester")
-                                                        .document(semesterNumber)
-                                                        .collection("class")
-                                                        .document(className)
-                                                        .collection("timetable")
-                                                        .document(Weekday.getWeekdayNameByNumber((selectedTab+1)))
-                                                        .collection("weekday")
-                                                        .document()
-                                                        .set(dataSet)
-                                                        .addOnSuccessListener {
-                                                            listener.onAddLesson()
-                                                            btnClose.callOnClick()
-                                                        }
-                                                }
-                                            }
+                    MainScope().launch(Dispatchers.IO) {
+                        AddLessonFragment.apply {
+                            val subjectDocumentId = selectedSubject!!
+                            val roomDocumentId = selectedRoom!!
+                            val subjectData = SubjectPojo.subjectDocumentToSubjectObj(SubjectPojo.getSubjectDocumentById(subjectDocumentId)!!)
+                            val roomData = RoomPojo.roomDocumentToRoomObj(RoomPojo.getRoomDocumentById(roomDocumentId)!!)
 
-                                    }
-
+                            val dataSet = hashMapOf(
+                                "class_name" to className,
+                                "subject_name" to selectedSubject!!,
+                                "subject_code" to subjectData.code,
+                                "location" to "$selectedRoom - ${roomData.location}",
+                                "start_time" to startTimeET.text.toString(),
+                                "end_time" to endTimeEL.text.toString(),
+                                "faculty" to selectedFaculty!!,
+                                "type" to selectedLessonType!!,
+                                "batch" to selectedBatch.toString(),
+                                "duration" to calculateLessonDuration(startTimeET.text.toString(),endTimeEL.text.toString())
+                            )
+                            val academicDocumentId = "${academicYear}_${academicType}"
+                            val semesterDocumentId = semesterNumber
+                            val classDocumentId = className
+                            val timetableDocumentId = Weekday.getWeekdayNameByNumber((selectedTab+1))
+                            isLessonDocumentExistByField(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,"start_time",startTimeET.text.toString()) {
+                                LessonPojo.insertLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,dataSet,{
+                                    listener.onAddLesson()
+                                    btnClose.callOnClick()
+                                },{
+                                    btnClose.callOnClick()
+                                })
                             }
-
-
+                        }
                     }
+
                 }
             }
             startTimeET.setOnClickListener {
@@ -330,55 +316,29 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         }
     }
 
-    fun calculateLessonDuration(startTime: String, endTime: String): String {
-        // Define the date format
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-        try {
-            // Parse the start and end time strings
-            val startTimeDate = timeFormat.parse(startTime)
-            val endTimeDate = timeFormat.parse(endTime)
-
-            if (startTimeDate != null && endTimeDate != null) {
-                // Calculate the difference in milliseconds
-                val durationInMillis = endTimeDate.time - startTimeDate.time
-
-                // Convert milliseconds to minutes
-                val durationInMinutes = durationInMillis / (1000 * 60)
-
-                // Calculate hours and minutes from the total minutes
-                val hours = durationInMinutes / 60
-                val minutes = durationInMinutes % 60
-
-                // Return the formatted duration string
-                return String.format("%02d:%02d", hours, minutes)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        // Return an empty string if there's any error
-        return ""
-    }
 
     private fun initSubjectDropDown()
     {
         binding.apply {
             AddLessonFragment.apply {
                 subjectTIL.isEnabled=false
-                subjectList.clear()
-                if(academicYear!=null && academicType!=null && semesterNumber!=null && className!=null){
-                    db.collection("subject")
-                        .get()
-                        .addOnSuccessListener {documents->
-                            for(document in documents)
-                            {
-                                subjectList.add(document.id)
-                            }
+                MainScope().launch(Dispatchers.IO)
+                {
+                    subjectList.clear()
+                    if(academicYear!=null && academicType!=null && semesterNumber!=null && className!=null){
+                        val documents = SubjectPojo.getAllSubjectDocuments()
+                        for(document in documents)
+                        {
+                            subjectList.add(document.id)
+                        }
+                        withContext(Dispatchers.Main)
+                        {
                             subjectAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,subjectList)
                             subjectACTV.setAdapter(subjectAdapter)
                             subjectACTV.isEnabled=true
                         }
+                    }
                 }
             }
         }
@@ -387,17 +347,20 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
     private fun initFacultyDropDown()
     {
         binding.apply {
-            facultyList.clear()
-            db.collection("faculty")
-                .get()
-                .addOnSuccessListener {documents->
-                    for(document in documents)
-                    {
-                        facultyList.add(document.id)
-                    }
+            MainScope().launch(Dispatchers.IO)
+            {
+                facultyList.clear()
+                val documents = FacultyPojo.getAllFacultyDocuments()
+                for(document in documents)
+                {
+                    facultyList.add(document.id)
+                }
+                withContext(Dispatchers.Main)
+                {
                     facultyAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,facultyList)
                     facultyACTV.setAdapter(facultyAdapter)
                 }
+            }
         }
     }
 
@@ -405,25 +368,27 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
     {
         binding.apply {
             batchTIL.isEnabled=false
-            batchList.clear()
-            AddLessonFragment.apply {
-                db.collection("academic")
-                    .document("${academicYear}_$academicType")
-                    .collection("semester")
-                    .document(semesterNumber)
-                    .collection("class")
-                    .document(className)
-                    .collection("batch")
-                    .get()
-                    .addOnSuccessListener {documents->
+            MainScope().launch(Dispatchers.IO) {
+                batchList.clear()
+                AddLessonFragment.apply {
+                    val academicDocumentId = "${academicYear}_$academicType"
+                    val semesterDocumentId = semesterNumber
+                    val classDocumentId = className
+                    if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null)
+                    {
+                        val documents = BatchPojo.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
                         for (document in documents)
                         {
                             batchList.add(document.id)
                         }
+                    }
+                    withContext(Dispatchers.Main)
+                    {
                         batchAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,batchList)
                         batchACTV.setAdapter(batchAdapter)
                         batchTIL.isEnabled=true
                     }
+                }
             }
         }
     }
@@ -432,19 +397,21 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
     {
         binding.apply {
             roomTIL.isEnabled=false
-            roomList.clear()
-            db.collection("room")
-                .whereEqualTo("type",selectedLessonType)
-                .get()
-                .addOnSuccessListener {documents->
-                    for(document in documents)
-                    {
-                        roomList.add(document.id)
-                    }
+            MainScope().launch(Dispatchers.IO)
+            {
+                roomList.clear()
+                val documents = getRoomDocumentsByField("type",selectedLessonType!!)
+                for(document in documents)
+                {
+                    roomList.add(document.id)
+                }
+                withContext(Dispatchers.Main)
+                {
                     roomAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,roomList)
                     roomACTV.setAdapter(roomAdapter)
                     roomTIL.isEnabled=true
                 }
+            }
         }
     }
 
@@ -467,42 +434,19 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         )
         timePickerDialog.show()
         timePickerDialog.setOnDismissListener {
-            validateTime()
-        }
-    }
-
-    private fun validateTime() {
-        binding.apply {
-            val startTimeString = startTimeET.text.toString()
-            val endTimeString = endTimeEL.text.toString()
-
-            if (startTimeString.isNotEmpty() && endTimeString.isNotEmpty()) {
-                val startTime = SimpleDateFormat("HH:mm").parse(startTimeString)
-                val endTime = SimpleDateFormat("HH:mm").parse(endTimeString)
-
-                if (startTime != null && endTime != null) {
-                    if (endTime.before(startTime)) {
-                        endTimeEL.setText("")
-                        endTimeEL.error = "End time must be after start time"
-                    } else {
-                        endTimeEL.error = null
-                    }
+            binding.apply {
+                val startTimeString = startTimeET.text.toString().trim()
+                val endTimeString = endTimeEL.text.toString().trim()
+                if(validateTime(startTimeString, endTimeString))
+                {
+                    endTimeEL.error = null
+                }
+                else{
+                    endTimeEL.setText("")
+                    endTimeEL.error = "End time must be after start time"
                 }
             }
         }
-
-    }
-
-
-    private fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {
-        val selectedItem = autoCompleteTextView.text.toString().trim()
-        val adapter = autoCompleteTextView.adapter as ArrayAdapter<String>
-        for (i in 0 until adapter.count) {
-            if (selectedItem == adapter.getItem(i)) {
-                return true
-            }
-        }
-        return false
     }
 
 }

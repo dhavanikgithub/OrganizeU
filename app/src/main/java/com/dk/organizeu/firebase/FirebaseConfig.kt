@@ -1,4 +1,4 @@
-package com.dk.organizeu.model
+package com.dk.organizeu.firebase
 
 import com.google.firebase.firestore.*
 import kotlinx.coroutines.tasks.await

@@ -13,9 +13,7 @@ import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.student_activity.adapter.TimetableAdapter
 import com.dk.organizeu.student_activity.data_class.TimetableItem
-import com.dk.organizeu.student_activity.util.UtilFunc
-import com.dk.organizeu.student_activity.util.UtilFunc.Companion.checkLessonStatus
-import com.dk.organizeu.student_activity.util.UtilFunc.Companion.getDayOfWeek
+import com.dk.organizeu.utils.UtilFunction
 import com.google.android.material.tabs.TabLayout
 import java.util.*
 
@@ -42,10 +40,10 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-                dayOfWeek = if(UtilFunc.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
+                dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
                     7
                 } else{
-                    UtilFunc.calendar.get(Calendar.DAY_OF_WEEK) - 1
+                    UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1
                 }
 
                 if (savedInstanceState == null){
@@ -194,7 +192,7 @@ class HomeFragment : Fragment() {
                 var i = 0
                 while (i<len)
                 {
-                    if (!checkLessonStatus(
+                    if (!UtilFunction.checkLessonStatus(
                             currentDayTimeTableData[i].startTime,
                             currentDayTimeTableData[i].endTime
                         )
@@ -207,15 +205,6 @@ class HomeFragment : Fragment() {
                     }
                     i++
                 }
-            }
-        }
-    }
-
-    private fun setTimetableData(tData:Map<Int,ArrayList<TimetableItem>>)
-    {
-        binding.apply {
-            viewModel.apply {
-                timetableData = tData
             }
         }
     }
@@ -251,7 +240,7 @@ class HomeFragment : Fragment() {
 
                 for(i in 0 .. 6)
                 {
-                    currentTab = tbLayoutWeekDay.newTab().setText(getDayOfWeek(i))
+                    currentTab = tbLayoutWeekDay.newTab().setText(UtilFunction.getDayOfWeek(i))
                     tbLayoutWeekDay.addTab(currentTab)
                     if(selectedWeekDayTab==i)
                     {

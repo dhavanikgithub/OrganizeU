@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.enum_class.SubjectType
 import com.dk.organizeu.admin_activity.listener.SubjectAddListener
+import com.dk.organizeu.model.SubjectPojo
+import com.dk.organizeu.model.SubjectPojo.Companion.isSubjectDocumentExists
+import com.dk.organizeu.utils.UtilFunction.Companion.hideKeyboard
+import com.dk.organizeu.utils.UtilFunction.Companion.isItemSelected
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
@@ -47,24 +51,29 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
             .setView(view)
             .setTitle("Add Subject")
 
+
+        subjectTypeACTV.setOnClickListener {
+            requireContext().hideKeyboard(it)
+        }
+
         closeButton.setOnClickListener {
             dismiss()
         }
         addButton.setOnClickListener {
             if(isItemSelected(subjectTypeACTV) && subjectNameET.text.toString()!="" && subjectCodeET.text.toString()!="")
             {
-
+                val subjectDocumentId = subjectNameET.text.toString()
                 val roomData = hashMapOf(
                     "code" to subjectCodeET.text.toString(),
                     "type" to subjectTypeACTV.text.toString()
                 )
-                isSubjectDocumentExists(subjectNameET.text.toString()) { exists ->
+                isSubjectDocumentExists(subjectDocumentId) { exists ->
                     if(exists)
                     {
                         closeButton.callOnClick()
                         return@isSubjectDocumentExists
                     }
-                    addNewSubject(subjectNameET.text.toString(),roomData)
+                    addNewSubject(subjectDocumentId,roomData)
                 }
 
             }
@@ -75,43 +84,13 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
 
     private fun addNewSubject(subjectDocumentId:String, subjectData:HashMap<String,String>)
     {
-        db.collection("subject")
-            .document(subjectDocumentId)
-            .set(subjectData)
-            .addOnSuccessListener {
-                Log.d("TAG", "Subject document added successfully with ID: $subjectDocumentId")
-                subjectAddListener?.onSubjectAdded(subjectData,subjectDocumentId)
-                closeButton.callOnClick()
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding subject document", e)
-                closeButton.callOnClick()
-            }
+        SubjectPojo.insertSubjectDocument(subjectDocumentId,subjectData,{
+            Log.d("TAG", "Subject document added successfully with ID: $subjectDocumentId")
+            subjectAddListener?.onSubjectAdded(subjectData,subjectDocumentId)
+            closeButton.callOnClick()
+        },{
+            Log.w("TAG", "Error adding subject document", it)
+            closeButton.callOnClick()
+        })
     }
-
-    private fun isSubjectDocumentExists(roomDocumentId: String, callback: (Boolean) -> Unit) {
-        db.collection("subject")
-            .document(roomDocumentId)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                callback(documentSnapshot.exists())
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TAG", "Error checking document existence", exception)
-                callback(false)
-            }
-    }
-
-
-    private fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {
-        val selectedItem = autoCompleteTextView.text.toString().trim()
-        val adapter = autoCompleteTextView.adapter as ArrayAdapter<String>
-        for (i in 0 until adapter.count) {
-            if (selectedItem == adapter.getItem(i)) {
-                return true
-            }
-        }
-        return false
-    }
-
 }

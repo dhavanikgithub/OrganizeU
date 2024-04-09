@@ -14,6 +14,7 @@ import com.dk.organizeu.admin_activity.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.listener.AcademicAddListener
 import com.dk.organizeu.model.AcademicPojo
 import com.dk.organizeu.model.AcademicPojo.Companion.isAcademicDocumentExists
+import com.dk.organizeu.utils.UtilFunction.Companion.isItemSelected
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -93,20 +94,4 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         }
         return builder.create()
     }
-
-
-
-
-
-    private fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {
-        val selectedItem = autoCompleteTextView.text.toString().trim()
-        val adapter = autoCompleteTextView.adapter as ArrayAdapter<String>
-        for (i in 0 until adapter.count) {
-            if (selectedItem == adapter.getItem(i)) {
-                return true
-            }
-        }
-        return false
-    }
-
 }

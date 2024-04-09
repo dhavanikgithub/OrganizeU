@@ -7,7 +7,7 @@ import kotlin.properties.Delegates
 
 class HomeViewModel : ViewModel() {
     lateinit var timetableAdapter: TimetableAdapter
-    lateinit var timetableData: Map<Int,ArrayList<TimetableItem>>
+    var timetableData: HashMap<Int,ArrayList<TimetableItem>> = HashMap()
     var dayOfWeek by Delegates.notNull<Int>()
     var currentDayTimeTableData = ArrayList<TimetableItem>()
     var selectedWeekDayTab: Int = 0

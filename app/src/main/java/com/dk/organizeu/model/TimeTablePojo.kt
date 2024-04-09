@@ -1,12 +1,13 @@
 package com.dk.organizeu.model
 
+import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.model.ClassPojo.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
 
-class TimeTableClass {
+class TimeTablePojo {
     companion object{
         fun timetableCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): CollectionReference
         {
