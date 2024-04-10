@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.enum_class.AcademicType
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.databinding.FragmentTimetableBinding
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists

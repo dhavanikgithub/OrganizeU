@@ -12,11 +12,11 @@ import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.enum_class.RoomType
-import com.dk.organizeu.admin_activity.enum_class.Weekday
+import com.dk.organizeu.enum_class.RoomType
+import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment
-import com.dk.organizeu.admin_activity.listener.LessonAddListener
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
+import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.BatchRepository
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.repository.LessonRepository
@@ -36,7 +36,7 @@ import java.util.Calendar
 class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFragment() {
     private lateinit var binding: AddLessonDialogLayoutBinding
 
-    private var lessonAddListener: LessonAddListener? = null
+    private var lessonAddListener: AddDocumentListener? = null
 
     private var selectedSubject:String?=null
     private lateinit var subjectList:ArrayList<String>
@@ -67,7 +67,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_lesson_dialog_layout, null)
         binding = AddLessonDialogLayoutBinding.bind(view)
-        lessonAddListener = parentFragment as? LessonAddListener
+        lessonAddListener = parentFragment as? AddDocumentListener
         subjectList = ArrayList()
         facultyList = ArrayList()
         batchList = ArrayList()
@@ -77,7 +77,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                 .setView(view)
                 .setTitle("Add Lesson")
 
-            val lessonTypeList = arrayOf(RoomType.CLASS.name,RoomType.LAB.name)
+            val lessonTypeList = arrayOf(RoomType.CLASS.name, RoomType.LAB.name)
             val lessonTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, lessonTypeList)
             lessonTypeACTV.setAdapter(lessonTypeAdapter)
 
@@ -178,7 +178,8 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     startTimeET.text.toString().isNotEmpty() &&
                     endTimeEL.text.toString().isNotBlank() &&
                     endTimeEL.text.toString().isNotEmpty() &&
-                    ((selectedLessonType.equals(RoomType.LAB.name) && selectedBatch!=null) || (selectedLessonType.equals(RoomType.CLASS.name))))
+                    ((selectedLessonType.equals(RoomType.LAB.name) && selectedBatch!=null) || (selectedLessonType.equals(
+                        RoomType.CLASS.name))))
                 {
                     MainScope().launch(Dispatchers.IO) {
                         AddLessonFragment.apply {

@@ -2,7 +2,7 @@ package com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batc
 
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModel
-import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
+import com.dk.organizeu.adapter.BatchAdapter
 
 class AddBatchViewModel : ViewModel() {
     var academicTypeItemList:ArrayList<String> = ArrayList()
@@ -14,7 +14,7 @@ class AddBatchViewModel : ViewModel() {
     lateinit var academicYearItemAdapter: ArrayAdapter<String>
     lateinit var academicSemItemAdapter: ArrayAdapter<Int>
     lateinit var academicClassItemAdapter: ArrayAdapter<String>
-    lateinit var academicBatchAdapter: AddBatchAdapter
+    lateinit var academicBatchAdapter: BatchAdapter
     var academicYearSelectedItem:String?=null
     var academicTypeSelectedItem:String?=null
     var academicSemSelectedItem:String?=null

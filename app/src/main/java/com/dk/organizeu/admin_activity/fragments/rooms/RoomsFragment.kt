@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.adapter.RoomAdapter
+import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddRoomDialog
-import com.dk.organizeu.admin_activity.listener.OnRoomItemClickListener
-import com.dk.organizeu.admin_activity.listener.RoomAddListener
 import com.dk.organizeu.databinding.FragmentRoomsBinding
+import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomObj
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -22,7 +22,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
+class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     companion object {
         fun newInstance() = RoomsFragment()
@@ -82,10 +82,10 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
         }
     }
 
-    override fun onRoomAdded(roomData: HashMap<String,String>,roomDocumentId:String) {
+    override fun onAdded(documentId: String,documentData: HashMap<String,String>) {
         binding.apply {
             viewModel.apply {
-                val roomItem = roomDocumentToRoomObj(roomDocumentId,roomData)
+                val roomItem = roomDocumentToRoomObj(documentId,documentData)
                 roomPojoList.add(roomItem)
                 roomAdapter.notifyItemInserted(roomAdapter.itemCount)
             }
@@ -93,6 +93,6 @@ class RoomsFragment : Fragment(), RoomAddListener, OnRoomItemClickListener {
 
     }
 
-    override fun onItemClick(position: Int) {
+    override fun onClick(position: Int) {
     }
 }

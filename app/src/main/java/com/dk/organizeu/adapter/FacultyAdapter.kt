@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View

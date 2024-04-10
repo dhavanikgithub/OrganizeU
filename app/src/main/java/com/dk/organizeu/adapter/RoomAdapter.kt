@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,10 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.pojo.RoomPojo
-import com.dk.organizeu.admin_activity.listener.OnRoomItemClickListener
+import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.RoomPojo
 
-class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val listener: OnRoomItemClickListener) :
+
+class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<RoomAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
@@ -24,7 +25,7 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
         holder.roomLocationTxt.text = "Location: ${currentItem.location}"
         holder.roomTypeTxt.text = "Type: ${currentItem.type}"
         holder.itemView.setOnClickListener {
-            listener.onItemClick(position)
+            listener.onClick(position)
         }
     }
 

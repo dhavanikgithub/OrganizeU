@@ -1,7 +1,7 @@
-package com.dk.organizeu.student_activity.pojo
+package com.dk.organizeu.pojo
 
 
-data class TimetableItem(
+data class TimetablePojo(
     val className: String,
     val subjectName: String,
     val subjectCode: String,

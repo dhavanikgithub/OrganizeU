@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.enum_class
+package com.dk.organizeu.enum_class
 
 enum class Weekday(val displayName: String) {
     MONDAY("Monday"),

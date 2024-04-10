@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 
-class AddClassAdapter(private val academicClassList: ArrayList<String>) :
-    RecyclerView.Adapter<AddClassAdapter.AcademicViewHolder>() {
+class ClassAdapter(private val academicClassList: ArrayList<String>) :
+    RecyclerView.Adapter<ClassAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)

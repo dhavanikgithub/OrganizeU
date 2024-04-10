@@ -10,12 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.pojo.AcademicPojo
+import com.dk.organizeu.pojo.AcademicPojo
 import com.dk.organizeu.databinding.FragmentAcademicBinding
-import com.dk.organizeu.admin_activity.adapter.AcademicAdapter
+import com.dk.organizeu.adapter.AcademicAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddAcademicDialog
-import com.dk.organizeu.admin_activity.listener.AcademicAddListener
-import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,10 +24,10 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickListener {
+class Fragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     companion object {
-        fun newInstance() = AcademicFragment()
+        fun newInstance() = com.dk.organizeu.admin_activity.fragments.academic.Fragment()
     }
 
     private lateinit var viewModel: AcademicViewModel
@@ -92,7 +92,7 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
                     }
                     withContext(Dispatchers.Main)
                     {
-                        academicAdapter = AcademicAdapter(academicList,this@AcademicFragment)
+                        academicAdapter = AcademicAdapter(academicList,this@Fragment)
                         rvAcademic.adapter = academicAdapter
                         progressDialog.stop()
                     }
@@ -102,17 +102,17 @@ class AcademicFragment : Fragment(), AcademicAddListener, OnAcademicItemClickLis
     }
 
 
-    override fun onAcademicAdded(academicDocumentId: String) {
+    override fun onAdded(documentId: String,documentData: HashMap<String,String>) {
         binding.apply {
             viewModel.apply {
-                val academicItem = academicDocumentId.split('_')
+                val academicItem = documentId.split('_')
                 academicList.add(AcademicPojo("${academicItem[0]}", "${academicItem[1]}"))
                 academicAdapter.notifyItemInserted(academicAdapter.itemCount)
             }
         }
     }
 
-    override fun onItemClick(position: Int) {
+    override fun onClick(position: Int) {
         binding.apply {
             viewModel.apply {
 //                Toast.makeText(requireContext(),position.toString(),Toast.LENGTH_SHORT).show()

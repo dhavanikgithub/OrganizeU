@@ -1,7 +1,7 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.admin_activity.pojo.SubjectPojo
+import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference

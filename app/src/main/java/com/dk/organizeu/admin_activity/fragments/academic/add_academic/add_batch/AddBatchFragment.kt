@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.adapter.AddBatchAdapter
-import com.dk.organizeu.admin_activity.enum_class.AcademicType
+import com.dk.organizeu.adapter.BatchAdapter
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.dk.organizeu.repository.AcademicRepository
@@ -263,7 +263,7 @@ class AddBatchFragment : Fragment() {
 
                     withContext(Dispatchers.Main)
                     {
-                        academicBatchAdapter = AddBatchAdapter(academicBatchList)
+                        academicBatchAdapter = BatchAdapter(academicBatchList)
                         recyclerView.adapter = academicBatchAdapter
                         progressDialog.stop()
                     }

@@ -1,7 +1,7 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.admin_activity.pojo.RoomPojo
+import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
 import com.google.firebase.firestore.CollectionReference

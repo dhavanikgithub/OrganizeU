@@ -1,7 +1,7 @@
 package com.dk.organizeu.repository
 
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
-import com.dk.organizeu.student_activity.pojo.TimetableItem
+import com.dk.organizeu.pojo.TimetablePojo
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
@@ -40,8 +40,8 @@ class LessonRepository {
                 }
         }
 
-        fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetableItem {
-            return TimetableItem(
+        fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetablePojo {
+            return TimetablePojo(
                 document.get("class_name").toString(),
                 document.get("subject_name").toString(),
                 document.get("subject_code").toString(),

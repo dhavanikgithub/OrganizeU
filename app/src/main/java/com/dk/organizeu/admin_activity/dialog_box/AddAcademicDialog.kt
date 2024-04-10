@@ -9,8 +9,9 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.enum_class.AcademicType
-import com.dk.organizeu.admin_activity.listener.AcademicAddListener
+import com.dk.organizeu.enum_class.AcademicType
+import com.dk.organizeu.listener.AddDocumentListener
+
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.isItemSelected
@@ -25,14 +26,14 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
     private lateinit var academicTypeTIL: AutoCompleteTextView
     private lateinit var addButton: MaterialButton
     private lateinit var closeButton: MaterialButton
-    private var academicAddListener: AcademicAddListener? = null
+    private var academicAddListener: AddDocumentListener? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
 
-        academicAddListener = parentFragment as? AcademicAddListener
+        academicAddListener = parentFragment as? AddDocumentListener
         academicYearACTV = view.findViewById(R.id.actAcademicYear)
         academicTypeTIL = view.findViewById(R.id.actAcademicType)
         addButton = view.findViewById(R.id.btnAdd)
@@ -77,7 +78,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         }
                         MainScope().launch(Dispatchers.IO){
                             AcademicRepository.insertAcademicDocuments(academicDocumentId,academicData,{
-                                academicAddListener?.onAcademicAdded(academicDocumentId)
+                                academicAddListener?.onAdded(academicDocumentId,academicData)
                                 closeButton.callOnClick()
                             },{
 

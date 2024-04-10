@@ -1,8 +1,8 @@
 package com.dk.organizeu.admin_activity.fragments.subjects
 
 import androidx.lifecycle.ViewModel
-import com.dk.organizeu.admin_activity.adapter.SubjectAdapter
-import com.dk.organizeu.admin_activity.pojo.SubjectPojo
+import com.dk.organizeu.adapter.SubjectAdapter
+import com.dk.organizeu.pojo.SubjectPojo
 
 class SubjectsViewModel : ViewModel() {
     lateinit var subjectAdapter: SubjectAdapter

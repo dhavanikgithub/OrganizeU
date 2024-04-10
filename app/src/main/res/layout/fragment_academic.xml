@@ -5,7 +5,7 @@
     android:id="@+id/layoutMainAcademic"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin_activity.fragments.academic.AcademicFragment">
+    tools:context=".admin_activity.fragments.academic.Fragment">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddAcademic"

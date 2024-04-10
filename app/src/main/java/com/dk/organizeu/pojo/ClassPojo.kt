@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.pojo
+package com.dk.organizeu.pojo
 
 data class ClassPojo(
     val className: String,

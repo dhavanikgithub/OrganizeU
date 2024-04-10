@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.pojo.AcademicPojo
-import com.dk.organizeu.admin_activity.listener.OnAcademicItemClickListener
+import com.dk.organizeu.pojo.AcademicPojo
+import com.dk.organizeu.listener.OnItemClickListener
 
-class AcademicAdapter(private val academicList: List<AcademicPojo>, private val listener: OnAcademicItemClickListener) :
+class AcademicAdapter(private val academicList: List<AcademicPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<AcademicAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
@@ -24,7 +24,7 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
         holder.academicTypeTxt.text = "Type: ${currentItem.sem}"
 
         holder.itemView.setOnClickListener {
-            listener.onItemClick(position)
+            listener.onClick(position)
         }
     }
 

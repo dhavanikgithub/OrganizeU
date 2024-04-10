@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 
-class AddBatchAdapter(private val academicBatchList: ArrayList<String>) :
-    RecyclerView.Adapter<AddBatchAdapter.AcademicViewHolder>() {
+class BatchAdapter(private val academicBatchList: ArrayList<String>) :
+    RecyclerView.Adapter<BatchAdapter.AcademicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)

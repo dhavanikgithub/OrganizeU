@@ -12,8 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.adapter.AddSemAdapter
-import com.dk.organizeu.admin_activity.enum_class.AcademicType
+import com.dk.organizeu.adapter.SemAdapter
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.utils.UtilFunction
@@ -223,7 +223,7 @@ class AddSemFragment : Fragment() {
                         }
                     }
                     withContext(Dispatchers.Main){
-                        academicSemAdapter = AddSemAdapter(academicSemList)
+                        academicSemAdapter = SemAdapter(academicSemList)
                         recyclerView.adapter = academicSemAdapter
                         loadAcademicSemACTV()
                         progressDialog.stop()
@@ -319,11 +319,11 @@ class AddSemFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 academicSemItemList.clear()
-                if(academicTypeSelectedItem==AcademicType.EVEN.name)
+                if(academicTypeSelectedItem== AcademicType.EVEN.name)
                 {
                     academicSemItemList.addAll(UtilFunction.evenSemList)
                 }
-                else if(academicTypeSelectedItem==AcademicType.ODD.name){
+                else if(academicTypeSelectedItem== AcademicType.ODD.name){
                     academicSemItemList.addAll(UtilFunction.oddSemList)
                 }
                 for(item in academicSemList)

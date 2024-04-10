@@ -1,4 +1,4 @@
-package com.dk.organizeu.student_activity.adapter
+package com.dk.organizeu.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.student_activity.pojo.TimetableItem
+import com.dk.organizeu.pojo.TimetablePojo
 
-class TimetableAdapter(private val timetableItems: ArrayList<TimetableItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+class LessonAdapter(private val timetablePojos: ArrayList<TimetablePojo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_EMPTY = 0
     private val VIEW_TYPE_ITEM = 1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -30,27 +31,27 @@ class TimetableAdapter(private val timetableItems: ArrayList<TimetableItem>) : R
         /*val item = timetableItems[position]
         holder.bind(item)*/
         if (holder is ItemViewHolder) {
-            holder.bind(timetableItems[position])
+            holder.bind(timetablePojos[position])
         }
     }
     override fun getItemCount(): Int {
-        return if (timetableItems.isEmpty()) {
+        return if (timetablePojos.isEmpty()) {
             1
         } else {
-            timetableItems.size
+            timetablePojos.size
         }
     }
 
     /*override fun getItemCount(): Int = timetableItems.size*/
     override fun getItemViewType(position: Int): Int {
-        return if (timetableItems.isEmpty()) {
+        return if (timetablePojos.isEmpty()) {
             VIEW_TYPE_EMPTY
         } else {
             VIEW_TYPE_ITEM
         }
     }
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: TimetableItem) {
+        fun bind(item: TimetablePojo) {
             itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
             itemView.findViewById<TextView>(R.id.txtLessonSubjectName).text = item.subjectName
             itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime

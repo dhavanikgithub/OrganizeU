@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.dialog_box.AddLessonDialog
-import com.dk.organizeu.admin_activity.enum_class.Weekday
+import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.LessonRepository.Companion.lessonDocumentToLessonObj
-import com.dk.organizeu.student_activity.adapter.TimetableAdapter
+import com.dk.organizeu.adapter.LessonAdapter
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
@@ -116,8 +116,8 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
             viewModel.apply {
                 timetableData.clear()
                 lessonRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-                timetableAdapter = TimetableAdapter(timetableData)
-                lessonRecyclerView.adapter = timetableAdapter
+                lessonAdapter = LessonAdapter(timetableData)
+                lessonRecyclerView.adapter = lessonAdapter
             }
         }
     }
@@ -148,8 +148,8 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                     }
                     withContext(Dispatchers.Main)
                     {
-                        timetableAdapter = TimetableAdapter(timetableData)
-                        lessonRecyclerView.adapter = timetableAdapter
+                        lessonAdapter = LessonAdapter(timetableData)
+                        lessonRecyclerView.adapter = lessonAdapter
                     }
                 }
             }

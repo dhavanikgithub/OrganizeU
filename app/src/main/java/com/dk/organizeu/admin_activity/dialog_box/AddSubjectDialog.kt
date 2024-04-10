@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.enum_class.SubjectType
-import com.dk.organizeu.admin_activity.listener.SubjectAddListener
+import com.dk.organizeu.enum_class.SubjectType
+import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.hideKeyboard
@@ -29,21 +29,24 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
     private lateinit var closeButton: MaterialButton
 
     private lateinit var db: FirebaseFirestore
-    private var subjectAddListener: SubjectAddListener? = null
+    private var subjectAddListener: AddDocumentListener? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_subject_dialog_layout, null)
         db = FirebaseFirestore.getInstance()
-        subjectAddListener = parentFragment as? SubjectAddListener
+        subjectAddListener = parentFragment as? AddDocumentListener
         subjectTypeACTV = view.findViewById(R.id.subjectTypeACTV)
         subjectCodeET = view.findViewById(R.id.subjectCodeET)
         subjectNameET = view.findViewById(R.id.subjectNameET)
         addButton = view.findViewById(R.id.btnAdd)
         closeButton = view.findViewById(R.id.btnClose)
 
-        val subjectTypeList = arrayOf(SubjectType.THEORY.name,SubjectType.PRACTICAL.name,SubjectType.BOTH.name)
+        val subjectTypeList = arrayOf(
+            SubjectType.THEORY.name,
+            SubjectType.PRACTICAL.name,
+            SubjectType.BOTH.name)
         val subjectTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, subjectTypeList)
         subjectTypeACTV.setAdapter(subjectTypeAdapter)
 
@@ -86,7 +89,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
     {
         SubjectRepository.insertSubjectDocument(subjectDocumentId,subjectData,{
             Log.d("TAG", "Subject document added successfully with ID: $subjectDocumentId")
-            subjectAddListener?.onSubjectAdded(subjectData,subjectDocumentId)
+            subjectAddListener?.onAdded(subjectDocumentId,subjectData)
             closeButton.callOnClick()
         },{
             Log.w("TAG", "Error adding subject document", it)

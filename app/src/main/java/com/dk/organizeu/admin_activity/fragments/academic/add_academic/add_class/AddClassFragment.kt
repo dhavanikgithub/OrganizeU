@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.adapter.AddClassAdapter
-import com.dk.organizeu.admin_activity.enum_class.AcademicType
+import com.dk.organizeu.adapter.ClassAdapter
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.databinding.FragmentAddClassBinding
@@ -227,7 +227,7 @@ class AddClassFragment : Fragment() {
                     }
                     withContext(Dispatchers.Main)
                     {
-                        academicClassAdapter = AddClassAdapter(academicClassList)
+                        academicClassAdapter = ClassAdapter(academicClassList)
                         recyclerView.adapter = academicClassAdapter
                         progressDialog.stop()
                     }

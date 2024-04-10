@@ -8,11 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.adapter.SubjectAdapter
+import com.dk.organizeu.adapter.SubjectAdapter
 import com.dk.organizeu.admin_activity.dialog_box.AddSubjectDialog
-import com.dk.organizeu.admin_activity.listener.OnSubjectItemClickListener
-import com.dk.organizeu.admin_activity.listener.SubjectAddListener
 import com.dk.organizeu.databinding.FragmentSubjectsBinding
+import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +21,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListener {
+class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     companion object {
         fun newInstance() = SubjectsFragment()
@@ -81,16 +81,16 @@ class SubjectsFragment : Fragment(), SubjectAddListener, OnSubjectItemClickListe
         }
     }
 
-    override fun onSubjectAdded(subjectData: HashMap<String, String>, subjectDocumentId: String) {
+    override fun onAdded(documentId: String,documentData: HashMap<String,String>) {
         binding.apply {
             viewModel.apply {
-                val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(subjectDocumentId,subjectData)
+                val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(documentId,documentData)
                 subjectPojoList.add(subjectItem)
                 subjectAdapter.notifyItemInserted(subjectAdapter.itemCount)
             }
         }
     }
 
-    override fun onItemClick(position: Int) {
+    override fun onClick(position: Int) {
     }
 }

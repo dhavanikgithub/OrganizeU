@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dk.organizeu.R
 import com.dk.organizeu.admin_activity.AdminActivity
-import com.dk.organizeu.admin_activity.adapter.TabAdapter
+import com.dk.organizeu.adapter.AcademicDetailsTabAdapter
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment
@@ -80,7 +80,7 @@ class AddAcademicFragment : Fragment() {
     private fun loadTabFragment(){
         binding.apply {
             viewModel.apply {
-                val adapter = TabAdapter(childFragmentManager)
+                val adapter = AcademicDetailsTabAdapter(childFragmentManager)
                 adapter.addFragment(AddSemFragment.newInstance(viewModel), "Sem")
                 adapter.addFragment(AddClassFragment.newInstance(viewModel), "Class")
                 adapter.addFragment(AddBatchFragment.newInstance(), "Batch")
