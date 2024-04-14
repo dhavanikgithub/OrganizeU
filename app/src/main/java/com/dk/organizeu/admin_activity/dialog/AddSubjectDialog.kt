@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.dialog_box
+package com.dk.organizeu.admin_activity.dialog
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.enum_class.SubjectType
+import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
@@ -37,9 +38,9 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_subject_dialog_layout, null)
         db = FirebaseFirestore.getInstance()
         subjectAddListener = parentFragment as? AddDocumentListener
-        subjectTypeACTV = view.findViewById(R.id.subjectTypeACTV)
-        subjectCodeET = view.findViewById(R.id.subjectCodeET)
-        subjectNameET = view.findViewById(R.id.subjectNameET)
+        subjectTypeACTV = view.findViewById(R.id.actSubjectType)
+        subjectCodeET = view.findViewById(R.id.etSubjectCode)
+        subjectNameET = view.findViewById(R.id.etSubjectName)
         addButton = view.findViewById(R.id.btnAdd)
         closeButton = view.findViewById(R.id.btnClose)
 
@@ -66,9 +67,9 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
             if(isItemSelected(subjectTypeACTV) && subjectNameET.text.toString()!="" && subjectCodeET.text.toString()!="")
             {
                 val subjectDocumentId = subjectNameET.text.toString()
-                val roomData = hashMapOf(
-                    "code" to subjectCodeET.text.toString(),
-                    "type" to subjectTypeACTV.text.toString()
+                val subjectData = hashMapOf(
+                    SubjectCollection.CODE.displayName to subjectCodeET.text.toString(),
+                    SubjectCollection.TYPE.displayName to subjectTypeACTV.text.toString()
                 )
                 isSubjectDocumentExists(subjectDocumentId) { exists ->
                     if(exists)
@@ -76,7 +77,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                         closeButton.callOnClick()
                         return@isSubjectDocumentExists
                     }
-                    addNewSubject(subjectDocumentId,roomData)
+                    addNewSubject(subjectDocumentId,subjectData)
                 }
 
             }
@@ -84,6 +85,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
         }
         return builder.create()
     }
+
 
     private fun addNewSubject(subjectDocumentId:String, subjectData:HashMap<String,String>)
     {

@@ -15,4 +15,7 @@
     <color name="drawer_menu_text_color">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="dialogBackground">#60000000</color>
+    <color name="danger">#D61C1C</color>
+    <color name="permissionDoneText">#45C560</color>
+    <color name="permissionAllowText">#0C79F5</color>
 </resources>

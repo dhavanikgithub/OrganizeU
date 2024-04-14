@@ -11,12 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
+import com.dk.organizeu.firebase.key_mapping.FacultyCollection
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class FacultyFragment : Fragment() {
 
@@ -49,7 +47,7 @@ class FacultyFragment : Fragment() {
                     val txtFacultyName = etFacultyName.text.toString()
                     if(txtFacultyName!="")
                     {
-                        val inputHashMap = hashMapOf("name" to txtFacultyName)
+                        val inputHashMap = hashMapOf(FacultyCollection.FACULTY_NAME.displayName to txtFacultyName)
                         FacultyRepository.insertFacultyDocument(txtFacultyName,inputHashMap,{
                             facultyList.add(txtFacultyName)
                             facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
@@ -68,10 +66,9 @@ class FacultyFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                progressDialog.start("Loading Faculty...")
+                showProgressBar()
                 MainScope().launch(Dispatchers.IO){
                     facultyList.clear()
-                    rvFaculty.layoutManager = LinearLayoutManager(requireContext())
                     val documents = FacultyRepository.getAllFacultyDocuments()
                     for (document in documents) {
                         facultyList.add(document.id)
@@ -79,11 +76,25 @@ class FacultyFragment : Fragment() {
                     withContext(Dispatchers.Main)
                     {
                         facultyAdapter = FacultyAdapter(facultyList)
+                        rvFaculty.layoutManager = LinearLayoutManager(requireContext())
                         rvFaculty.adapter = facultyAdapter
-                        progressDialog.stop()
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
             }
         }
+    }
+
+    fun showProgressBar()
+    {
+        binding.rvFaculty.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvFaculty.visibility = View.VISIBLE
     }
 }

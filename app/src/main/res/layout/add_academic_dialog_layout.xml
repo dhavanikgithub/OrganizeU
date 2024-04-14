@@ -58,12 +58,8 @@
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_add"
-            android:backgroundTint="@color/primary_color"
-            android:textColor="@color/white"
-            app:iconTint="@color/white"
+            android:text="@string/dialog_btn_add"
+            style="@style/DialogAddButton"
             app:layout_constraintEnd_toStartOf="@+id/btnClose"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -73,19 +69,16 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClose"
+            style="@style/DialogCloseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close"
-            android:textAllCaps="false"
-            app:backgroundTint="#D61C1C"
-            android:textColor="@color/white"
-            app:iconTint="@color/white"
-            app:icon="@drawable/ic_close"
+            android:text="@string/dialog_btn_close"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnAdd"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

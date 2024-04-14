@@ -9,17 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.adapter.SubjectAdapter
-import com.dk.organizeu.admin_activity.dialog_box.AddSubjectDialog
+import com.dk.organizeu.admin_activity.dialog.AddSubjectDialog
 import com.dk.organizeu.databinding.FragmentSubjectsBinding
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
@@ -61,7 +58,7 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     {
         binding.apply {
             viewModel.apply {
-                rvSubjects.layoutManager = LinearLayoutManager(requireContext())
+                showProgressBar()
                 MainScope().launch(Dispatchers.IO)
                 {
                     subjectPojoList.clear()
@@ -74,11 +71,25 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     withContext(Dispatchers.Main)
                     {
                         subjectAdapter = SubjectAdapter(subjectPojoList,this@SubjectsFragment)
+                        rvSubjects.layoutManager = LinearLayoutManager(requireContext())
                         rvSubjects.adapter = subjectAdapter
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
             }
         }
+    }
+    fun showProgressBar()
+    {
+        binding.rvSubjects.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvSubjects.visibility = View.VISIBLE
     }
 
     override fun onAdded(documentId: String,documentData: HashMap<String,String>) {

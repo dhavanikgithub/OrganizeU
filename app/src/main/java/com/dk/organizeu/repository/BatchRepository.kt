@@ -25,7 +25,7 @@ class BatchRepository {
             return batchCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).get().await().documents
         }
 
-        suspend fun insertBatchDocument(
+        fun insertBatchDocument(
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,

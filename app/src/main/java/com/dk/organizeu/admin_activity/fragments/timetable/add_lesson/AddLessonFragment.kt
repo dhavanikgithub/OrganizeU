@@ -5,10 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.admin_activity.dialog_box.AddLessonDialog
+import com.dk.organizeu.admin_activity.dialog.AddLessonDialog
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.repository.LessonRepository
@@ -114,12 +115,26 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
     {
         binding.apply {
             viewModel.apply {
+                showProgressBar()
                 timetableData.clear()
-                lessonRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                rvLesson.layoutManager = LinearLayoutManager(requireContext())
                 lessonAdapter = LessonAdapter(timetableData)
-                lessonRecyclerView.adapter = lessonAdapter
+                rvLesson.adapter = lessonAdapter
+                hideProgressBar()
             }
         }
+    }
+
+    fun showProgressBar()
+    {
+        binding.rvLesson.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvLesson.visibility = View.VISIBLE
     }
     private fun initLesson(weekDay:Int)
     {
@@ -133,23 +148,19 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                     val classDocumentId = className
                     val timetableDocumentId = Weekday.getWeekdayNameByNumber(weekDay)
 
-                    if(semesterDocumentId != null && classDocumentId !=null && timetableDocumentId != null)
+                    val documents = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
+                    var counter = 1
+                    for(document in documents)
                     {
-
-                        val documents = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
-                        var counter = 1
-                        for(document in documents)
-                        {
-                            val lessonItem = lessonDocumentToLessonObj(document,counter)
-                            counter++
-                            timetableData.add(lessonItem)
-                        }
-
+                        val lessonItem = lessonDocumentToLessonObj(document,counter)
+                        counter++
+                        timetableData.add(lessonItem)
                     }
+
                     withContext(Dispatchers.Main)
                     {
                         lessonAdapter = LessonAdapter(timetableData)
-                        lessonRecyclerView.adapter = lessonAdapter
+                        rvLesson.adapter = lessonAdapter
                     }
                 }
             }
@@ -158,5 +169,12 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
 
     override fun onAddLesson() {
         initLesson(selectedTab+1)
+    }
+
+    override fun onConflict() {
+        MainScope().launch(Dispatchers.Main)
+        {
+            Toast.makeText(requireContext(),"Lesson Already Exist", Toast.LENGTH_SHORT).show()
+        }
     }
 }

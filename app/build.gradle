@@ -11,11 +11,12 @@ android {
     defaultConfig {
         applicationId "com.dk.organizeu"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -34,22 +35,34 @@ android {
     buildFeatures {
         viewBinding true
     }
-
 }
 
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.mediarouter:mediarouter:1.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //Compact
     implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    //Material Design
     implementation 'com.google.android.material:material:1.11.0'
+
+    // Constraint Layout
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    //Kotlin
+
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutines"
+
     //Components
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+
     //Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
@@ -57,19 +70,22 @@ dependencies {
     //SDP for responsive layout
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
 
-    
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.core:core-ktx:+'
+    //Firebase
     implementation 'com.google.firebase:firebase-firestore:24.11.0'
     implementation 'com.google.firebase:firebase-database:20.3.1'
     implementation 'com.google.firebase:firebase-storage:20.3.0'
     implementation 'com.google.firebase:firebase-auth:22.3.1'
-    implementation 'androidx.fragment:fragment-ktx:1.5.6'
-    implementation 'androidx.mediarouter:mediarouter:1.7.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    //Fragment
+    implementation 'androidx.fragment:fragment-ktx:1.5.6'
+
+    //Swipe Refresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    //Range Time Picker
+    implementation 'com.github.ashiqursuperfly:Android-Material-Ranged-Time-Picker-Dialog:1.0.2'
+
+    //Dexter Permission
+    implementation 'com.karumi:dexter:6.2.3'
 
 }

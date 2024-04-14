@@ -18,6 +18,7 @@ import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
+import com.dk.organizeu.firebase.key_mapping.BatchCollection
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.BatchRepository
@@ -83,8 +84,8 @@ class AddBatchFragment : Fragment() {
                     {
                         academicClassACTV.setText(academicClassSelectedItem)
                     }
-                    loadactAcademicYear()
-                    loadactAcademicType()
+                    loadACTAcademicYear()
+                    loadACTAcademicType()
                     initRecyclerView()
                     if(academicTypeSelectedItem!=null)
                     {
@@ -117,8 +118,6 @@ class AddBatchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-
-
                 actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
                     tlAcademicType.isEnabled=false
@@ -126,7 +125,7 @@ class AddBatchFragment : Fragment() {
                     academicClassTIL.isEnabled=false
                     academicBatchTIL.isEnabled=false
                     btnAddBatch.isEnabled=false
-                    clearactAcademicType()
+                    clearACTAcademicType()
                     clearAcademicSemACTV()
                     clearAcademicClassACTV()
                     academicBatchList.clear()
@@ -207,7 +206,7 @@ class AddBatchFragment : Fragment() {
                         semesterDocumentId = academicSemSelectedItem
                         classDocumentId = academicClassSelectedItem
                         batchDocumentId = batchET.text.toString()
-                        if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!=null)
+                        if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!="null")
                         {
                             isBatchDocumentExists(academicDocumentId!!,
                                 semesterDocumentId!!, classDocumentId!!, batchDocumentId!!
@@ -216,7 +215,7 @@ class AddBatchFragment : Fragment() {
                                 {
                                     val job = MainScope().launch(Dispatchers.IO) {
                                         val inputHashMap = hashMapOf(
-                                            "batch" to batchET.text.toString()
+                                            BatchCollection.BATCH.displayName to batchET.text.toString()
                                         )
                                         insertBatchDocument(academicDocumentId!!,
                                             semesterDocumentId!!,
@@ -245,15 +244,15 @@ class AddBatchFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
-                progressDialog.start("Loading Batches...")
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                showProgressBar()
+
                 MainScope().launch(Dispatchers.IO)
                 {
                     academicBatchList.clear()
                     academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
                     semesterDocumentId = academicSemSelectedItem
                     classDocumentId = academicClassSelectedItem
-                    if(academicDocumentId!=null && semesterDocumentId != null && classDocumentId!=null)
+                    if(academicDocumentId!="null" && semesterDocumentId != null && classDocumentId!=null)
                     {
                         val documents = BatchRepository.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
                         for (document in documents) {
@@ -264,16 +263,30 @@ class AddBatchFragment : Fragment() {
                     withContext(Dispatchers.Main)
                     {
                         academicBatchAdapter = BatchAdapter(academicBatchList)
-                        recyclerView.adapter = academicBatchAdapter
-                        progressDialog.stop()
+                        rvBatch.layoutManager = LinearLayoutManager(requireContext())
+                        rvBatch.adapter = academicBatchAdapter
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
             }
         }
     }
 
+    fun showProgressBar()
+    {
+        binding.rvBatch.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
 
-    private fun clearactAcademicType()
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvBatch.visibility = View.VISIBLE
+    }
+
+
+    private fun clearACTAcademicType()
     {
         binding.apply {
             viewModel.apply {
@@ -309,7 +322,7 @@ class AddBatchFragment : Fragment() {
         }
     }
 
-    private fun loadactAcademicYear()
+    private fun loadACTAcademicYear()
     {
         binding.apply {
             viewModel.apply {
@@ -333,7 +346,7 @@ class AddBatchFragment : Fragment() {
         }
     }
 
-    private fun loadactAcademicType()
+    private fun loadACTAcademicType()
     {
         binding.apply {
             viewModel.apply {
@@ -373,7 +386,7 @@ class AddBatchFragment : Fragment() {
                 {
                     academicSemItemList.clear()
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                    if(academicDocumentId!=null)
+                    if(academicDocumentId!="null")
                     {
                         val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
                         for (document in documents) {
@@ -400,7 +413,7 @@ class AddBatchFragment : Fragment() {
                     academicClassItemList.clear()
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                     semesterDocumentId = academicSemSelectedItem
-                    if(academicDocumentId!=null && semesterDocumentId!=null)
+                    if(academicDocumentId!="null" && semesterDocumentId!=null)
                     {
                         val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {

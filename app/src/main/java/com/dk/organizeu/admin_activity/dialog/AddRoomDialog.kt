@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.dialog_box
+package com.dk.organizeu.admin_activity.dialog
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.enum_class.RoomType
+import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.UtilFunction
@@ -33,9 +34,9 @@ class AddRoomDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_room_dialog_layout, null)
 
         roomAddListener = parentFragment as? AddDocumentListener
-        roomTypeACTV = view.findViewById(R.id.roomTypeACTV)
-        roomLocationET = view.findViewById(R.id.roomLocationET)
-        roomNameET = view.findViewById(R.id.roomNameET)
+        roomTypeACTV = view.findViewById(R.id.actRoomType)
+        roomLocationET = view.findViewById(R.id.etRoomLocation)
+        roomNameET = view.findViewById(R.id.etRoomName)
         addButton = view.findViewById(R.id.btnAdd)
         closeButton = view.findViewById(R.id.btnClose)
 
@@ -59,8 +60,8 @@ class AddRoomDialog() : AppCompatDialogFragment() {
             {
                 val roomName = roomNameET.text.toString()
                 val roomData = hashMapOf(
-                    "location" to roomLocationET.text.toString(),
-                    "type" to roomTypeACTV.text.toString()
+                    RoomCollection.LOCATION.displayName to roomLocationET.text.toString(),
+                    RoomCollection.TYPE.displayName to roomTypeACTV.text.toString()
 
                 )
                 RoomRepository.isRoomDocumentExists(roomName) { exists ->

@@ -1,4 +1,4 @@
-package com.dk.organizeu.admin_activity.dialog_box
+package com.dk.organizeu.admin_activity.dialog
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -10,6 +10,7 @@ import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
 import com.dk.organizeu.enum_class.AcademicType
+import com.dk.organizeu.firebase.key_mapping.AcademicCollection
 import com.dk.organizeu.listener.AddDocumentListener
 
 import com.dk.organizeu.repository.AcademicRepository
@@ -66,8 +67,8 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                 {
                     val academicDocumentId = "${academicYearACTV.text}_${academicTypeTIL.text}"
                     val academicData = hashMapOf(
-                        "year" to academicYearACTV.text.toString(),
-                        "type" to academicTypeTIL.text.toString()
+                        AcademicCollection.YEAR.displayName to academicYearACTV.text.toString(),
+                        AcademicCollection.TYPE.displayName to academicTypeTIL.text.toString()
                     )
 
                     isAcademicDocumentExists(academicDocumentId) { exists ->

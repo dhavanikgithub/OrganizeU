@@ -18,6 +18,7 @@ import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcadem
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.databinding.FragmentAddSemBinding
+import com.dk.organizeu.firebase.key_mapping.SemesterCollection
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
@@ -183,7 +184,7 @@ class AddSemFragment : Fragment() {
                             if(academicDocumentId!=null && semesterDocumentId!=null)
                             {
                                 val inputHashMap = hashMapOf(
-                                    "sem" to academicSemSelectedItem!!
+                                    SemesterCollection.SEMESTER.displayName to academicSemSelectedItem!!
                                 )
                                 SemesterRepository.insertSemesterDocuments(academicDocumentId!!,semesterDocumentId!!, inputHashMap,{
                                     academicSemList.add(academicSemSelectedItem!!)
@@ -207,12 +208,9 @@ class AddSemFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
-                academicSemLayoutManager = LinearLayoutManager(requireContext())
-                recyclerView.layoutManager = academicSemLayoutManager
-                progressDialog.start("Loading Semester...")
+                showProgressBar()
                 MainScope().launch(Dispatchers.IO)
                 {
-
                     academicSemList.clear()
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                     if(academicDocumentId!=null)
@@ -224,14 +222,29 @@ class AddSemFragment : Fragment() {
                     }
                     withContext(Dispatchers.Main){
                         academicSemAdapter = SemAdapter(academicSemList)
-                        recyclerView.adapter = academicSemAdapter
+                        academicSemLayoutManager = LinearLayoutManager(requireContext())
+                        rvSemester.layoutManager = academicSemLayoutManager
+                        rvSemester.adapter = academicSemAdapter
                         loadAcademicSemACTV()
-                        progressDialog.stop()
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
 
             }
         }
+    }
+
+    fun showProgressBar()
+    {
+        binding.rvSemester.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvSemester.visibility = View.VISIBLE
     }
 
     private fun clearactAcademicType()

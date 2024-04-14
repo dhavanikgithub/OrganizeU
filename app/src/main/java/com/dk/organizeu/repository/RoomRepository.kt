@@ -4,6 +4,7 @@ import android.util.Log
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
+import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -56,16 +57,16 @@ class RoomRepository {
         fun roomDocumentToRoomObj(document:DocumentSnapshot): RoomPojo {
             return RoomPojo(
                 document.id,
-                document.get("location").toString(),
-                document.get("type").toString()
+                document.get(RoomCollection.LOCATION.displayName).toString(),
+                document.get(RoomCollection.TYPE.displayName).toString()
             )
         }
 
         fun roomDocumentToRoomObj(roomDocumentId:String, document:HashMap<String,String>): RoomPojo {
             return RoomPojo(
                 roomDocumentId,
-                document["location"].toString(),
-                document["type"].toString()
+                document[RoomCollection.LOCATION.displayName].toString(),
+                document[RoomCollection.TYPE.displayName].toString()
             )
         }
 

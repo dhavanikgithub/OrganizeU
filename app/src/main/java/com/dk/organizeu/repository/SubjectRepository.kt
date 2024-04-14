@@ -3,6 +3,7 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
+import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -51,11 +52,11 @@ class SubjectRepository {
         }
 
         fun subjectDocumentToSubjectObj(document: DocumentSnapshot): SubjectPojo {
-            return SubjectPojo(document.id,document.get("code").toString(),document.get("type").toString())
+            return SubjectPojo(document.id,document.get(SubjectCollection.CODE.displayName).toString(),document.get(SubjectCollection.TYPE.displayName).toString())
         }
 
         fun subjectDocumentToSubjectObj(subjectDocumentId: String,subjectData: HashMap<String, String>): SubjectPojo {
-            return SubjectPojo(subjectDocumentId,subjectData["code"].toString(),subjectData["type"].toString())
+            return SubjectPojo(subjectDocumentId,subjectData[SubjectCollection.CODE.displayName].toString(),subjectData[SubjectCollection.TYPE.displayName].toString())
         }
 
         fun isSubjectDocumentExists(subjectDocumentId: String, callback: (Boolean) -> Unit) {

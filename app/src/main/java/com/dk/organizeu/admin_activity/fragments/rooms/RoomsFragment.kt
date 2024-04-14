@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.adapter.RoomAdapter
-import com.dk.organizeu.admin_activity.dialog_box.AddRoomDialog
+import com.dk.organizeu.admin_activity.dialog.AddRoomDialog
 import com.dk.organizeu.databinding.FragmentRoomsBinding
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
@@ -17,10 +17,7 @@ import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomObj
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
@@ -62,8 +59,7 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     {
         binding.apply {
             viewModel.apply {
-
-                rvRooms.layoutManager = LinearLayoutManager(requireContext())
+                showProgressBar()
                 MainScope().launch(Dispatchers.IO){
                     roomPojoList.clear()
                     val documents = RoomRepository.getAllRoomDocument()
@@ -75,11 +71,26 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     withContext(Dispatchers.Main)
                     {
                         roomAdapter = RoomAdapter(roomPojoList,this@RoomsFragment)
+                        rvRooms.layoutManager = LinearLayoutManager(requireContext())
                         rvRooms.adapter = roomAdapter
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
             }
         }
+    }
+
+    fun showProgressBar()
+    {
+        binding.rvRooms.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvRooms.visibility = View.VISIBLE
     }
 
     override fun onAdded(documentId: String,documentData: HashMap<String,String>) {

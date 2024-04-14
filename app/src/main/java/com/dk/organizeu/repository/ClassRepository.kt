@@ -24,7 +24,7 @@ class ClassRepository {
             return classCollectionRef(academicDocumentId, semesterDocumentId).get().await().documents
         }
 
-        suspend fun insertClassDocument(
+        fun insertClassDocument(
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,

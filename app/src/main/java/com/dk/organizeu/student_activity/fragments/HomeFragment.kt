@@ -1,21 +1,24 @@
 package com.dk.organizeu.student_activity.fragments
 
-import androidx.lifecycle.ViewModelProvider
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.enum_class.Weekday
+import com.dk.organizeu.adapter.LessonAdapter
 import com.dk.organizeu.databinding.FragmentHomeBinding
+import com.dk.organizeu.enum_class.Weekday
+import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.repository.BatchRepository
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.student_activity.StudentActivity
-import com.dk.organizeu.adapter.LessonAdapter
-import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction
 import com.google.android.material.tabs.TabLayout
@@ -24,7 +27,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 class HomeFragment : Fragment() {
 
@@ -51,6 +54,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+
                 MainScope().launch(Dispatchers.Main) {
                     dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
                         7
@@ -69,8 +73,8 @@ class HomeFragment : Fragment() {
                     }
                     val academicDocumentId = "2024-2025_EVEN"
                     val semesterDocumentId = "2"
-                    val classDocumentId = "CEIT-A"
-                    loadTimeTableData(academicDocumentId, semesterDocumentId, classDocumentId, savedInstanceState)
+                    val classDocumentId = "CEIT-B"
+                    loadTimeTableData(academicDocumentId, semesterDocumentId, classDocumentId)
                 }
 
 
@@ -116,6 +120,13 @@ class HomeFragment : Fragment() {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         viewModel.selectedWeekDayTab = tab.position
                         try{
+                            if(dayOfWeek==tab.position+1)
+                            {
+                                tbLayoutAction.visibility= View.VISIBLE
+                            }
+                            else{
+                                tbLayoutAction.visibility= View.GONE
+                            }
                             if(timetableData[tab.position+1]!!.isNotEmpty())
                             {
                                 loadTimeTable(tab.position+1)
@@ -162,12 +173,16 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private suspend fun loadTimeTableData(academicDocumentId:String,semesterDocumentId:String,classDocumentId:String,savedInstanceState: Bundle?)
+    private suspend fun loadTimeTableData(academicDocumentId:String,semesterDocumentId:String,classDocumentId:String)
     {
         binding.apply {
             viewModel.apply {
                 val timetableList: ArrayList<TimetablePojo> = ArrayList()
+                val batchDocuments = BatchRepository.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+                for(d in batchDocuments)
+                {
 
+                }
                 val timetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicDocumentId,semesterDocumentId, classDocumentId)
                 for(timetableDocument in timetableDocuments)
                 {
@@ -182,13 +197,7 @@ class HomeFragment : Fragment() {
                 withContext(Dispatchers.Main)
                 {
                     loadTabs()
-                    if (savedInstanceState != null) {
-                        rvLesson.layoutManager = LinearLayoutManager(requireContext())
-                        rvLesson.adapter = lessonAdapter
-                    }
-                    else{
-                        initLessonRecyclerView()
-                    }
+                    initLessonRecyclerView()
                     progressDialog.stop()
                 }
             }
@@ -218,18 +227,15 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                if(dayOfWeek==position)
+                if(tbLayoutAction.isVisible)
                 {
-                    tbLayoutAction.visibility= View.VISIBLE
                     val currentTab = tbLayoutAction.getTabAt(0)!!
                     if(currentTab.isSelected)
                     {
                         loadCurrentLesson()
                     }
                 }
-                else{
-                    tbLayoutAction.visibility= View.GONE
-                }
+
             }
         }
     }

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/academicFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.Fragment"
+        android:name="com.dk.organizeu.admin_activity.fragments.academic.AcademicFragment"
         android:label="fragment_academic"
         tools:layout="@layout/fragment_academic" >
         <action

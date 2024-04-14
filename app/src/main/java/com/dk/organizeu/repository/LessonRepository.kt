@@ -1,7 +1,10 @@
 package com.dk.organizeu.repository
 
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
+import com.dk.organizeu.firebase.key_mapping.TimeTableCollection
+import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.utils.UtilFunction.Companion.timeFormat
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
@@ -29,44 +32,78 @@ class LessonRepository {
             successCallback: (HashMap<String, String>) -> Unit,
             failureCallback: (Exception) -> Unit
             ){
-            lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
-                .document()
-                .set(inputHashMap)
-                .addOnSuccessListener {
-                    successCallback(inputHashMap)
-                }
-                .addOnFailureListener {
-                    failureCallback(it)
-                }
+            val myHashMap = hashMapOf(
+                TimeTableCollection.WEEKDAY.displayName to timetableDocumentId
+            )
+            TimeTableRepository.insertTimeTableDocument(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, myHashMap,
+                {
+                    lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
+                        .document()
+                        .set(inputHashMap)
+                        .addOnSuccessListener {
+                            successCallback(inputHashMap)
+                        }
+                        .addOnFailureListener {
+                            failureCallback(it)
+                        }
+                }, {
+
+                })
+
         }
 
         fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetablePojo {
             return TimetablePojo(
-                document.get("class_name").toString(),
-                document.get("subject_name").toString(),
-                document.get("subject_code").toString(),
-                document.get("location").toString(),
-                document.get("start_time").toString(),
-                document.get("end_time").toString(),
-                document.get("duration").toString(),
-                document.get("type").toString(),
-                document.get("faculty").toString(),
+                document.get(WeekdayCollection.CLASS_NAME.displayName).toString(),
+                document.get(WeekdayCollection.SUBJECT_NAME.displayName).toString(),
+                document.get(WeekdayCollection.SUBJECT_CODE.displayName).toString(),
+                document.get(WeekdayCollection.LOCATION.displayName).toString(),
+                document.get(WeekdayCollection.START_TIME.displayName).toString(),
+                document.get(WeekdayCollection.END_TIME.displayName).toString(),
+                document.get(WeekdayCollection.DURATION.displayName).toString(),
+                document.get(WeekdayCollection.TYPE.displayName).toString(),
+                document.get(WeekdayCollection.FACULTY_NAME.displayName).toString(),
                 counter
             )
         }
 
-        fun isLessonDocumentExistByField(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String,fieldName:String,fieldValue:String, callback: (Boolean) -> Unit)
+        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, callback: (Boolean) -> Unit)
         {
-            TimeTableRepository.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
-                .collection("weekday")
-                .whereEqualTo(fieldName, fieldValue)
-                .get()
-                .addOnSuccessListener { documents ->
-                    callback(documents.isEmpty)
+            val lessonStartTime = timeFormat.parse(startTime)
+            val lessonEndTime = timeFormat.parse(endTime)
+            val semesterDocuments = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
+            for(semesterDoc in semesterDocuments)
+            {
+                val classDocuments = ClassRepository.getAllClassDocuments(academicDocumentId, semesterDoc.id)
+                for (classDoc in classDocuments)
+                {
+                    val lessonDocuments = getAllLessonDocuments(academicDocumentId, semesterDoc.id, classDoc.id, timetableDocumentId)
+                    for(lessonDoc in lessonDocuments)
+                    {
+                        val parsedStartTime = timeFormat.parse(lessonDoc.get(WeekdayCollection.START_TIME.displayName).toString())
+                        val parsedEndTime = timeFormat.parse(lessonDoc.get(WeekdayCollection.END_TIME.displayName).toString())
+                        if (parsedStartTime != null) {
+                            if (parsedEndTime != null) {
+                                if (parsedStartTime.before(lessonEndTime) && parsedEndTime.after(lessonStartTime)) {
+                                    if (semesterDoc.id != semesterDocumentId)
+                                    {
+                                        if (facultyName == (lessonDoc.get(WeekdayCollection.FACULTY_NAME.displayName).toString()))
+                                        {
+                                            callback(true)
+                                            return
+                                        }
+                                    }
+                                    else{
+                                        callback(true)
+                                        return
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                .addOnFailureListener {
-                    callback(false)
-                }
+            }
+            callback(false)
         }
     }
 }

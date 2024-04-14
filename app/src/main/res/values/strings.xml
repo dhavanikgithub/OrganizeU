@@ -11,7 +11,7 @@
     <string name="ic_menu_text">Menu Icon</string>
 
 
-    <string name="userImageDrawerMenu">Profile Image</string>
+    <string name="user_image_drawer_menu">Profile Image</string>
     <string name="userNameTextDrawerMenu">Student Name</string>
     <string name="AdminNameTextDrawerMenu">Admin Name</string>
     <string name="userOtherDetailsTextDrawerMenu">Sem: 8 Class: A Lab: AB5</string>
@@ -23,4 +23,24 @@
     <string name="textFacultyName">MDT</string>
     <string name="textDuration">50 min</string>
     <string name="textType">LAB</string>
+    <string name="dialog_btn_add">Add</string>
+    <string name="dialog_btn_close">Close</string>
+
+    <string name="need_permissions">Need Permissions</string>
+    <string name="permission_description_1">In order for you use certain features of this app, you need to give permission. See description for each permission</string>
+    <string name="storage_permission_image_description">Storage/Image Access Image</string>
+    <string name="storage_permission_name">Photo Library</string>
+    <string name="storage_permission_description">Allow to access your photos</string>
+    <string name="camera_permission_image_description">Camera Permission Image</string>
+    <string name="camera_permission_name">Camera</string>
+    <string name="camera_permission_description">Allow to access your camera</string>
+    <string name="permission_description_2">Permission are necessary for all the features and functions to work properly.</string>
+    <string name="Allow">ALLOW</string>
+    <string name="Done">Done</string>
+    <string name="let_s_start">Let\'s Start</string>
+
+    <string name="hint_select_subject_type">Select Subject Type</string>
+    <string name="hint_subject_code">Subject Code</string>
+    <string name="hint_subject_name">Subject Name</string>
+
 </resources>

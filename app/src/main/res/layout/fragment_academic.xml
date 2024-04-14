@@ -5,7 +5,7 @@
     android:id="@+id/layoutMainAcademic"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin_activity.fragments.academic.Fragment">
+    tools:context=".admin_activity.fragments.academic.AcademicFragment">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddAcademic"
@@ -20,6 +20,21 @@
         app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddAcademic"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:progressTint="@color/primary_color"/>
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAcademic"
         android:layout_width="match_parent"
@@ -27,6 +42,5 @@
         android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnAddAcademic"
-
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

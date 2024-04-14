@@ -24,7 +24,7 @@ class UtilFunction {
         val calendar = Calendar.getInstance()
 
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-        val timeFormat = SimpleDateFormat("hh:mm", Locale.ENGLISH)
+        val timeFormat = SimpleDateFormat("hh:mm aa", Locale.ENGLISH)
 
         fun getCurrentDate():String
         {
@@ -141,5 +141,12 @@ class UtilFunction {
             // Return an empty string if there's any error
             return ""
         }
+        fun convertTo12HourFormat(hour: Int, minute: Int): String {
+            val period = if (hour < 12) "AM" else "PM"
+            val hour12 = if (hour % 12 == 0) 12 else hour % 12
+            val minuteStr = if (minute < 10) "0$minute" else "$minute"
+            return "$hour12:$minuteStr $period"
+        }
+
     }
 }

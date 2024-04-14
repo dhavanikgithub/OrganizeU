@@ -8,18 +8,18 @@
     android:padding="10dp">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/subjectNameTIL"
+        android:id="@+id/tlSubjectName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:hint="Subject Name"
+        android:hint="@string/hint_subject_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/subjectNameET"
+            android:id="@+id/etSubjectName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -28,19 +28,19 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/subjectCodeTIL"
+        android:id="@+id/tlSubjectCode"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Subject Code"
+        android:hint="@string/hint_subject_code"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/subjectNameTIL">
+        app:layout_constraintTop_toBottomOf="@id/tlSubjectName">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/subjectCodeET"
+            android:id="@+id/etSubjectCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
@@ -49,42 +49,38 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/subjectTypeTIL"
+        android:id="@+id/tlSubjectType"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
-        android:hint="Select Subject Type"
-        app:layout_constraintTop_toBottomOf="@id/subjectCodeTIL"
+        android:hint="@string/hint_select_subject_type"
+        app:layout_constraintTop_toBottomOf="@id/tlSubjectCode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <AutoCompleteTextView
-            android:id="@+id/subjectTypeACTV"
+            android:id="@+id/actSubjectType"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
-            tools:text="Theory" />
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/subjectTypeTIL"
+        app:layout_constraintTop_toBottomOf="@id/tlSubjectType"
         android:layout_marginTop="10dp">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_add"
-            android:backgroundTint="@color/primary_color"
-            android:textColor="@color/white"
-            app:iconTint="@color/white"
+            android:text="@string/dialog_btn_add"
+            style="@style/DialogAddButton"
             app:layout_constraintEnd_toStartOf="@+id/btnClose"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,12 +92,8 @@
             android:id="@+id/btnClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close"
-            android:textAllCaps="false"
-            app:backgroundTint="#D61C1C"
-            android:textColor="@color/white"
-            app:iconTint="@color/white"
-            app:icon="@drawable/ic_close"
+            android:text="@string/dialog_btn_close"
+            style="@style/DialogCloseButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnAdd"

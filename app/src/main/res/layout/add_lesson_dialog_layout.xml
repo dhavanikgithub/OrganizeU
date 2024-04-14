@@ -9,8 +9,8 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/subjectTIL"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/tlSubject"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -18,11 +18,12 @@
         android:hint="Select Subject"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
 
         <AutoCompleteTextView
-            android:id="@+id/subjectACTV"
+            android:id="@+id/actSubject"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -31,20 +32,20 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/facultyTIL"
+        android:id="@+id/tlFaculty"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:hint="Select Faculty"
-        app:layout_constraintTop_toBottomOf="@+id/subjectTIL"
+        app:layout_constraintTop_toBottomOf="@+id/tlSubject"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <AutoCompleteTextView
-            android:id="@+id/facultyACTV"
+            android:id="@+id/actFaculty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -53,20 +54,20 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/lessonTypeTIL"
+        android:id="@+id/tlLessonType"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:hint="Select Lesson Type"
-        app:layout_constraintTop_toBottomOf="@+id/facultyTIL"
+        app:layout_constraintTop_toBottomOf="@+id/tlFaculty"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <AutoCompleteTextView
-            android:id="@+id/lessonTypeACTV"
+            android:id="@+id/actLessonType"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -76,14 +77,14 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/batchTIL"
+        android:id="@+id/tlBatch"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:hint="Select Batch"
-        app:layout_constraintTop_toBottomOf="@+id/lessonTypeTIL"
+        app:layout_constraintTop_toBottomOf="@+id/tlLessonType"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="gone"
@@ -91,7 +92,7 @@
 
 
         <AutoCompleteTextView
-            android:id="@+id/batchACTV"
+            android:id="@+id/actBatch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -99,71 +100,28 @@
             tools:text="AB5" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout5"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tlSelectLessonTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tlBatch"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/batchTIL"
-        tools:layout_editor_absoluteX="20dp">
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <TextView
+            android:id="@+id/txtSelectLessonTime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:hint="Select Lesson Time"
+            android:drawableStart="@drawable/ic_start_time"
+            android:drawableEnd="@drawable/ic_add"
+            android:padding="10dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/startTimeTIL"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="5dp"
-            android:hint="Begining Time"
-            app:helperTextEnabled="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/endTimeTIL"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/startTimeET"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_start_time"
-                android:drawablePadding="10dp"
-                android:focusable="false"
-                android:inputType="none"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/endTimeTIL"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="5dp"
-            android:hint="End Time"
-            app:helperTextEnabled="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/startTimeTIL"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/endTimeEL"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_end_time"
-                android:drawablePadding="10dp"
-                android:focusable="false"
-                android:inputType="none" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/roomTIL"
+        android:id="@+id/tlRoom"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -172,11 +130,11 @@
         android:hint="Select Room"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/tlSelectLessonTime">
 
 
         <AutoCompleteTextView
-            android:id="@+id/roomACTV"
+            android:id="@+id/actRoom"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -186,23 +144,18 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/roomTIL"
+        app:layout_constraintTop_toBottomOf="@id/tlRoom"
         tools:layout_editor_absoluteX="10dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary_color"
-            android:text="Add"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:icon="@drawable/ic_add"
-            app:iconTint="@color/white"
+            android:text="@string/dialog_btn_add"
+            style="@style/DialogAddButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnClose"
             app:layout_constraintHorizontal_bias="0.5"
@@ -213,12 +166,8 @@
             android:id="@+id/btnClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:backgroundTint="#D61C1C"
-            app:icon="@drawable/ic_close"
-            app:iconTint="@color/white"
+            android:text="@string/dialog_btn_close"
+            style="@style/DialogCloseButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

@@ -19,16 +19,14 @@ import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.databinding.FragmentAddClassBinding
+import com.dk.organizeu.firebase.key_mapping.ClassCollection
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.ClassRepository.Companion.isClassDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class AddClassFragment : Fragment() {
 
@@ -189,7 +187,7 @@ class AddClassFragment : Fragment() {
                                 MainScope().launch(Dispatchers.IO)
                                 {
                                     val inputHashMap = hashMapOf(
-                                        "class" to classET.text.toString()
+                                        ClassCollection.CLASS.displayName to classET.text.toString()
                                     )
                                     ClassRepository.insertClassDocument(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!,inputHashMap,{
                                         academicClassList.add(classET.text.toString())
@@ -211,14 +209,13 @@ class AddClassFragment : Fragment() {
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
-                progressDialog.start("Loading Classes...")
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                showProgressBar()
                 MainScope().launch(Dispatchers.IO)
                 {
                     academicClassList.clear()
                     academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                     semesterDocumentId = academicSemSelectedItem
-                    if(academicDocumentId!=null && semesterDocumentId!=null)
+                    if(academicDocumentId!="null" && semesterDocumentId!=null)
                     {
                         val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
                         for (document in documents) {
@@ -228,8 +225,10 @@ class AddClassFragment : Fragment() {
                     withContext(Dispatchers.Main)
                     {
                         academicClassAdapter = ClassAdapter(academicClassList)
-                        recyclerView.adapter = academicClassAdapter
-                        progressDialog.stop()
+                        rvClass.layoutManager = LinearLayoutManager(requireContext())
+                        rvClass.adapter = academicClassAdapter
+                        delay(500)
+                        hideProgressBar()
                     }
                 }
 
@@ -337,6 +336,17 @@ class AddClassFragment : Fragment() {
                 }
             }
         }
+    }
+    fun showProgressBar()
+    {
+        binding.rvClass.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar()
+    {
+        binding.progressBar.visibility = View.GONE
+        binding.rvClass.visibility = View.VISIBLE
     }
 
 }

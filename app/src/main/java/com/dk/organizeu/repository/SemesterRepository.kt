@@ -21,7 +21,7 @@ class SemesterRepository {
             return semesterCollectionRef(academicDocumentId).get().await().documents
         }
 
-        suspend fun insertSemesterDocuments(
+        fun insertSemesterDocuments(
             academicDocumentId: String,
             semesterDocumentId:String,
             inputHashMap:HashMap<String,String>,

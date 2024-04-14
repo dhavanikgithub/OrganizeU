@@ -11,8 +11,7 @@ class TimeTableRepository {
     companion object{
         fun timetableCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): CollectionReference
         {
-            return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId)
-                .collection(FirebaseConfig.TIMETABLE_COLLECTION)
+            return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId).collection(FirebaseConfig.TIMETABLE_COLLECTION)
         }
 
         fun timetableDocumentRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String): DocumentReference {
@@ -20,10 +19,11 @@ class TimeTableRepository {
         }
 
         suspend fun getAllTimeTableDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): MutableList<DocumentSnapshot> {
-            return timetableCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).get().await().documents
+            return timetableCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId)
+                .get().await().documents
         }
 
-        suspend fun insertTimeTableDocument(
+        fun insertTimeTableDocument(
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,
