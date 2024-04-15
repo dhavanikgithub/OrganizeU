@@ -24,6 +24,7 @@ import com.dk.organizeu.utils.UtilFunction
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -69,7 +70,7 @@ class HomeFragment : Fragment() {
 
                     withContext(Dispatchers.Main)
                     {
-                        progressDialog.start("Loading Timetable...")
+                        showProgressBar()
                     }
                     val academicDocumentId = "2024-2025_EVEN"
                     val semesterDocumentId = "2"
@@ -173,6 +174,22 @@ class HomeFragment : Fragment() {
         }
     }
 
+    fun showProgressBar()
+    {
+        binding.apply {
+            rvLesson.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        }
+    }
+
+    fun hideProgressBar()
+    {
+        binding.apply {
+            progressBar.visibility = View.GONE
+            rvLesson.visibility = View.VISIBLE
+        }
+    }
+
     private suspend fun loadTimeTableData(academicDocumentId:String,semesterDocumentId:String,classDocumentId:String)
     {
         binding.apply {
@@ -198,7 +215,8 @@ class HomeFragment : Fragment() {
                 {
                     loadTabs()
                     initLessonRecyclerView()
-                    progressDialog.stop()
+                    delay(500)
+                    hideProgressBar()
                 }
             }
         }

@@ -60,6 +60,7 @@
 
     </LinearLayout>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutRecyclerView"
         android:layout_width="match_parent"
@@ -73,6 +74,18 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:padding="10dp" />
+
+        <LinearLayout
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
