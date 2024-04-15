@@ -23,8 +23,8 @@ class UtilFunction {
 
         val calendar = Calendar.getInstance()
 
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
-        val timeFormat = SimpleDateFormat("hh:mm aa", Locale.ENGLISH)
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("hh:mm aa", Locale.getDefault())
 
         fun getCurrentDate():String
         {
