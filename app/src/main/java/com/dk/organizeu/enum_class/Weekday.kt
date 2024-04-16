@@ -1,5 +1,8 @@
 package com.dk.organizeu.enum_class
 
+import android.system.SystemCleaner
+import java.util.Calendar
+
 enum class Weekday(val displayName: String) {
     MONDAY("Monday"),
     TUESDAY("Tuesday"),
@@ -20,6 +23,21 @@ enum class Weekday(val displayName: String) {
                 6 -> SATURDAY.displayName
                 7 -> SUNDAY.displayName
                 else -> throw IllegalArgumentException("Invalid day number: $dayNumber. Day number should be between 1 and 7.")
+            }
+        }
+
+        fun getSystemWeekDayByNumber(dayNumber:Int): Int {
+            return when(dayNumber){
+                1 -> Calendar.MONDAY
+                2 -> Calendar.TUESDAY
+                3 -> Calendar.WEDNESDAY
+                4 -> Calendar.THURSDAY
+                5 -> Calendar.FRIDAY
+                6 -> Calendar.SATURDAY
+                7 -> Calendar.SUNDAY
+                else -> {
+                    0
+                }
             }
         }
 

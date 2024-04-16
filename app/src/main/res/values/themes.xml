@@ -13,9 +13,8 @@
         <!--<item name="android:statusBarColor">?attr/colorPrimaryVariant</item>-->
         <!-- Customize your theme here. -->
     </style>
-    <style name="CustomTabTextAppearance" parent="TextAppearance.MaterialComponents.Button">
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">14sp</item>
+    <style name="CustomTabTextAppearance">
+        <item name="android:textSize">12sp</item>
     </style>
     <style name="ProgressBar">
         <item name="android:indeterminateTint">@color/primary_color</item>
@@ -38,4 +37,5 @@
         <item name="icon">@drawable/ic_add</item>
         <item name="iconTint">@color/white</item>
     </style>
+
 </resources>

@@ -21,7 +21,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <receiver
-            android:name=".utils.LessonReminderReceiver"
+            android:name=".broadcast_receiver.LessonReminderReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
 

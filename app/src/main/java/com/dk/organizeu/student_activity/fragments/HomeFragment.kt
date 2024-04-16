@@ -5,11 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +22,10 @@ import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.student_activity.StudentActivity
 import com.dk.organizeu.utils.CustomProgressDialog
-import com.dk.organizeu.utils.LessonReminderReceiver
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_END_LESSON
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_START_LESSON
+import com.dk.organizeu.utils.LessonMuteManagement
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.timeFormat
 import com.google.android.material.tabs.TabLayout
@@ -33,7 +34,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -46,6 +46,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var binding: FragmentHomeBinding
     private lateinit var progressDialog: CustomProgressDialog
+    private lateinit var lessonMuteManagement: LessonMuteManagement
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +56,7 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.bind(view)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
+        lessonMuteManagement = LessonMuteManagement()
         return view
     }
 
@@ -62,10 +64,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-                scheduleLessonAlarm(requireContext(),"11:58 PM",LessonReminderReceiver.ACTION_START_LESSON,0,Calendar.MONDAY)
-                //editLessonAlarm(requireContext(),"11:34 PM",LessonReminderReceiver.ACTION_START_LESSON,0)
-                scheduleLessonAlarm(requireContext(),"11:59 PM",LessonReminderReceiver.ACTION_END_LESSON,1,Calendar.MONDAY)
-                //cancelLessonAlarm(requireContext(),LessonReminderReceiver.ACTION_END_LESSON,1)
+
                 MainScope().launch(Dispatchers.Main) {
                     dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
                         7
@@ -100,10 +99,11 @@ class HomeFragment : Fragment() {
                             1 -> {
                                 try {
                                     if(timetableData[dayOfWeek]!=null) {
-                                        currentDayTimeTableData.clear()
+                                        currentDayTimeTableData.value!!.clear()
                                         //timetableAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.count())
-                                        currentDayTimeTableData.addAll(timetableData[dayOfWeek]!!)
-                                        lessonAdapter = LessonAdapter(currentDayTimeTableData)
+                                        currentDayTimeTableData.value!!.addAll(timetableData[dayOfWeek]!!)
+                                        currentDayTimeTableData.value = currentDayTimeTableData.value
+                                        lessonAdapter = LessonAdapter(currentDayTimeTableData.value!!)
                                         rvLesson.adapter = lessonAdapter
                                         //timetableAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.count())
                                     }
@@ -138,9 +138,9 @@ class HomeFragment : Fragment() {
                             }
                         }
                         catch (e:Exception){
-                            if(currentDayTimeTableData.size>0)
+                            if(currentDayTimeTableData.value!!.size>0)
                             {
-                                currentDayTimeTableData.clear()
+                                currentDayTimeTableData.value!!.clear()
                                 lessonAdapter.notifyDataSetChanged()
                             }
                         }
@@ -178,99 +178,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun editLessonAlarm(context: Context, lessonTime: String, action: String, requestCode: Int) {
-        // Cancel the existing alarm
-        cancelLessonAlarm(context, action, requestCode)
-
-        // Schedule a new alarm with the updated time
-        scheduleLessonAlarm(context, lessonTime, action, requestCode)
-    }
-
-    fun scheduleLessonAlarm(context: Context, lessonTime: String, action: String, requestCode:Int) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, LessonReminderReceiver::class.java).apply {
-            this.action = action
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        if (pendingIntent != null) {
-            cancelLessonAlarm(context,action,requestCode)
-        }
-
-        val newPendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        val calendar = Calendar.getInstance()
-        calendar.time = timeFormat.parse(lessonTime)!!
-
-        // Set calendar to today's date but with the time from lessonTime
-        val now = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, now.get(Calendar.YEAR))
-        calendar.set(Calendar.MONTH, now.get(Calendar.MONTH))
-        calendar.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH))
-
-        // If the lesson time is in the past, schedule it for the next day
-        if (calendar.timeInMillis <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
-        }
-
-        // Set alarm
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, newPendingIntent)
-    }
-
-    fun scheduleLessonAlarm(context: Context, lessonTime: String, action: String, requestCode: Int, lessonWeekday: Int) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, LessonReminderReceiver::class.java).apply {
-            this.action = action
-        }
-
-        // Check if the alarm already exists
-        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        if (pendingIntent != null) {
-            cancelLessonAlarm(context, action, requestCode)
-        }
-
-        // Create a new PendingIntent
-        val newPendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        val calendar = Calendar.getInstance()
-        calendar.time = timeFormat.parse(lessonTime)!!
-
-        // Set the time of the lesson
-        val lessonHour = calendar.get(Calendar.HOUR_OF_DAY)
-        val lessonMinute = calendar.get(Calendar.MINUTE)
-
-        // Calculate the next occurrence of the lesson based on the current day of the week and the specified lesson weekday
-        val today = Calendar.getInstance()
-        val daysUntilNextLesson = (lessonWeekday - today.get(Calendar.DAY_OF_WEEK) + 7) % 7
-        val nextLessonDate = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_MONTH, daysUntilNextLesson)
-            set(Calendar.HOUR_OF_DAY, lessonHour)
-            set(Calendar.MINUTE, lessonMinute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        // Set the alarm to repeat every week
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            nextLessonDate.timeInMillis,
-            AlarmManager.INTERVAL_DAY * 7,
-            newPendingIntent
-        )
-    }
-
-
-    fun cancelLessonAlarm(context: Context, action: String, requestCode: Int) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, LessonReminderReceiver::class.java).apply {
-            this.action = action
-        }
-        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.cancel(pendingIntent)
-        pendingIntent.cancel()
-    }
 
     fun showProgressBar()
     {
@@ -294,21 +201,22 @@ class HomeFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 val timetableList: ArrayList<TimetablePojo> = ArrayList()
-                val batchDocuments = BatchRepository.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
-                for(d in batchDocuments)
-                {
-
-                }
                 val timetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicDocumentId,semesterDocumentId, classDocumentId)
                 for(timetableDocument in timetableDocuments)
                 {
+                    timetableList.clear()
+                    val weekDayNumber = Weekday.getWeekdayNumberByName(timetableDocument.id)
                     val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocument.id,"start_time")
                     var count = 1
+                    var lesson:TimetablePojo
                     for(lessonDocument in lessonDocuments)
                     {
-                        timetableList.add(LessonRepository.lessonDocumentToLessonObj(lessonDocument,count++))
+                        lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument,count++)
+                        timetableList.add(lesson)
+                        //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,totalLessonCount++,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                        //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,totalLessonCount++,Weekday.getSystemWeekDayByNumber(weekDayNumber))
                     }
-                    timetableData[Weekday.getWeekdayNumberByName(timetableDocument.id)] = ArrayList(timetableList)
+                    timetableData[weekDayNumber] = ArrayList(timetableList)
                 }
                 withContext(Dispatchers.Main)
                 {
@@ -325,22 +233,22 @@ class HomeFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                if(currentDayTimeTableData.size==0)
+                if(currentDayTimeTableData.value!!.size==0)
                 {
                     if(timetableData[position]!=null)
                     {
-                        currentDayTimeTableData.addAll(timetableData[position]!!)
-                        lessonAdapter = LessonAdapter(currentDayTimeTableData)
+                        currentDayTimeTableData.value!!.addAll(timetableData[position]!!)
+                        lessonAdapter = LessonAdapter(currentDayTimeTableData.value!!)
                         rvLesson.adapter = lessonAdapter
                     }
                 }
                 else{
-                    lessonAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.count())
-                    currentDayTimeTableData.clear()
+                    lessonAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.value!!.count())
+                    currentDayTimeTableData.value!!.clear()
                     if(timetableData[position]!=null)
                     {
-                        currentDayTimeTableData.addAll(timetableData[position]!!)
-                        lessonAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.count())
+                        currentDayTimeTableData.value!!.addAll(timetableData[position]!!)
+                        lessonAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.value!!.count())
                     }
                 }
 
@@ -361,17 +269,17 @@ class HomeFragment : Fragment() {
     {
         binding.apply {
             viewModel.apply {
-                var len = currentDayTimeTableData.size
+                var len = currentDayTimeTableData.value!!.size
                 var i = 0
                 while (i<len)
                 {
                     if (!UtilFunction.checkLessonStatus(
-                            currentDayTimeTableData[i].startTime,
-                            currentDayTimeTableData[i].endTime
+                            currentDayTimeTableData.value!![i].startTime,
+                            currentDayTimeTableData.value!![i].endTime
                         )
                     )
                     {
-                        currentDayTimeTableData.removeAt(i)
+                        currentDayTimeTableData.value!!.removeAt(i)
                         lessonAdapter.notifyItemRemoved(i)
                         len--
                         i--
@@ -387,15 +295,15 @@ class HomeFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 rvLesson.layoutManager = LinearLayoutManager(requireContext())
-                currentDayTimeTableData.clear()
+                currentDayTimeTableData.value!!.clear()
                 if(timetableData[selectedWeekDayTab+1]!=null)
                 {
-                    currentDayTimeTableData.addAll(timetableData[selectedWeekDayTab+1]!!)
+                    currentDayTimeTableData.value!!.addAll(timetableData[selectedWeekDayTab+1]!!)
                 }
                 else{
-                    currentDayTimeTableData.addAll(ArrayList())
+                    currentDayTimeTableData.value!!.addAll(ArrayList())
                 }
-                lessonAdapter = LessonAdapter(currentDayTimeTableData)
+                lessonAdapter = LessonAdapter(currentDayTimeTableData.value!!)
                 if(tbLayoutAction.selectedTabPosition==0 && selectedTab==0 && tbLayoutAction.isVisible)
                 {
                     loadCurrentLesson()

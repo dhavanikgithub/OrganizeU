@@ -67,7 +67,7 @@ class LessonRepository {
             )
         }
 
-        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, callback: (Boolean) -> Unit)
+        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, roomName:String, callback: (Boolean) -> Unit)
         {
             val lessonStartTime = timeFormat.parse(startTime)
             val lessonEndTime = timeFormat.parse(endTime)
@@ -88,6 +88,11 @@ class LessonRepository {
                                     if (semesterDoc.id != semesterDocumentId)
                                     {
                                         if (facultyName == (lessonDoc.get(WeekdayCollection.FACULTY_NAME.displayName).toString()))
+                                        {
+                                            callback(true)
+                                            return
+                                        }
+                                        else if(roomName == (lessonDoc.get(WeekdayCollection.LOCATION.displayName)))
                                         {
                                             callback(true)
                                             return

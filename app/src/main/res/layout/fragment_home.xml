@@ -24,6 +24,7 @@
             app:tabIndicatorHeight="3dp"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorColor="@color/white"
+            app:tabTextAppearance="@style/CustomTabTextAppearance"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <com.google.android.material.card.MaterialCardView
@@ -50,11 +51,11 @@
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@android:color/transparent"
                 app:tabIndicatorHeight="0dp"
-                app:tabMode="fixed"
                 app:tabRippleColor="@android:color/transparent"
                 app:tabSelectedTextColor="@color/white"
                 app:tabTextAppearance="@style/CustomTabTextAppearance"
-                app:tabTextColor="@color/tab_layout_text"/>
+                app:tabTextColor="@color/tab_layout_text">
+            </com.google.android.material.tabs.TabLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

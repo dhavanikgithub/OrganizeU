@@ -1,4 +1,4 @@
-package com.dk.organizeu.utils
+package com.dk.organizeu.broadcast_receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

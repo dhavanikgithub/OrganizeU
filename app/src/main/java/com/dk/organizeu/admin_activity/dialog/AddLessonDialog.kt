@@ -174,7 +174,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                             val classDocumentId = className
                             val timetableDocumentId = Weekday.getWeekdayNameByNumber((selectedTab+1))
 
-                            isLessonDocumentConflict(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,selectedLessonTime[0],selectedLessonTime[1],selectedFaculty!!) {
+                            isLessonDocumentConflict(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,selectedLessonTime[0],selectedLessonTime[1],selectedFaculty!!,"$selectedRoom - ${roomData.location}") {
                                 if(!it)
                                 {
                                     LessonRepository.insertLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,dataSet,{
