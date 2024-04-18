@@ -37,7 +37,6 @@ class AdminActivity : AppCompatActivity() {
             ).build()
 
             navController = navHostFragment.findNavController()
-            val appBarConfiguration = AppBarConfiguration(navController.graph)
             setupActionBarWithNavController(navController, appBarConfiguration)
 
 

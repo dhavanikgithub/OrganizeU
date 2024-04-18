@@ -32,7 +32,6 @@ class StudentActivity : AppCompatActivity() {
             ).build()
 
             navController = navHostFragment.findNavController()
-            val appBarConfiguration = AppBarConfiguration(navController.graph)
             setupActionBarWithNavController(navController, appBarConfiguration)
 
             /*val mainMenuIcon = findViewById<ImageView>(R.id.iconMenu)

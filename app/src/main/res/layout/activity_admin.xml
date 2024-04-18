@@ -26,8 +26,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
-
-
         </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.fragment.app.FragmentContainerView
