@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.adapter.LessonAdapter
+import com.dk.organizeu.admin_activity.AdminActivity
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.pojo.TimetablePojo
@@ -177,6 +178,7 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
 
 
     fun showProgressBar()
@@ -358,5 +360,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as? StudentActivity)?.drawerMenuSelect(R.id.nav_home)
+        (activity as? StudentActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? StudentActivity)?.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
     }
 }

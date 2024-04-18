@@ -21,6 +21,10 @@ class FacultyRepository {
             return facultyCollectionRef().get().await().documents
         }
 
+        suspend fun getFacultyDocumentById(facultyDocumentId:String): DocumentSnapshot? {
+            return facultyCollectionRef().document(facultyDocumentId).get().await()
+        }
+
         fun insertFacultyDocument(
             facultyDocumentId: String,
             inputHashMap:HashMap<String,String>,

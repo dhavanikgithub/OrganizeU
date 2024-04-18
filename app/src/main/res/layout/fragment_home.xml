@@ -18,12 +18,10 @@
             android:id="@+id/tbLayoutWeekDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/tab_layout_text"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabIndicatorColor="@color/colorPrimary"
             app:tabIndicatorHeight="3dp"
             app:tabIndicatorFullWidth="true"
-            app:tabIndicatorColor="@color/white"
             app:tabTextAppearance="@style/CustomTabTextAppearance"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -36,7 +34,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/primary_color"
             android:layout_gravity="end"
             app:strokeWidth="1dp"
             android:layout_margin="10dp">

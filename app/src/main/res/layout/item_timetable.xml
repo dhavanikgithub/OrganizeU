@@ -3,10 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:elevation="20dp"
     app:cardCornerRadius="10dp"
     android:layout_marginBottom="10dp"
-    android:backgroundTint="@color/timetable_recycler_item">
+    android:backgroundTint="@color/colorPrimaryContainer">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@string/textStartTime"
-                android:textColor="@color/timetable_recycler_item_text"
+                tools:text="@string/textStartTime"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +32,7 @@
             <View
                 android:layout_width="2dp"
                 android:layout_height="0dp"
-                android:background="@color/timetable_recycler_item_text"
+                android:background="@color/colorPrimary"
                 app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,8 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@string/textEndTime"
-                android:textColor="@color/timetable_recycler_item_text"
+                tools:text="@string/textEndTime"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -59,8 +60,8 @@
                 android:id="@+id/txtLessonNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/timetable_recycler_item_text"
-                android:text="@string/textLessonNumber"
+                android:textColor="@color/colorPrimary"
+                tools:text="@string/textLessonNumber"
                 />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,17 +74,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="@string/textSubjectName"
+                    tools:text="@string/textSubjectName"
                     android:layout_weight="50"
-                    android:textColor="@color/timetable_recycler_item_text"/>
+                    android:textColor="@color/colorPrimary"/>
                 <TextView
                     android:id="@+id/txtLessonClassName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="@string/textClassName"
+                    tools:text="@string/textClassName"
                     android:layout_weight="50"
-                    android:textColor="@color/timetable_recycler_item_text"/>
+                    android:textColor="@color/colorPrimary"/>
 
             </LinearLayout>
 
@@ -99,26 +100,26 @@
                     android:id="@+id/txtLessonFacultyName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/textFacultyName"
+                    tools:text="@string/textFacultyName"
                     android:layout_weight="50"
-                    android:textColor="@color/timetable_recycler_item_text"/>
+                    android:textColor="@color/colorPrimary"/>
 
                 <TextView
                     android:id="@+id/txtLessonDuration"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/textDuration"
+                    tools:text="@string/textDuration"
                     android:layout_weight="25"
-                    android:textColor="@color/timetable_recycler_item_text"/>
+                    android:textColor="@color/colorPrimary"/>
 
                 <TextView
                     android:id="@+id/txtLessonType"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/textType"
+                    tools:text="@string/textType"
                     android:layout_weight="25"
                     android:gravity="end"
-                    android:textColor="@color/timetable_recycler_item_text"/>
+                    android:textColor="@color/colorPrimary"/>
             </LinearLayout>
 
         </LinearLayout>

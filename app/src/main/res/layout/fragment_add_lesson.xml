@@ -11,17 +11,13 @@
         android:id="@+id/tbLayoutWeekDay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_color"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorColor="@color/white"
         app:tabIndicatorFullWidth="true"
         app:tabIndicatorHeight="3dp"
-        app:tabTextAppearance="@style/CustomTabTextAppearance"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/tab_layout_text">
+        app:tabTextAppearance="@style/CustomTabTextAppearance">
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,18 +48,7 @@
             android:text="Sun"/>
     </com.google.android.material.tabs.TabLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAddLesson"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Lesson"
-        app:icon="@drawable/ic_add"
-        android:textColor="@color/white"
-        app:iconTint="@color/white"
-        android:backgroundTint="@color/primary_color"
-        app:layout_constraintTop_toBottomOf="@id/tbLayoutWeekDay"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="10dp"/>
+
 
     <LinearLayout
         android:id="@+id/progressBar"
@@ -71,23 +56,33 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/btnAddLesson"
+        app:layout_constraintTop_toBottomOf="@id/tbLayoutWeekDay"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone">
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:progressTint="@color/primary_color"/>
+            android:layout_gravity="center"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLesson"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="10dp"
-        app:layout_constraintTop_toBottomOf="@id/btnAddLesson"
+        app:layout_constraintTop_toBottomOf="@id/tbLayoutWeekDay"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddLesson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Lesson"
+        android:src="@drawable/ic_add"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

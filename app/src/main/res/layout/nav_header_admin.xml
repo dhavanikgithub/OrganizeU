@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimary"
     android:gravity="bottom"
     android:orientation="vertical"
@@ -21,7 +22,7 @@
         android:id="@+id/txtAdminName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Admin Name"
+        tools:text="Admin Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_marginStart="10dp"
         android:padding="8dp"/>

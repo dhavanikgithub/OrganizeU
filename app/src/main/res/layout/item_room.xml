@@ -3,12 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="7dp"
-    app:cardElevation="10dp"
     android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="5dp"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_marginVertical="5dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -19,8 +17,9 @@
                 android:id="@+id/txtRoomName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Name/Number: 102"
+                tools:text="Name/Number: 102"
                 android:textSize="@dimen/_12sdp"
+                android:textColor="@color/colorPrimary"
                 android:textStyle="bold"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,13 +31,15 @@
                     android:id="@+id/txtRoomLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Location: 1NB"
+                    tools:text="Location: 1NB"
+                    android:textColor="@color/colorPrimary"
                     android:layout_weight="50"/>
                 <TextView
                     android:id="@+id/txtRoomType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Type: Class"
+                    tools:text="Type: Class"
+                    android:textColor="@color/colorPrimary"
                     android:layout_weight="50"/>
             </LinearLayout>
 

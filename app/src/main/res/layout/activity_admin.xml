@@ -14,28 +14,20 @@
             android:id="@+id/adminToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
+            app:title="@string/app_name"
+            app:titleTextAppearance="@dimen/_10sdp"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_menu"
+            app:navigationIconTint="@color/white"
             android:minHeight="?attr/actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/iconMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:contentDescription="@string/ic_menu_text"
-                app:srcCompat="@drawable/ic_menu"
-                app:tint="@color/white" />
 
-            <TextView
-                android:id="@+id/txtAppName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/app_name"
-                android:textColor="@color/white"/>
+
+
         </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.fragment.app.FragmentContainerView
@@ -56,8 +48,6 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_admin"
         app:menu="@menu/admin_drawer"
-        app:itemTextColor="@color/drawer_menu_text_color"
-        app:itemIconTint="@color/drawer_menu_text_color"
         app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

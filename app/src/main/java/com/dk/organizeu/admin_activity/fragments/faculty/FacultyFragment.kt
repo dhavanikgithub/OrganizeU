@@ -45,7 +45,8 @@ class FacultyFragment : Fragment() {
 
                 btnAddFaculty.setOnClickListener {
                     val txtFacultyName = etFacultyName.text.toString()
-                    if(txtFacultyName!="")
+                    tlFacultyName.error = null
+                    if(txtFacultyName!="" && txtFacultyName.matches("^[a-zA-Z_-]{2,20}$".toRegex()))
                     {
                         val inputHashMap = hashMapOf(FacultyCollection.FACULTY_NAME.displayName to txtFacultyName)
                         FacultyRepository.insertFacultyDocument(txtFacultyName,inputHashMap,{
@@ -57,9 +58,17 @@ class FacultyFragment : Fragment() {
 
                         })
                     }
+                    else{
+                        tlFacultyName.error = "Faculty name only have alphabet, -, _ with 2-20 length"
+                    }
                 }
             }
         }
+    }
+
+    fun showToast(message: String)
+    {
+        Toast.makeText(requireContext(),message,Toast.LENGTH_SHORT).show()
     }
 
     private fun initRecyclerView()

@@ -11,15 +11,13 @@
         android:id="@+id/tbLayoutAcademicData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorColor="@color/white"
         app:tabIndicatorFullWidth="true"
         app:tabIndicatorHeight="3dp"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/tab_layout_text"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabIndicatorColor="@color/colorPrimary"
         android:contentDescription="test"
         />
     <androidx.viewpager.widget.ViewPager
