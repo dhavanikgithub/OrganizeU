@@ -70,8 +70,6 @@ class PermissionFragment : Fragment() {
                             Dexter.withContext(requireContext()).withPermission(NOTIFICATION_PERMISSION)
                                 .withListener(object : PermissionListener{
                                     override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                                        txtAllowNotification.text = getString(R.string.Done)
-                                        txtAllowNotification.setTextColor(requireContext().getColor(R.color.permissionDoneText))
                                         btnStart.isEnabled = permissionCheck()
                                     }
 
@@ -90,8 +88,6 @@ class PermissionFragment : Fragment() {
                                 .check()
                         }
                         else{
-                            txtAllowNotification.text = getString(R.string.Done)
-                            txtAllowNotification.setTextColor(requireContext().getColor(R.color.permissionDoneText))
                             btnStart.isEnabled = permissionCheck()
                         }
                     }
@@ -111,8 +107,6 @@ class PermissionFragment : Fragment() {
                         Dexter.withContext(requireContext()).withPermission(AUDIO_SETTING_PERMISSION)
                             .withListener(object : PermissionListener{
                                 override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                                    txtAllowAudio.text = getString(R.string.Done)
-                                    txtAllowAudio.setTextColor(requireContext().getColor(R.color.permissionDoneText))
                                     btnStart.isEnabled = permissionCheck()
                                 }
 
@@ -150,32 +144,39 @@ class PermissionFragment : Fragment() {
             val audioSettingPermission = checkPermissionGranted(requireContext(),AUDIO_SETTING_PERMISSION)
             if (doNotDisturb) {
                 txtAllowDoNotDisturb.text = getString(R.string.Done)
-                txtAllowDoNotDisturb.setTextColor(requireContext().getColor(R.color.permissionDoneText))
+                txtAllowDoNotDisturb.setTextColor(requireContext().getColor(R.color.colorSecondary))
+                btnAllowDoNotDisturb.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
             } else {
                 txtAllowDoNotDisturb.text = getString(R.string.Allow)
-                txtAllowDoNotDisturb.setTextColor(requireContext().getColor(R.color.permissionAllowText))
+                txtAllowDoNotDisturb.setTextColor(requireContext().getColor(R.color.colorPrimary))
+                btnAllowDoNotDisturb.setBackgroundColor(requireContext().getColor(R.color.colorPrimaryContainer))
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                 notificationPermission = checkPermissionGranted(requireContext(),NOTIFICATION_PERMISSION)
                 if (notificationPermission) {
                     txtAllowNotification.text = getString(R.string.Done)
-                    txtAllowNotification.setTextColor(requireContext().getColor(R.color.permissionDoneText))
+                    txtAllowNotification.setTextColor(requireContext().getColor(R.color.colorSecondary))
+                    btnAllowNotification.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
                 } else {
                     txtAllowNotification.text = getString(R.string.Allow)
-                    txtAllowNotification.setTextColor(requireContext().getColor(R.color.permissionAllowText))
+                    txtAllowNotification.setTextColor(requireContext().getColor(R.color.colorPrimary))
+                    btnAllowNotification.setBackgroundColor(requireContext().getColor(R.color.colorPrimaryContainer))
                 }
             }
             else{
                 txtAllowNotification.text = getString(R.string.Done)
-                txtAllowNotification.setTextColor(requireContext().getColor(R.color.permissionDoneText))
+                txtAllowNotification.setTextColor(requireContext().getColor(R.color.colorSecondary))
+                btnAllowNotification.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
             }
             if (audioSettingPermission) {
                 txtAllowAudio.text = getString(R.string.Done)
-                txtAllowAudio.setTextColor(requireContext().getColor(R.color.permissionDoneText))
+                txtAllowAudio.setTextColor(requireContext().getColor(R.color.colorSecondary))
+                btnAllowAudio.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
             } else {
                 txtAllowAudio.text = getString(R.string.Allow)
-                txtAllowAudio.setTextColor(requireContext().getColor(R.color.permissionAllowText))
+                txtAllowAudio.setTextColor(requireContext().getColor(R.color.colorPrimary))
+                btnAllowAudio.setBackgroundColor(requireContext().getColor(R.color.colorPrimaryContainer))
             }
             return audioSettingPermission && notificationPermission && doNotDisturb
         }
