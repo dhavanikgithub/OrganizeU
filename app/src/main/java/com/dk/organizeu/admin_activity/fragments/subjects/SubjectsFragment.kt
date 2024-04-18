@@ -104,4 +104,8 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     override fun onClick(position: Int) {
     }
+
+    override fun onDeleteClick(position: Int) {
+        TODO("Not yet implemented")
+    }
 }

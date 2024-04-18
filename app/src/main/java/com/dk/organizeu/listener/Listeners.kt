@@ -7,4 +7,6 @@ interface AddDocumentListener {
 
 interface OnItemClickListener {
     fun onClick(position: Int)
+
+    fun onDeleteClick(position: Int)
 }

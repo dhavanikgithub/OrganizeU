@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dk.organizeu.R
+import com.dk.organizeu.databinding.AddAcademicDialogLayoutBinding
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.AcademicCollection
 import com.dk.organizeu.listener.AddDocumentListener
@@ -23,74 +24,68 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class AddAcademicDialog() : AppCompatDialogFragment() {
-    private lateinit var academicYearACTV: AutoCompleteTextView
-    private lateinit var academicTypeTIL: AutoCompleteTextView
-    private lateinit var addButton: MaterialButton
-    private lateinit var closeButton: MaterialButton
     private var academicAddListener: AddDocumentListener? = null
+    private lateinit var binding: AddAcademicDialogLayoutBinding
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
-
+        binding = AddAcademicDialogLayoutBinding.bind(view)
         academicAddListener = parentFragment as? AddDocumentListener
-        academicYearACTV = view.findViewById(R.id.actAcademicYear)
-        academicTypeTIL = view.findViewById(R.id.actAcademicType)
-        addButton = view.findViewById(R.id.btnAdd)
-        closeButton = view.findViewById(R.id.btnClose)
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-
-        val academicYears = mutableListOf<String>()
-        for (year in currentYear..currentYear + 5) {
-            academicYears.add("$year-${year + 1}")
-        }
-
-        val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)
-        academicYearACTV.setAdapter(academicYearsAdapter)
-
-        val academicTypes = arrayOf(AcademicType.EVEN.name, AcademicType.ODD.name)
-        val academicTypesAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypes)
-        academicTypeTIL.setAdapter(academicTypesAdapter)
-
         val builder = AlertDialog.Builder(requireContext())
             .setView(view)
             .setTitle("Add Academic")
+        binding.apply {
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-        closeButton.setOnClickListener {
-            dismiss()
-        }
-        addButton.setOnClickListener {
-            if(isItemSelected(academicYearACTV))
-            {
-                if(isItemSelected(academicTypeTIL))
-                {
-                    val academicDocumentId = "${academicYearACTV.text}_${academicTypeTIL.text}"
-                    val academicData = hashMapOf(
-                        AcademicCollection.YEAR.displayName to academicYearACTV.text.toString(),
-                        AcademicCollection.TYPE.displayName to academicTypeTIL.text.toString()
-                    )
-
-                    isAcademicDocumentExists(academicDocumentId) { exists ->
-                        if(exists)
-                        {
-                            closeButton.callOnClick()
-                            return@isAcademicDocumentExists
-                        }
-                        MainScope().launch(Dispatchers.IO){
-                            AcademicRepository.insertAcademicDocuments(academicDocumentId,academicData,{
-                                academicAddListener?.onAdded(academicDocumentId,academicData)
-                                closeButton.callOnClick()
-                            },{
-
-                            })
-                        }
-                    }
-
-                }
+            val academicYears = mutableListOf<String>()
+            for (year in currentYear..currentYear + 5) {
+                academicYears.add("$year-${year + 1}")
             }
 
+            val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)
+            actAcademicYear.setAdapter(academicYearsAdapter)
+
+
+
+            btnClose.setOnClickListener {
+                dismiss()
+            }
+            btnAdd.setOnClickListener {
+                if(isItemSelected(actAcademicYear))
+                {
+                    if((chipEven.isChecked || chipOdd.isChecked))
+                    {
+                        val aType = if(chipEven.isChecked) chipEven.text.toString() else chipOdd .text.toString()
+                        val academicDocumentId = "${actAcademicYear.text}_${aType}"
+                        val academicData = hashMapOf(
+                            AcademicCollection.YEAR.displayName to actAcademicYear.text.toString(),
+                            AcademicCollection.TYPE.displayName to aType
+                        )
+
+                        isAcademicDocumentExists(academicDocumentId) { exists ->
+                            if(exists)
+                            {
+                                dismiss()
+                                return@isAcademicDocumentExists
+                            }
+                            MainScope().launch(Dispatchers.IO){
+                                AcademicRepository.insertAcademicDocuments(academicDocumentId,academicData,{
+                                    academicAddListener?.onAdded(academicDocumentId,academicData)
+                                    dismiss()
+                                },{
+
+                                })
+                            }
+                        }
+
+                    }
+                }
+
+            }
         }
+
         return builder.create()
     }
 }

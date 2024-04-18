@@ -10,37 +10,77 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
-            <TextView
-                android:id="@+id/txtSubjectName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Name: Mobile Application"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"/>
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp"
-                android:weightSum="100">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_weight=".9">
                 <TextView
-                    android:id="@+id/txtSubjectCode"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/txtSubjectName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Code: 2CEIT401"
+                    tools:text="Name: Mobile Application"
+                    android:textSize="@dimen/_12sdp"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="50"/>
-                <TextView
-                    android:id="@+id/txtSubjectType"
-                    android:layout_width="wrap_content"
+                    android:textStyle="bold"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:text="Type: Theory \ Theory + Practical"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_weight="50"/>
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:weightSum="1">
+                    <TextView
+                        android:id="@+id/txtSubjectCode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:text="Code: 2CEIT401"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_weight=".5"/>
+                    <TextView
+                        android:id="@+id/txtSubjectType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        tools:text="Type: Theory \ Theory + Practical"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_weight=".5"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".1"
+                android:weightSum="1"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:background="@color/colorPrimaryContainer"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@color/colorPrimary"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:background="@color/colorSecondaryContainer"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/icon_delete"
+                        app:tint="@color/colorSecondary"
+                        />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

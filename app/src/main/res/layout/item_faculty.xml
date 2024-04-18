@@ -10,17 +10,58 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="horizontal"
+            android:weightSum="1"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_weight=".6">
+                <TextView
+                    android:id="@+id/txtFacultyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Faculty Name"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/_12sdp"/>
 
-            <TextView
-                android:id="@+id/txtFacultyName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Faculty Name"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_12sdp"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".4"
+                android:weightSum="1"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:background="@color/colorPrimaryContainer"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@color/colorPrimary"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:background="@color/colorSecondaryContainer"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/icon_delete"
+                        app:tint="@color/colorSecondary"
+                        />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -106,4 +106,8 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     override fun onClick(position: Int) {
     }
+
+    override fun onDeleteClick(position: Int) {
+
+    }
 }

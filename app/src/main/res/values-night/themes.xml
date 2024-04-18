@@ -30,6 +30,9 @@
         <item name="colorOnTertiaryFixedVariant">@color/colorOnTertiaryFixedVariant</item>
 
         <item name="android:statusBarColor">@color/colorPrimary</item>
+
+        <item name="chipBackgroundColor">@color/colorPrimaryContainer</item>
+        <item name="chipIconTint">@color/colorPrimary</item>
     </style>
     <style name="ProgressBar">
         <item name="android:indeterminateTint">@color/colorPrimary</item>

@@ -72,7 +72,9 @@ class AcademicRepository {
                 }
         }
 
-
+        suspend fun deleteAcademicDocumentById(academicDocumentId: String){
+            academicDocumentRef(academicDocumentId).delete().await()
+        }
 
     }
 }

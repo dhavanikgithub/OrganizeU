@@ -3,6 +3,7 @@ package com.dk.organizeu.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
@@ -26,6 +27,9 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
         holder.itemView.setOnClickListener {
             listener.onClick(position)
         }
+        holder.btnDelete.setOnClickListener {
+            listener.onDeleteClick(position)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -37,6 +41,8 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
 
         val academicYearTxt: TextView = itemView.findViewById(R.id.txtAcademicYear)
         val academicTypeTxt: TextView = itemView.findViewById(R.id.txtAcademicType)
+        val btnEdit: LinearLayout = itemView.findViewById(R.id.btnEdit)
+        val btnDelete: LinearLayout = itemView.findViewById(R.id.btnDelete)
 
     }
 

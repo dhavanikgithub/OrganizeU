@@ -27,32 +27,40 @@
             tools:text="2024-2025" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlAcademicType"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupAcademicType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
-        android:hint="Select Academic Type"
+        app:singleSelection="true"
+        app:layout_constraintTop_toBottomOf="@id/tlAcademicYear"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tlAcademicYear">
+        app:layout_constraintStart_toStartOf="parent">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipEven"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EVEN"
+            style="@style/ChipStyle"
+            android:checked="true"
+            />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ODD"
+            style="@style/ChipStyle"
+            />
+    </com.google.android.material.chip.ChipGroup>
 
-        <AutoCompleteTextView
-            android:id="@+id/actAcademicType"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            tools:text="EVEN" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutActionBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tlAcademicType"
+
+        app:layout_constraintTop_toBottomOf="@id/chipGroupAcademicType"
         android:layout_marginTop="10dp">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"

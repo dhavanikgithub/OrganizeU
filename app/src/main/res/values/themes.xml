@@ -32,6 +32,17 @@
 
         <item name="android:statusBarColor">@color/colorPrimary</item>
 
+
+    </style>
+
+    <style name="ChipStyle" parent="ShapeAppearanceOverlay.Material3.Chip">
+        <item name="android:checkable">true</item>
+        <item name="checkedIconEnabled">true</item>
+        <item name="android:checked">false</item>
+        <item name="chipIconEnabled">true</item>
+        <item name="checkedIcon">@drawable/ic_check</item>
+        <item name="checkedIconTint">@color/colorPrimary</item>
+        <item name="chipBackgroundColor">@color/colorPrimaryContainer</item>
     </style>
     <style name="CustomTabTextAppearance">
         <item name="android:textSize">12sp</item>
@@ -44,10 +55,10 @@
     </style>
     <style name="DialogCloseButton" parent="Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="backgroundTint">@color/danger</item>
+        <item name="android:textColor">@color/danger</item>
+        <item name="backgroundTint">@color/white</item>
         <item name="icon">@drawable/ic_close</item>
-        <item name="iconTint">@color/white</item>
+        <item name="iconTint">@color/danger</item>
     </style>
 
     <style name="DialogAddButton" parent="Widget.MaterialComponents.Button">
