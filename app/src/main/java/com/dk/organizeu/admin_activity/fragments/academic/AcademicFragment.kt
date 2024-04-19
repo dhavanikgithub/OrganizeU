@@ -161,13 +161,6 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     }
 
     override fun onDeleteClick(position: Int) {
-        MainScope().launch(Dispatchers.IO){
-            AcademicRepository.deleteAcademicDocumentById("${viewModel.academicList.value!![position].academic}_${viewModel.academicList.value!![position].sem}")
-            withContext(Dispatchers.Main)
-            {
-                viewModel.academicList.value!!.removeAt(position)
-                viewModel.academicAdapter.notifyItemRemoved(position)
-            }
-        }
+
     }
 }

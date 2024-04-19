@@ -2,6 +2,7 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -70,10 +71,6 @@ class AcademicRepository {
                     Log.w("TAG", "Error checking academic document existence", exception)
                     callback(false)
                 }
-        }
-
-        suspend fun deleteAcademicDocumentById(academicDocumentId: String){
-            academicDocumentRef(academicDocumentId).delete().await()
         }
 
     }
