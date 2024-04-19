@@ -49,8 +49,6 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         binding.apply {
             viewModel.apply {
                 (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
-                (activity as? AdminActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                (activity as? AdminActivity)?.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
             }
         }
     }

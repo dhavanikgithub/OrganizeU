@@ -53,21 +53,33 @@
     <style name="CustomDialogTheme">
         <item name="android:windowBackground">@color/transparent</item>
     </style>
-    <style name="DialogCloseButton" parent="Widget.MaterialComponents.Button">
+    <style name="DialogCloseButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/danger</item>
-        <item name="backgroundTint">@color/white</item>
+        <item name="background">@color/transparent</item>
+        <item name="backgroundTint">@color/transparent</item>
         <item name="icon">@drawable/ic_close</item>
         <item name="iconTint">@color/danger</item>
     </style>
 
+    
     <style name="DialogAddButton" parent="Widget.MaterialComponents.Button">
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/white</item>
         <item name="backgroundTint">@color/colorPrimary</item>
         <item name="icon">@drawable/ic_add</item>
-        <item name="iconTint">@color/white</item>
     </style>
 
+    <style name="TabLayoutActionStyle" parent="Widget.Material3.TabLayout">
+        <item name="tabBackground">@drawable/tabs_selector</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabRippleColor">@android:color/transparent</item>
+        <item name="tabTextAppearance">@style/CustomTabTextAppearance</item>
+        <item name="tabTextColor">@color/colorPrimary</item>
+        <item name="tabSelectedTextColor">@color/colorPrimaryContainer</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="tabIndicatorColor">@color/transparent</item>
+
+    </style>
 
 </resources>

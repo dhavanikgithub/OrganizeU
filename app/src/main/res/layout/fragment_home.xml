@@ -43,15 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:visibility="gone"
-                android:backgroundTint="@android:color/transparent"
-                app:tabBackground="@drawable/tabs_selector"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@android:color/transparent"
-                app:tabIndicatorHeight="0dp"
-                app:tabRippleColor="@android:color/transparent"
-                app:tabSelectedTextColor="@color/white"
-                app:tabTextAppearance="@style/CustomTabTextAppearance"
-                app:tabTextColor="@color/tab_layout_text">
+                style="@style/TabLayoutActionStyle">
             </com.google.android.material.tabs.TabLayout>
 
         </com.google.android.material.card.MaterialCardView>

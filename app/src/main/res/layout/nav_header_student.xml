@@ -22,8 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Student Name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorPrimaryContainer"
         android:layout_marginStart="10dp"
+        android:textSize="@dimen/_13sdp"
+        android:textStyle="bold"
         android:padding="8dp"/>
 
     <TextView
@@ -31,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Student Details"
+        android:textColor="@color/colorPrimaryContainer"
         android:layout_marginStart="10dp"
         android:padding="8dp"/>
 

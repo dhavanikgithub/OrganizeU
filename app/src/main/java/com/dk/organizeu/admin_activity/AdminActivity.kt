@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -50,104 +51,69 @@ class AdminActivity : AppCompatActivity() {
                 }
             }*/
 
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                val isHomeFragment = destination.id == R.id.academicFragment
+                if (isHomeFragment) {
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+                } else {
+                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
+                }
+            }
+
             adminNV.setNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.nav_academic -> {
                         if(!isDrawerMenuSelect(R.id.nav_academic))
                         {
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.academicFragment,true)
+                            navController.popBackStack(R.id.academicFragment,false)
                             navController.navigate(R.id.academicFragment)
-                            //mainMenuIcon.callOnClick()
-                            true
-                        }
-                        else{
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.academicFragment,true)
-                            //mainMenuIcon.callOnClick()
-                            false
                         }
 
                     }
                     R.id.nav_timetable -> {
                         if(!isDrawerMenuSelect(R.id.nav_timetable))
                         {
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.timetableFragment,true)
+                            navController.popBackStack(R.id.academicFragment,false)
                             navController.navigate(R.id.timetableFragment)
-                            //mainMenuIcon.callOnClick()
-                            true
-                        }
-                        else{
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.timetableFragment,true)
-                            //mainMenuIcon.callOnClick()
-                            false
                         }
                     }
                     R.id.nav_faculty -> {
                         if(!isDrawerMenuSelect(R.id.nav_faculty))
                         {
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.facultyFragment,true)
+                            navController.popBackStack(R.id.academicFragment,false)
                             navController.navigate(R.id.facultyFragment)
-                            //mainMenuIcon.callOnClick()
-                            true
-                        }
-                        else{
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.facultyFragment,true)
-                            //mainMenuIcon.callOnClick()
-                            false
                         }
                     }
                     R.id.nav_room -> {
                         if(!isDrawerMenuSelect(R.id.nav_room))
                         {
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.roomsFragment,true)
+                            navController.popBackStack(R.id.academicFragment,false)
                             navController.navigate(R.id.roomsFragment)
-                            //mainMenuIcon.callOnClick()
-                            true
-                        }
-                        else{
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.roomsFragment,true)
-                            //mainMenuIcon.callOnClick()
-                            false
                         }
                     }
                     R.id.nav_subject -> {
                         if(!isDrawerMenuSelect(R.id.nav_subject))
                         {
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.subjectsFragment,false)
+                            navController.popBackStack(R.id.academicFragment,false)
                             navController.navigate(R.id.subjectsFragment)
-                            //mainMenuIcon.callOnClick()
-
-                            true
-                        }
-                        else{
-                            toggleDrawerMenu()
-                            navController.popBackStack(R.id.subjectsFragment,false)
-                            //mainMenuIcon.callOnClick()
-                            false
                         }
                     }
-                    else -> false
                 }
-
+                toggleDrawerMenu()
+                true
             }
         }
     }
 
+
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                // Check if the current fragment is the home fragment
-
                 if (navController.currentDestination?.id == R.id.academicFragment) {
-                    // Open the drawer only if the home fragment is active
                     toggleDrawerMenu()
                     return true
                 }
