@@ -327,8 +327,15 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     val selectedEndTime = UtilFunction.convertTo12HourFormat(endHour,endMinute)
 
                     if(validateTime(selectedStartTime, selectedEndTime)) {
-                        binding.tlSelectLessonTime.error = null
-                        textInput.text = "$selectedStartTime - $selectedEndTime"
+                        if(selectedStartTime!=selectedEndTime)
+                        {
+                            binding.tlSelectLessonTime.error = null
+                            textInput.text = "$selectedStartTime - $selectedEndTime"
+                        }
+                        else{
+                            textInput.text = ""
+                            binding.tlSelectLessonTime.error = "End time must be not be same"
+                        }
                     }
                     else {
                         textInput.text = ""
