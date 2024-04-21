@@ -7,11 +7,11 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.dk.organizeu.main_activity.fragments.SplashFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.SplashFragment"
         android:label="SplashFragment" />
     <fragment
         android:id="@+id/permissionFragment"
-        android:name="com.dk.organizeu.main_activity.fragments.permission.PermissionFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.permission.PermissionFragment"
         android:label="fragment_permission"
         tools:layout="@layout/fragment_permission" >
         <action

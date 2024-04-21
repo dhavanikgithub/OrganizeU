@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:elevation="20dp"
+    app:cardCornerRadius="10dp"
+    android:layout_marginBottom="10dp"
+    android:backgroundTint="@color/colorPrimaryContainer">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:baselineAligned="false">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight=".2">
+
+            <TextView
+                android:id="@+id/txtStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                tools:text="@string/textStartTime"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtStartTime"
+                />
+
+            <TextView
+                android:id="@+id/txtEndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                tools:text="@string/textEndTime"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_weight=".8">
+            <TextView
+                android:id="@+id/txtLessonNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                tools:text="@string/textLessonNumber"
+                android:textSize="@dimen/_10sdp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100"
+                android:paddingVertical="5dp">
+                <TextView
+                    android:id="@+id/txtLessonSubjectName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    tools:text="@string/textSubjectName"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_weight="50"
+                    android:textColor="@color/colorPrimary"/>
+                <TextView
+                    android:id="@+id/txtLessonClassName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    tools:text="@string/textClassName"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_weight="50"
+                    android:textColor="@color/colorPrimary"/>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="100">
+
+                <TextView
+                    android:id="@+id/txtLessonFacultyName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/textFacultyName"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_weight="50"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/txtLessonDuration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/textDuration"
+                    android:layout_weight="25"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/txtLessonType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/textType"
+                    android:layout_weight="25"
+                    android:gravity="end"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/colorPrimary"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

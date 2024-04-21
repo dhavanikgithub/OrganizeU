@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/academicFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.AcademicFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.AcademicFragment"
         android:label="Home"
         tools:layout="@layout/fragment_academic" >
         <action
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/addAcademicFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.AddAcademicFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment"
         android:label="Add Academic"
         tools:layout="@layout/fragment_add_academic" >
         <action
@@ -44,22 +44,22 @@
     </fragment>
     <fragment
         android:id="@+id/addBatchFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_batch.AddBatchFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch.AddBatchFragment"
         android:label="Add Batch"
         tools:layout="@layout/fragment_add_batch" />
     <fragment
         android:id="@+id/addSemFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_sem.AddSemFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment"
         android:label="Add Semester"
         tools:layout="@layout/fragment_add_sem" />
     <fragment
         android:id="@+id/addClassFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.academic.add_academic.add_class.AddClassFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_class.AddClassFragment"
         android:label="Add Class"
         tools:layout="@layout/fragment_add_class" />
     <fragment
         android:id="@+id/timetableFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.timetable.TimetableFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.timetable.TimetableFragment"
         android:label="Timetable"
         tools:layout="@layout/fragment_timetable" >
         <action
@@ -68,22 +68,22 @@
     </fragment>
     <fragment
         android:id="@+id/facultyFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.faculty.FacultyFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment"
         android:label="Faculty"
         tools:layout="@layout/fragment_faculty" />
     <fragment
         android:id="@+id/roomsFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.rooms.RoomsFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.rooms.RoomsFragment"
         android:label="Rooms"
         tools:layout="@layout/fragment_rooms" />
     <fragment
         android:id="@+id/subjectsFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.subjects.SubjectsFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.subjects.SubjectsFragment"
         android:label="Subjects"
         tools:layout="@layout/fragment_subjects" />
     <fragment
         android:id="@+id/addTimetableFragment"
-        android:name="com.dk.organizeu.admin_activity.fragments.timetable.add_lesson.AddLessonFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment"
         android:label="Add Lesson"
         tools:layout="@layout/fragment_add_lesson" />
 </navigation>

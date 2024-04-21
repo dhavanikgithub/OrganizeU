@@ -1,5 +1,6 @@
 package com.dk.organizeu.repository
 
+import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.repository.AcademicRepository.Companion.academicDocumentRef
 import com.google.firebase.firestore.CollectionReference
@@ -9,16 +10,32 @@ import kotlinx.coroutines.tasks.await
 
 class SemesterRepository {
     companion object{
+        const val TAG = "OrganizeU-SemesterRepository"
         fun semesterCollectionRef(academicDocumentId: String): CollectionReference {
-            return academicDocumentRef(academicDocumentId).collection(FirebaseConfig.SEMESTER_COLLECTION)
+            try {
+                return academicDocumentRef(academicDocumentId).collection(FirebaseConfig.SEMESTER_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun semesterDocumentRef(academicDocumentId: String, semesterDocumentId:String): DocumentReference {
-            return semesterCollectionRef(academicDocumentId).document(semesterDocumentId)
+            try {
+                return semesterCollectionRef(academicDocumentId).document(semesterDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllSemesterDocuments(academicDocumentId: String): MutableList<DocumentSnapshot> {
-            return semesterCollectionRef(academicDocumentId).get().await().documents
+            try {
+                return semesterCollectionRef(academicDocumentId).get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertSemesterDocuments(

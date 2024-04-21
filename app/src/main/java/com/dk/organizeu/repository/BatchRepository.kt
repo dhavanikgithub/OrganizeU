@@ -10,19 +10,35 @@ import kotlinx.coroutines.tasks.await
 
 class BatchRepository {
     companion object{
+        const val TAG = "OrganizeU-BatchRepository"
         fun batchCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): CollectionReference
         {
-            return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId)
-                .collection(FirebaseConfig.BATCH_COLLECTION)
+            try {
+                return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId)
+                    .collection(FirebaseConfig.BATCH_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun batchDocumentRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,batchDocumentId:String): DocumentReference
         {
-            return batchCollectionRef(academicDocumentId,semesterDocumentId,classDocumentId).document(batchDocumentId)
+            try {
+                return batchCollectionRef(academicDocumentId,semesterDocumentId,classDocumentId).document(batchDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllBatchDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String): MutableList<DocumentSnapshot> {
-            return batchCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).get().await().documents
+            try {
+                return batchCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertBatchDocument(
@@ -52,15 +68,20 @@ class BatchRepository {
         }
 
         fun isBatchDocumentExists(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,batchDocumentId: String, callback: (Boolean) -> Unit) {
-            batchDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, batchDocumentId)
-                .get()
-                .addOnSuccessListener { documentSnapshot ->
-                    callback(documentSnapshot.exists())
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking document existence", exception)
-                    callback(false) // Assume document doesn't exist if there's an error
-                }
+            try {
+                batchDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, batchDocumentId)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false) // Assume document doesn't exist if there's an error
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
     }
 }

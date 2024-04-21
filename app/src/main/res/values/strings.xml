@@ -43,4 +43,7 @@
     <string name="hint_subject_code">Subject Code</string>
     <string name="hint_subject_name">Subject Name</string>
 
+    <string name="item_edit_button_content_description">Edit Button</string>
+    <string name="item_delete_button_content_description">Delete Button</string>
+
 </resources>

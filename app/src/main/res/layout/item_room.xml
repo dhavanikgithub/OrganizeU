@@ -11,7 +11,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -61,12 +62,14 @@
                     android:layout_height="0dp"
                     android:layout_weight=".5"
                     android:background="@color/colorPrimaryContainer"
-                    android:gravity="center">
+                    android:gravity="center"
+                    tools:ignore="NestedWeights">
                     <ImageView
                         android:layout_width="@dimen/_16sdp"
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/colorPrimary"
+                        android:contentDescription="@string/item_edit_button_content_description"
                         />
                 </LinearLayout>
                 <LinearLayout
@@ -80,6 +83,7 @@
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/icon_delete"
                         app:tint="@color/colorSecondary"
+                        android:contentDescription="@string/item_delete_button_content_description"
                         />
                 </LinearLayout>
             </LinearLayout>

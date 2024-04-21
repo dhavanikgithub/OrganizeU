@@ -10,18 +10,34 @@ import kotlinx.coroutines.tasks.await
 
 class ClassRepository {
     companion object{
+        const val TAG = "OrganizeU-ClassRepository"
         fun classCollectionRef(academicDocumentId: String, semesterDocumentId: String): CollectionReference {
-            return semesterDocumentRef(academicDocumentId,semesterDocumentId).collection(
-                FirebaseConfig.CLASS_COLLECTION
-            )
+            try {
+                return semesterDocumentRef(academicDocumentId,semesterDocumentId).collection(
+                    FirebaseConfig.CLASS_COLLECTION
+                )
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun classDocumentRef(academicDocumentId: String, semesterDocumentId: String, classDocumentId:String): DocumentReference {
-            return classCollectionRef(academicDocumentId,semesterDocumentId).document(classDocumentId)
+            try {
+                return classCollectionRef(academicDocumentId,semesterDocumentId).document(classDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllClassDocuments(academicDocumentId: String,semesterDocumentId: String): MutableList<DocumentSnapshot> {
-            return classCollectionRef(academicDocumentId, semesterDocumentId).get().await().documents
+            try {
+                return classCollectionRef(academicDocumentId, semesterDocumentId).get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertClassDocument(
@@ -49,15 +65,20 @@ class ClassRepository {
         }
 
         fun isClassDocumentExists(academicDocumentId: String,semesterDocumentId: String,classDocumentId:String, callback: (Boolean) -> Unit) {
-            classDocumentRef(academicDocumentId,semesterDocumentId, classDocumentId)
-                .get()
-                .addOnSuccessListener { documentSnapshot ->
-                    callback(documentSnapshot.exists())
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking document existence", exception)
-                    callback(false) // Assume document doesn't exist if there's an error
-                }
+            try {
+                classDocumentRef(academicDocumentId,semesterDocumentId, classDocumentId)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false) // Assume document doesn't exist if there's an error
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
     }
 }

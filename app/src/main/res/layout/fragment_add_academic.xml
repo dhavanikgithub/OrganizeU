@@ -5,7 +5,7 @@
     android:id="@+id/layoutMainAddAcademic"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin_activity.fragments.academic.add_academic.AddAcademicFragment">
+    tools:context=".activity_admin.fragments.academic.add_academic.AddAcademicFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tbLayoutAcademicData"

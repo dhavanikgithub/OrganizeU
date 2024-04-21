@@ -12,24 +12,52 @@ import kotlinx.coroutines.tasks.await
 
 class RoomRepository {
     companion object{
+        const val TAG = "OrganizeU-RoomRepository"
         fun roomCollectionRef(): CollectionReference{
-            return db.collection(ROOM_COLLECTION)
+            try {
+                return db.collection(ROOM_COLLECTION)
+            } catch (e: Exception)
+            {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+
         }
 
         fun roomDocumentRef(roomDocumentId: String): DocumentReference{
-            return roomCollectionRef().document(roomDocumentId)
+            try {
+                return roomCollectionRef().document(roomDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllRoomDocument(): MutableList<DocumentSnapshot> {
-            return roomCollectionRef().get().await().documents
+            try {
+                return roomCollectionRef().get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getRoomDocumentById(roomDocumentId: String): DocumentSnapshot? {
-            return roomDocumentRef(roomDocumentId).get().await()
+            try {
+                return roomDocumentRef(roomDocumentId).get().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getRoomDocumentsByField(fieldName:String, fieldValue:String): MutableList<DocumentSnapshot> {
-            return roomCollectionRef().whereEqualTo(fieldName,fieldValue).get().await().documents
+            try {
+                return roomCollectionRef().whereEqualTo(fieldName,fieldValue).get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertRoomDocument(
@@ -55,30 +83,45 @@ class RoomRepository {
         }
 
         fun roomDocumentToRoomObj(document:DocumentSnapshot): RoomPojo {
-            return RoomPojo(
-                document.id,
-                document.get(RoomCollection.LOCATION.displayName).toString(),
-                document.get(RoomCollection.TYPE.displayName).toString()
-            )
+            try {
+                return RoomPojo(
+                    document.id,
+                    document.get(RoomCollection.LOCATION.displayName).toString(),
+                    document.get(RoomCollection.TYPE.displayName).toString()
+                )
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun roomDocumentToRoomObj(roomDocumentId:String, document:HashMap<String,String>): RoomPojo {
-            return RoomPojo(
-                roomDocumentId,
-                document[RoomCollection.LOCATION.displayName].toString(),
-                document[RoomCollection.TYPE.displayName].toString()
-            )
+            try {
+                return RoomPojo(
+                    roomDocumentId,
+                    document[RoomCollection.LOCATION.displayName].toString(),
+                    document[RoomCollection.TYPE.displayName].toString()
+                )
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun isRoomDocumentExists(roomDocumentId: String, callback: (Boolean) -> Unit) {
-           roomDocumentRef(roomDocumentId).get()
-                .addOnSuccessListener { documentSnapshot ->
-                    callback(documentSnapshot.exists())
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking document existence", exception)
-                    callback(false)
-                }
+            try {
+                roomDocumentRef(roomDocumentId).get()
+                     .addOnSuccessListener { documentSnapshot ->
+                         callback(documentSnapshot.exists())
+                     }
+                     .addOnFailureListener { exception ->
+                         Log.w("TAG", "Error checking document existence", exception)
+                         callback(false)
+                     }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
     }
 }

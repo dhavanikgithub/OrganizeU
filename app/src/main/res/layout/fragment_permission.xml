@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorSecondaryContainer"
-    tools:context=".main_activity.fragments.permission.PermissionFragment">
+    tools:context=".activity_main.fragments.permission.PermissionFragment">
 
     <TextView
         android:id="@+id/textView"

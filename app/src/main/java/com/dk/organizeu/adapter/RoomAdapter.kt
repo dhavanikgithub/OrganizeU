@@ -1,5 +1,6 @@
 package com.dk.organizeu.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,10 @@ import com.dk.organizeu.pojo.RoomPojo
 class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<RoomAdapter.AcademicViewHolder>() {
 
+    companion object{
+        const val TAG = "OrganizeU-RoomAdapter"
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_room, parent, false)
@@ -20,12 +25,16 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
-        val currentItem = roomPojoList[position]
-        holder.roomNameTxt.text = "Name: ${currentItem.name}"
-        holder.roomLocationTxt.text = "Location: ${currentItem.location}"
-        holder.roomTypeTxt.text = "Type: ${currentItem.type}"
-        holder.itemView.setOnClickListener {
-            listener.onClick(position)
+        try {
+            val currentItem = roomPojoList[position]
+            holder.roomNameTxt.text = "Name: ${currentItem.name}"
+            holder.roomLocationTxt.text = "Location: ${currentItem.location}"
+            holder.roomTypeTxt.text = "Type: ${currentItem.type}"
+            holder.itemView.setOnClickListener {
+                listener.onClick(position)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG,e.message.toString())
         }
     }
 

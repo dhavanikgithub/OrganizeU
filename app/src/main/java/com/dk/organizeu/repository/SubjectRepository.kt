@@ -12,20 +12,41 @@ import kotlinx.coroutines.tasks.await
 
 class SubjectRepository {
     companion object{
+        const val TAG = "OrganizeU-SubjectRepository"
         fun subjectCollectionRef(): CollectionReference{
-            return db.collection(SUBJECT_COLLECTION)
+            try {
+                return db.collection(SUBJECT_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun subjectDocumentRef(subjectDocumentId: String): DocumentReference{
-            return subjectCollectionRef().document(subjectDocumentId)
+            try {
+                return subjectCollectionRef().document(subjectDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllSubjectDocuments(): MutableList<DocumentSnapshot> {
-            return subjectCollectionRef().get().await().documents
+            try {
+                return subjectCollectionRef().get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getSubjectDocumentById(subjectDocumentId: String): DocumentSnapshot? {
-            return subjectDocumentRef(subjectDocumentId).get().await()
+            try {
+                return subjectDocumentRef(subjectDocumentId).get().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertSubjectDocument(
@@ -52,22 +73,37 @@ class SubjectRepository {
         }
 
         fun subjectDocumentToSubjectObj(document: DocumentSnapshot): SubjectPojo {
-            return SubjectPojo(document.id,document.get(SubjectCollection.CODE.displayName).toString(),document.get(SubjectCollection.TYPE.displayName).toString())
+            try {
+                return SubjectPojo(document.id,document.get(SubjectCollection.CODE.displayName).toString(),document.get(SubjectCollection.TYPE.displayName).toString())
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun subjectDocumentToSubjectObj(subjectDocumentId: String,subjectData: HashMap<String, String>): SubjectPojo {
-            return SubjectPojo(subjectDocumentId,subjectData[SubjectCollection.CODE.displayName].toString(),subjectData[SubjectCollection.TYPE.displayName].toString())
+            try {
+                return SubjectPojo(subjectDocumentId,subjectData[SubjectCollection.CODE.displayName].toString(),subjectData[SubjectCollection.TYPE.displayName].toString())
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun isSubjectDocumentExists(subjectDocumentId: String, callback: (Boolean) -> Unit) {
-            subjectDocumentRef(subjectDocumentId).get()
-                .addOnSuccessListener { documentSnapshot ->
-                    callback(documentSnapshot.exists())
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking document existence", exception)
-                    callback(false)
-                }
+            try {
+                subjectDocumentRef(subjectDocumentId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
     }
 }

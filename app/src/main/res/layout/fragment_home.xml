@@ -5,7 +5,7 @@
     android:id="@+id/layoutMainHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".student_activity.fragments.HomeFragment">
+    tools:context=".activity_student.fragments.HomeFragment">
 
     <LinearLayout
         android:id="@+id/layoutTabLayout"
@@ -58,12 +58,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutTabLayout">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLesson"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="10dp" />
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLesson"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="10dp" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
         <LinearLayout
             android:id="@+id/progressBar"

@@ -1,5 +1,6 @@
 package com.dk.organizeu.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,10 @@ import com.dk.organizeu.R
 class FacultyAdapter(private val facultyList: ArrayList<String>) :
     RecyclerView.Adapter<FacultyAdapter.AcademicViewHolder>() {
 
+    companion object{
+        const val TAG = "OrganizeU-FacultyAdapter"
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_faculty, parent, false)
@@ -17,8 +22,12 @@ class FacultyAdapter(private val facultyList: ArrayList<String>) :
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
-        val currentItem = facultyList[position]
-        holder.facultyNameTxt.text = currentItem
+        try {
+            val currentItem = facultyList[position]
+            holder.facultyNameTxt.text = currentItem
+        } catch (e: Exception) {
+            Log.e(TAG,e.message.toString())
+        }
     }
 
     override fun getItemCount(): Int {

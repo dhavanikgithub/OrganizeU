@@ -1,7 +1,9 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.dk.organizeu.firebase.FirebaseConfig
+import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -14,17 +16,33 @@ import kotlin.coroutines.suspendCoroutine
 class AcademicRepository {
     companion object{
         val db = FirebaseFirestore.getInstance()
+        const val TAG = "OrganizeU-AcademicRepository"
 
         fun academicCollectionRef(): CollectionReference {
-            return db.collection(FirebaseConfig.ACADEMIC_COLLECTION)
+            try {
+                return db.collection(FirebaseConfig.ACADEMIC_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun academicDocumentRef(academicDocumentId:String): DocumentReference {
-            return academicCollectionRef().document(academicDocumentId)
+            try {
+                return academicCollectionRef().document(academicDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllAcademicDocuments(): MutableList<DocumentSnapshot> {
-            return academicCollectionRef().get().await().documents
+            try {
+                return academicCollectionRef().get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertAcademicDocuments(
@@ -50,28 +68,37 @@ class AcademicRepository {
         }
 
         suspend fun isAcademicDocumentExists(academicDocumentId: String): Boolean {
-            return suspendCoroutine { continuation ->
-                academicDocumentRef(academicDocumentId).get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        continuation.resume(documentSnapshot.exists())
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking academic document existence", exception)
-                        continuation.resume(false)
-                    }
+            try {
+                return suspendCoroutine { continuation ->
+                    academicDocumentRef(academicDocumentId).get()
+                        .addOnSuccessListener { documentSnapshot ->
+                            continuation.resume(documentSnapshot.exists())
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.w("TAG", "Error checking academic document existence", exception)
+                            continuation.resume(false)
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
             }
         }
 
         fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
-            academicDocumentRef(academicDocumentId).get()
-                .addOnSuccessListener { documentSnapshot ->
-                    callback(documentSnapshot.exists())
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("TAG", "Error checking academic document existence", exception)
-                    callback(false)
-                }
+            try {
+                academicDocumentRef(academicDocumentId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking academic document existence", exception)
+                        callback(false)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
-
     }
 }

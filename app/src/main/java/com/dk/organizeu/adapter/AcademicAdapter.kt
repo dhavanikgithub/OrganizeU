@@ -1,5 +1,6 @@
 package com.dk.organizeu.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,9 @@ import com.dk.organizeu.listener.OnItemClickListener
 
 class AcademicAdapter(private val academicList: List<AcademicPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<AcademicAdapter.AcademicViewHolder>() {
+    companion object{
+        const val TAG = "OrganizeU-AcademicAdapter"
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -20,15 +24,19 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
-        val currentItem = academicList[position]
-        holder.academicYearTxt.text = "Academic: ${currentItem.academic}"
-        holder.academicTypeTxt.text = "Type: ${currentItem.sem}"
+        try {
+            val currentItem = academicList[position]
+            holder.academicYearTxt.text = "Academic: ${currentItem.academic}"
+            holder.academicTypeTxt.text = "Type: ${currentItem.sem}"
 
-        holder.itemView.setOnClickListener {
-            listener.onClick(position)
-        }
-        holder.btnDelete.setOnClickListener {
-            listener.onDeleteClick(position)
+            holder.itemView.setOnClickListener {
+                listener.onClick(position)
+            }
+            holder.btnDelete.setOnClickListener {
+                listener.onDeleteClick(position)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG,e.message.toString())
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dk.organizeu.repository
 
+import android.util.Log
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.FACULTY_COLLECTION
 import com.google.firebase.firestore.CollectionReference
@@ -9,20 +10,41 @@ import kotlinx.coroutines.tasks.await
 
 class FacultyRepository {
     companion object{
+        const val TAG = "OrganizeU-FacultyRepository"
         fun facultyCollectionRef(): CollectionReference {
-            return db.collection(FACULTY_COLLECTION)
+            try {
+                return db.collection(FACULTY_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun facultyDocumentRef(facultyDocumentId:String): DocumentReference{
-            return facultyCollectionRef().document(facultyDocumentId)
+            try {
+                return facultyCollectionRef().document(facultyDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getAllFacultyDocuments(): MutableList<DocumentSnapshot> {
-            return facultyCollectionRef().get().await().documents
+            try {
+                return facultyCollectionRef().get().await().documents
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         suspend fun getFacultyDocumentById(facultyDocumentId:String): DocumentSnapshot? {
-            return facultyCollectionRef().document(facultyDocumentId).get().await()
+            try {
+                return facultyCollectionRef().document(facultyDocumentId).get().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun insertFacultyDocument(
