@@ -6,29 +6,36 @@
     <group android:checkableBehavior="single" >
         <item
             android:id="@+id/nav_academic"
-            android:title="@string/admin_drawer_item_1" />
+            android:title="@string/admin_drawer_item_1"
+            android:icon="@drawable/ic_academic"/>
         <item
             android:id="@+id/nav_timetable"
-            android:title="@string/admin_drawer_item_2" />
+            android:title="@string/admin_drawer_item_2"
+            android:icon="@drawable/ic_timetable"/>
         <item
             android:id="@+id/nav_faculty"
-            android:title="@string/admin_drawer_item_3" />
+            android:title="@string/admin_drawer_item_3"
+            android:icon="@drawable/ic_faculty"/>
         <item
             android:id="@+id/nav_room"
-            android:title="@string/admin_drawer_item_4" />
+            android:title="@string/admin_drawer_item_4"
+            android:icon="@drawable/ic_room"/>
         <item
             android:id="@+id/nav_subject"
-            android:title="@string/admin_drawer_item_5" />
+            android:title="@string/admin_drawer_item_5"
+            android:icon="@drawable/ic_subject"/>
     </group>
 
-    <!--<item android:title="Other">
+    <item android:title="Other">
         <menu>
             <item
                 android:id="@+id/nav_aboutUs"
-                android:title="About Us" />
+                android:title="About Us"
+                android:icon="@drawable/ic_about"/>
             <item
                 android:id="@+id/nav_sign_out"
-                android:title="Sign out" />
+                android:title="Sign out"
+                android:icon="@drawable/ic_signout"/>
         </menu>
-    </item>-->
+    </item>
 </menu>

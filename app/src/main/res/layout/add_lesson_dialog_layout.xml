@@ -27,6 +27,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
+            android:drawableStart="@drawable/ic_subject"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorPrimary"
             tools:text="Mobile Application Development" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,6 +52,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
+            android:drawableStart="@drawable/ic_faculty"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorPrimary"
             tools:text="MDT" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,6 +77,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
+            android:drawableStart="@drawable/ic_lesson"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorPrimary"
             tools:text="LAB" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,6 +147,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
+            android:drawableStart="@drawable/ic_room"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorPrimary"
             tools:text="102" />
     </com.google.android.material.textfield.TextInputLayout>
 

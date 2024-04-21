@@ -24,7 +24,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inputType="none"
-            tools:text="2024-2025" />
+            android:drawableStart="@drawable/ic_academic"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorPrimary"
+            tools:text="2024-2025"
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.chip.ChipGroup
