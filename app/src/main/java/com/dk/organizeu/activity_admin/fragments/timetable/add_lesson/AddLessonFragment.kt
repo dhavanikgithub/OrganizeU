@@ -16,6 +16,7 @@ import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.LessonRepository.Companion.lessonDocumentToLessonObj
 import com.dk.organizeu.adapter.LessonAdapterAdmin
+import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
@@ -27,6 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
+import kotlin.properties.Delegates
 
 class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
 
@@ -44,6 +47,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
     private lateinit var binding: FragmentAddLessonBinding
     private lateinit var progressDialog: CustomProgressDialog
     private lateinit var db: FirebaseFirestore
+    var dayOfWeek by Delegates.notNull<Int>()
 
 
     override fun onCreateView(
@@ -71,9 +75,14 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                             className = getString("academic_class",null)
                         }
                     }
+                    dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
+                        7
+                    } else {
+                        UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1
+                    }
                     loadTabs()
                     initRecyclerView()
-                    initLesson(1)
+                    initLesson(dayOfWeek)
                 } catch (e: Exception) {
                     Log.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
@@ -154,7 +163,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                     }
 
                     // Select Weekday tab based of current week day
-                    currentTab = tbLayoutWeekDay.getTabAt(0)
+                    currentTab = tbLayoutWeekDay.getTabAt(dayOfWeek-1)
                     tbLayoutWeekDay.selectTab(currentTab)
                 } catch (e: Exception) {
                     Log.e(TAG,e.message.toString())
@@ -197,7 +206,8 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                             val classDocumentId = className
                             val timetableDocumentId = Weekday.getWeekdayNameByNumber(weekDay)
 
-                            val documents = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,"start_time")
+                            val documents = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,
+                                WeekdayCollection.START_TIME.displayName)
                             var counter = 1
                             for(document in documents)
                             {

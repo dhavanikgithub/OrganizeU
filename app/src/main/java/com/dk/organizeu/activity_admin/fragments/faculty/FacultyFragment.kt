@@ -60,7 +60,7 @@ class FacultyFragment : Fragment() {
 
                 btnAddFaculty.setOnClickListener {
                     try {
-                        val txtFacultyName = etFacultyName.text.toString()
+                        val txtFacultyName = etFacultyName.text.toString().trim()
                         tlFacultyName.error = null
                         if(txtFacultyName!="" && txtFacultyName.matches("^[a-zA-Z_-]{2,20}$".toRegex()))
                         {

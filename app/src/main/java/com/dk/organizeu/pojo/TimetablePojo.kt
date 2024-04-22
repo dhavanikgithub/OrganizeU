@@ -12,6 +12,9 @@ data class TimetablePojo(
     val type: String,
     val facultyName: String,
     val lessonNumber: Int,
-    val color: String = "#735DA5"
+    val muteRequestCode: Int,
+    val unmuteRequestCode: Int,
+    val notificationCode: Int,
+    val color: String = "#735DA5",
 )
 

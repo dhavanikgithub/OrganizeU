@@ -10,5 +10,8 @@ enum class WeekdayCollection(val displayName:String) {
     START_TIME("start_time"),
     SUBJECT_CODE("subject_code"),
     SUBJECT_NAME("subject_name"),
-    TYPE("type")
+    TYPE("type"),
+    MUTE_REQUEST_CODE("mute_request_code"),
+    UNMUTE_REQUEST_CODE("unmute_request_code"),
+    NOTIFICATION_CODE("notification_code")
 }

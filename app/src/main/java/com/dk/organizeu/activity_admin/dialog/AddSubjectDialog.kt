@@ -44,7 +44,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                 }
                 btnAdd.setOnClickListener {
                     try {
-                        if(etSubjectName.text.toString()!="" && etSubjectCode.text.toString()!="" && (chipPractical.isChecked || chipTheory.isChecked))
+                        if(etSubjectName.text.toString().trim()!="" && etSubjectCode.text.toString().trim()!="" && (chipPractical.isChecked || chipTheory.isChecked))
                         {
                             val subjectType = if(chipPractical.isChecked && chipTheory.isChecked) {
                                 "${chipTheory.text} AND ${chipPractical.text}"
@@ -54,9 +54,9 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                                 chipTheory.text.toString()
                             }
 
-                            val subjectDocumentId = etSubjectName.text.toString()
+                            val subjectDocumentId = etSubjectName.text.toString().trim()
                             val subjectData = hashMapOf(
-                                SubjectCollection.CODE.displayName to etSubjectCode.text.toString(),
+                                SubjectCollection.CODE.displayName to etSubjectCode.text.toString().trim(),
                                 SubjectCollection.TYPE.displayName to subjectType
                             )
                             isSubjectDocumentExists(subjectDocumentId) { exists ->

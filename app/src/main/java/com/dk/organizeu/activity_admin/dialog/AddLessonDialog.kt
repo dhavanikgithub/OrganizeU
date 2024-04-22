@@ -23,10 +23,12 @@ import com.dk.organizeu.repository.LessonRepository.Companion.isLessonDocumentCo
 import com.dk.organizeu.repository.RoomRepository.Companion.getRoomDocumentsByField
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.calculateLessonDuration
+import com.dk.organizeu.utils.UtilFunction.Companion.convert12HourTo24Hour
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.dk.organizeu.utils.UtilFunction.Companion.validateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -193,17 +195,25 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                     val subjectData = SubjectRepository.subjectDocumentToSubjectObj(SubjectRepository.getSubjectDocumentById(subjectDocumentId)!!)
                                     val roomData = RoomRepository.roomDocumentToRoomObj(RoomRepository.getRoomDocumentById(roomDocumentId)!!)
                                     val selectedLessonTime = selectedTime!!.split(" - ")
+                                    val muteRequestCode = System.currentTimeMillis().toInt()
+                                    delay(100)
+                                    val unmuteRequestCode = System.currentTimeMillis().toInt()
+                                    delay(100)
+                                    val notificationCode = System.currentTimeMillis().toInt()
                                     val dataSet = hashMapOf(
                                         WeekdayCollection.CLASS_NAME.displayName to className,
                                         WeekdayCollection.SUBJECT_NAME.displayName to selectedSubject!!,
                                         WeekdayCollection.SUBJECT_CODE.displayName to subjectData.code,
                                         WeekdayCollection.LOCATION.displayName to "$selectedRoom - ${roomData.location}",
-                                        WeekdayCollection.START_TIME.displayName to selectedLessonTime[0],
-                                        WeekdayCollection.END_TIME.displayName to selectedLessonTime[1],
+                                        WeekdayCollection.START_TIME.displayName to selectedLessonTime[0].convert12HourTo24Hour(),
+                                        WeekdayCollection.END_TIME.displayName to selectedLessonTime[1].convert12HourTo24Hour(),
                                         WeekdayCollection.FACULTY_NAME.displayName to selectedFaculty!!,
                                         WeekdayCollection.TYPE.displayName to selectedLessonType!!,
                                         WeekdayCollection.BATCH.displayName to selectedBatch.toString(),
-                                        WeekdayCollection.DURATION.displayName to calculateLessonDuration(selectedLessonTime[0],selectedLessonTime[1])
+                                        WeekdayCollection.DURATION.displayName to calculateLessonDuration(selectedLessonTime[0],selectedLessonTime[1]),
+                                        WeekdayCollection.MUTE_REQUEST_CODE.displayName to muteRequestCode.toString(),
+                                        WeekdayCollection.UNMUTE_REQUEST_CODE.displayName to unmuteRequestCode.toString(),
+                                        WeekdayCollection.NOTIFICATION_CODE.displayName to notificationCode.toString()
                                     )
                                     val academicDocumentId = "${academicYear}_${academicType}"
                                     val semesterDocumentId = semesterNumber

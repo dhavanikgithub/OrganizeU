@@ -60,15 +60,9 @@ class UtilFunction {
             }
         }
 
-        fun checkLessonStatus(startTime: String, endTime: String): Boolean {
+        fun checkLessonStatus(endTime: String): Boolean {
 
             try {
-                val startDate = Calendar.getInstance().apply {
-                    time = timeFormat.parse(startTime)!!
-                    set(Calendar.YEAR, calendar.get(Calendar.YEAR))
-                    set(Calendar.MONTH, calendar.get(Calendar.MONTH))
-                    set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
-                }
                 val endDate = Calendar.getInstance().apply {
                     time = timeFormat.parse(endTime)!!
                     set(Calendar.YEAR, calendar.get(Calendar.YEAR))
@@ -76,12 +70,7 @@ class UtilFunction {
                     set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH))
                 }
 
-                return when {
-
-                    calendar.before(startDate) -> true
-                    calendar.after(endDate) -> false
-                    else -> true
-                }
+                return endDate.timeInMillis>=System.currentTimeMillis()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -267,6 +256,20 @@ class UtilFunction {
                 Log.e(TAG,e.message.toString())
                 throw e
             }
+        }
+
+        fun String.convert12HourTo24Hour(): String {
+            val sdf12hr = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val sdf24hr = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = sdf12hr.parse(this)
+            return sdf24hr.format(date)
+        }
+
+        fun String.convert24HourTo12Hour(): String {
+            val sdf24hr = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val sdf12hr = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val date = sdf24hr.parse(this)
+            return sdf12hr.format(date)
         }
     }
 }

@@ -41,11 +41,11 @@ class AddRoomDialog : AppCompatDialogFragment() {
                 }
                 btnAdd.setOnClickListener {
                     try {
-                        if(etRoomName.text.toString()!="" && etRoomLocation.text.toString()!="" && (chipLab.isChecked || chipClass.isChecked))
+                        if(etRoomName.text.toString().trim()!="" && etRoomLocation.text.toString().trim()!="" && (chipLab.isChecked || chipClass.isChecked))
                         {
-                            val roomName = etRoomName.text.toString()
+                            val roomName = etRoomName.text.toString().trim()
                             val roomData = hashMapOf(
-                                RoomCollection.LOCATION.displayName to etRoomLocation.text.toString(),
+                                RoomCollection.LOCATION.displayName to etRoomLocation.text.toString().trim(),
                                 RoomCollection.TYPE.displayName to if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
                             )
                             RoomRepository.isRoomDocumentExists(roomName) { exists ->

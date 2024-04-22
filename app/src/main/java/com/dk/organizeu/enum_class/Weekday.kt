@@ -54,5 +54,19 @@ enum class Weekday(val displayName: String) {
             }
         }
 
+
+        fun getSystemWeekdayByName(dayName: String): Int {
+            return when (dayName) {
+                MONDAY.displayName -> 2
+                TUESDAY.displayName -> 3
+                WEDNESDAY.displayName -> 4
+                THURSDAY.displayName -> 5
+                FRIDAY.displayName -> 6
+                SATURDAY.displayName -> 7
+                SUNDAY.displayName -> 1
+                else -> throw IllegalArgumentException("Invalid day name: $dayName.")
+            }
+        }
+
     }
 }

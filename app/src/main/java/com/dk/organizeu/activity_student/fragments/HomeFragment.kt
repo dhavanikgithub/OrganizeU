@@ -18,6 +18,10 @@ import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.activity_student.StudentActivity
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_END_LESSON
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_START_LESSON
+import com.dk.organizeu.enum_class.Weekday.Companion.getSystemWeekdayByName
+import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.LessonMuteManagement
 import com.dk.organizeu.utils.NotificationScheduler.Companion.scheduleNotification
@@ -62,7 +66,16 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-                scheduleNotification(requireContext(),"TOC","8:37 AM")
+
+                /*val context = requireContext() // Replace applicationContext with your actual context
+                val lessonName = "Math Lesson"
+                val startTimeStr = "11:50 AM" // Example time
+                val weekday = Calendar.MONDAY // Example: Schedule for Monday
+
+                scheduleNotification(context, lessonName, startTimeStr, weekday,12345)
+                scheduleNotification(context, "Science", "11:51 AM", weekday,12346)
+*/
+
                 MainScope().launch(Dispatchers.Main) {
                     try {
                         dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
@@ -78,6 +91,7 @@ class HomeFragment : Fragment() {
 
                         withContext(Dispatchers.Main)
                         {
+                            loadTabs()
                             showProgressBar(rvLesson,progressBar)
                         }
 
@@ -205,22 +219,23 @@ class HomeFragment : Fragment() {
                     {
                         timetableList.clear()
                         val weekDayNumber = Weekday.getWeekdayNumberByName(timetableDocument.id)
-                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocument.id,"start_time")
+                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocument.id,WeekdayCollection.START_TIME.displayName)
                         var count = 1
                         var lesson: TimetablePojo
                         for(lessonDocument in lessonDocuments)
                         {
                             lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument,count++)
                             timetableList.add(lesson)
-                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,totalLessonCount++,Weekday.getSystemWeekDayByNumber(weekDayNumber))
-                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,totalLessonCount++,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                            scheduleNotification(requireContext(), lesson.subjectName, lesson.startTime, Weekday.getSystemWeekDayByNumber(weekDayNumber),lesson.notificationCode)
+                            lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,lesson.muteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                            lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,lesson.unmuteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
                         }
                         timetableData[weekDayNumber] = ArrayList(timetableList)
                     }
                     withContext(Dispatchers.Main)
                     {
                         try {
-                            loadTabs()
+
                             initLessonRecyclerView()
                             delay(500)
                             hideProgressBar(rvLesson,progressBar)
@@ -287,7 +302,6 @@ class HomeFragment : Fragment() {
                     while (i<len)
                     {
                         if (!UtilFunction.checkLessonStatus(
-                                currentDayTimeTableData.value!![i].startTime,
                                 currentDayTimeTableData.value!![i].endTime
                             )
                         )
