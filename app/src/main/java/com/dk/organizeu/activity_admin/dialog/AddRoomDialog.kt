@@ -13,7 +13,6 @@ import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
-import kotlin.collections.HashMap
 
 class AddRoomDialog : AppCompatDialogFragment() {
     private var roomAddListener: AddDocumentListener? = null
@@ -23,6 +22,11 @@ class AddRoomDialog : AppCompatDialogFragment() {
         const val TAG = "OrganizeU-AddRoomDialog"
     }
 
+    /**
+     * Creates and configures the dialog for adding a new room.
+     * @param savedInstanceState The saved instance state.
+     * @return The created dialog.
+     */
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
@@ -31,16 +35,22 @@ class AddRoomDialog : AppCompatDialogFragment() {
         var builder:AlertDialog.Builder? = null
 
         try {
+            // Set the roomAddListener if the parentFragment implements AddDocumentListener
             roomAddListener = parentFragment as? AddDocumentListener
+
+            // Initialize an AlertDialog.Builder with the context of the current fragment
             builder = AlertDialog.Builder(requireContext())
-            .setView(view)
-            .setTitle("Add Room")
+            .setView(view) // Set the custom view for the dialog to the inflated view
+            .setTitle("Add Room") // Set the title of the dialog
+
             binding.apply {
                 binding.btnClose.setOnClickListener {
-                    dismiss()
+                    dismiss() // Dismiss dialog
                 }
+
                 btnAdd.setOnClickListener {
                     try {
+                        // Check if roomName, roomLocation, and roomType are not empty and at least one type (lab or class) is selected
                         if(etRoomName.text.toString().trim()!="" && etRoomLocation.text.toString().trim()!="" && (chipLab.isChecked || chipClass.isChecked))
                         {
                             val roomName = etRoomName.text.toString().trim()
@@ -48,58 +58,84 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                 RoomCollection.LOCATION.displayName to etRoomLocation.text.toString().trim(),
                                 RoomCollection.TYPE.displayName to if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
                             )
+
+                            // Check if the room document already exists
                             RoomRepository.isRoomDocumentExists(roomName) { exists ->
                                 try {
+                                    // If the room document already exists, dismiss the dialog and return
                                     if(exists)
                                     {
                                         dismiss()
                                         return@isRoomDocumentExists
                                     }
+                                    // If the room document does not exist, add it to the database
                                     addNewRoom(roomName,roomData)
                                 } catch (e: Exception) {
+                                    // Log any unexpected exceptions that occur
                                     Log.e(TAG,e.message.toString())
+                                    // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
 
                         }
                     } catch (e: Exception) {
+                        // Log any unexpected exceptions that occur
                         Log.e(TAG,e.message.toString())
+                        // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
 
                 }
             }
         } catch (e: Exception) {
+            // Log any unexpected exceptions that occur
             Log.e(TAG,e.message.toString())
+            // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
         }
 
         try {
+            // Create and return the dialog
             return builder!!.create()
         } catch (e: Exception) {
+
             Log.e(TAG,e.message.toString())
+            // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
+            // Propagate the exception up the call stack
             throw e
         }
     }
 
 
+    /**
+     * Adds a new room to the database.
+     * @param roomDocumentId The ID of the room document.
+     * @param roomData A HashMap containing room data.
+     */
     private fun addNewRoom(roomDocumentId:String, roomData:HashMap<String,String>)
     {
+        // Insert the room document into the database by using repository insert method
         RoomRepository.insertRoomDocument(roomDocumentId,roomData,{
+            // Success callback
             try {
                 Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
+                // Notify the listener about the addition of the room document
                 roomAddListener?.onAdded(roomDocumentId,roomData)
-                dismiss()
+                dismiss() // Dismiss dialog
             } catch (e: Exception) {
+                // Log any exceptions that occur
                 Log.e(TAG,e.message.toString())
+                // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
             }
         },{
+            // Error callback
             Log.w("TAG", "Error adding room document", it)
+            // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(it)
-            dismiss()
+            dismiss() // Dismiss dialog
         })
     }
 

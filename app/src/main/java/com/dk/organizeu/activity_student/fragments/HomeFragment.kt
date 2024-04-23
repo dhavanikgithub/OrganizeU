@@ -11,31 +11,28 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.adapter.LessonAdapterStudent
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.enum_class.Weekday
+import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.TimeTableRepository
-import com.dk.organizeu.activity_student.StudentActivity
-import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_END_LESSON
-import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_START_LESSON
-import com.dk.organizeu.enum_class.Weekday.Companion.getSystemWeekdayByName
-import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.LessonMuteManagement
-import com.dk.organizeu.utils.NotificationScheduler.Companion.scheduleNotification
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import com.dk.organizeu.utils.Validation.Companion.checkLessonStatus
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Calendar
 
 
 class HomeFragment : Fragment() {
@@ -75,6 +72,7 @@ class HomeFragment : Fragment() {
                 scheduleNotification(context, lessonName, startTimeStr, weekday,12345)
                 scheduleNotification(context, "Science", "11:51 AM", weekday,12346)
 */
+
 
                 MainScope().launch(Dispatchers.Main) {
                     try {
@@ -226,9 +224,9 @@ class HomeFragment : Fragment() {
                         {
                             lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument,count++)
                             timetableList.add(lesson)
-                            scheduleNotification(requireContext(), lesson.subjectName, lesson.startTime, Weekday.getSystemWeekDayByNumber(weekDayNumber),lesson.notificationCode)
-                            lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,lesson.muteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
-                            lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,lesson.unmuteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+
+                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,lesson.muteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,lesson.unmuteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
                         }
                         timetableData[weekDayNumber] = ArrayList(timetableList)
                     }
@@ -301,7 +299,7 @@ class HomeFragment : Fragment() {
                     var i = 0
                     while (i<len)
                     {
-                        if (!UtilFunction.checkLessonStatus(
+                        if (!checkLessonStatus(
                                 currentDayTimeTableData.value!![i].endTime
                             )
                         )

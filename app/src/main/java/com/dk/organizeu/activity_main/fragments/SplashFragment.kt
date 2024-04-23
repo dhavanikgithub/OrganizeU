@@ -1,18 +1,20 @@
 package com.dk.organizeu.activity_main.fragments
 
 import android.content.Intent
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.databinding.FragmentSplashBinding
 import com.dk.organizeu.activity_student.StudentActivity
+import com.dk.organizeu.databinding.FragmentSplashBinding
+import com.dk.organizeu.utils.NotificationMan
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
@@ -38,7 +40,20 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+
                 MainScope().launch {
+                    launch {
+                        val notificationMan = NotificationMan()
+                        notificationMan.showNotification(requireContext(), "Sub 1")
+                        delay(10000)
+                        notificationMan.showNotification(requireContext(), "Sub 2")
+                        delay(10000)
+                        notificationMan.showNotification(requireContext(), "Sub 3")
+                        delay(10000)
+                        notificationMan.showNotification(requireContext(), "Sub 4")
+                        delay(10000)
+                        notificationMan.showNotification(requireContext(), "Sub 5")
+                    }
                     btnAdminScreen.setOnClickListener {
                         gotoAdminActivity()
                     }

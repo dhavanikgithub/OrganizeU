@@ -5,8 +5,8 @@ import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
 import com.dk.organizeu.firebase.key_mapping.TimeTableCollection
 import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.TimetablePojo
-import com.dk.organizeu.utils.UtilFunction.Companion.convert24HourTo12Hour
-import com.dk.organizeu.utils.UtilFunction.Companion.timeFormat
+import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
+import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
@@ -107,8 +107,8 @@ class LessonRepository {
         suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, roomName:String, callback: (Boolean) -> Unit)
         {
             try {
-                val lessonStartTime = timeFormat.parse(startTime)
-                val lessonEndTime = timeFormat.parse(endTime)
+                val lessonStartTime = timeFormat12H.parse(startTime)
+                val lessonEndTime = timeFormat12H.parse(endTime)
                 val semesterDocuments = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
                 for(semesterDoc in semesterDocuments)
                 {
@@ -121,8 +121,8 @@ class LessonRepository {
                                 for(lessonDoc in lessonDocuments)
                                 {
                                     try {
-                                        val parsedStartTime = timeFormat.parse(lessonDoc.get(WeekdayCollection.START_TIME.displayName).toString())
-                                        val parsedEndTime = timeFormat.parse(lessonDoc.get(WeekdayCollection.END_TIME.displayName).toString())
+                                        val parsedStartTime = timeFormat12H.parse(lessonDoc.get(WeekdayCollection.START_TIME.displayName).toString())
+                                        val parsedEndTime = timeFormat12H.parse(lessonDoc.get(WeekdayCollection.END_TIME.displayName).toString())
                                         if (parsedStartTime != null) {
                                             if (parsedEndTime != null) {
                                                 if (parsedStartTime.before(lessonEndTime) && parsedEndTime.after(lessonStartTime)) {

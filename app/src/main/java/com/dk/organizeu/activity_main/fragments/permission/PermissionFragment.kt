@@ -16,7 +16,6 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.FragmentPermissionBinding
 import com.dk.organizeu.utils.Constants.Companion.AUDIO_SETTING_PERMISSION
 import com.dk.organizeu.utils.Constants.Companion.NOTIFICATION_PERMISSION
-import com.dk.organizeu.utils.NotificationScheduler
 import com.dk.organizeu.utils.PermissionManager.Companion.appNotificationSettingIntent
 import com.dk.organizeu.utils.PermissionManager.Companion.appSettingIntent
 import com.dk.organizeu.utils.PermissionManager.Companion.isAudioSettingsPermissionGranted
@@ -29,6 +28,7 @@ class PermissionFragment : Fragment() {
 
     companion object {
         fun newInstance() = PermissionFragment()
+        const val TAG = "OrganizeU-PermissionFragment"
 
     }
 
@@ -159,7 +159,7 @@ class PermissionFragment : Fragment() {
         try {
             binding.btnStart.isEnabled=permissionCheck()
         } catch (e: Exception) {
-            Log.e(NotificationScheduler.TAG,e.message.toString())
+            Log.e(TAG,e.message.toString())
             throw e
         }
     }

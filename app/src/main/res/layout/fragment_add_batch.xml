@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutControl"
+        app:layout_constraintBottom_toTopOf="@+id/clBottomControl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +28,7 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutControl"
+        app:layout_constraintBottom_toTopOf="@+id/clBottomControl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayoutControl"
+        android:id="@+id/clBottomControl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -113,20 +113,20 @@
             android:layout_marginBottom="5dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicSemTIL"
+                android:id="@+id/tlAcademicSem"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="Select Sem"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/academicClassTIL"
+                app:layout_constraintEnd_toStartOf="@+id/tlAcademicClass"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginEnd="5dp">
 
                 <AutoCompleteTextView
-                    android:id="@+id/academicSemACTV"
+                    android:id="@+id/actAcademicSem"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -135,7 +135,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicClassTIL"
+                android:id="@+id/tlAcademicClass"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -143,12 +143,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/academicSemTIL"
+                app:layout_constraintStart_toEndOf="@+id/tlAcademicSem"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="5dp">
 
                 <AutoCompleteTextView
-                    android:id="@+id/academicClassACTV"
+                    android:id="@+id/actAcademicClass"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -168,7 +168,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicBatchTIL"
+                android:id="@+id/tlAcademicBatch"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/batchET"
+                    android:id="@+id/etAcademicBatch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
@@ -194,9 +194,9 @@
                 android:text="Add"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="@+id/academicBatchTIL"
+                app:layout_constraintBottom_toBottomOf="@+id/tlAcademicBatch"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/academicBatchTIL" />
+                app:layout_constraintTop_toTopOf="@+id/tlAcademicBatch" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

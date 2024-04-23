@@ -2,17 +2,17 @@ package com.dk.organizeu.activity_admin.fragments.timetable
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
-import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.databinding.FragmentTimetableBinding
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.ClassRepository
@@ -68,7 +68,7 @@ class TimetableFragment : Fragment() {
 
                     if(selectedSemesterItem==null)
                     {
-                        semTIL.isEnabled=false
+                        tlAcademicSem.isEnabled=false
                     }
                     else{
                         if(selectedAcademicYearItem!=null && selectedAcademicTypeItem!=null)
@@ -113,7 +113,7 @@ class TimetableFragment : Fragment() {
                         clearClass()
                         loadAcademicTypeDropDown()
 
-                        semTIL.isEnabled=false
+                        tlAcademicSem.isEnabled=false
                         classTIL.isEnabled=false
                         btnGoToTimetable.isEnabled=false
                     } catch (e: Exception) {
@@ -138,7 +138,7 @@ class TimetableFragment : Fragment() {
 
                 }
 
-                semACTV.setOnItemClickListener { parent, view, position, id ->
+                actAcademicSem.setOnItemClickListener { parent, view, position, id ->
                     try {
                         selectedSemesterItem = parent.getItemAtPosition(position).toString()
                         clearClass()
@@ -188,8 +188,8 @@ class TimetableFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 try {
-                    semTIL.isEnabled=false
-                    semACTV.setText("")
+                    tlAcademicSem.isEnabled=false
+                    actAcademicSem.setText("")
                     semesterList.clear()
                     if(semesterAdapter!=null)
                     {
@@ -332,7 +332,7 @@ class TimetableFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 try {
-                    semTIL.isEnabled=false
+                    tlAcademicSem.isEnabled=false
                     semesterList.clear()
                     val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
                     MainScope().launch(Dispatchers.IO)
@@ -347,8 +347,8 @@ class TimetableFragment : Fragment() {
                             {
                                 try {
                                     semesterAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,semesterList)
-                                    semACTV.setAdapter(semesterAdapter)
-                                    semTIL.isEnabled=true
+                                    actAcademicSem.setAdapter(semesterAdapter)
+                                    tlAcademicSem.isEnabled=true
                                 } catch (e: Exception) {
                                     Log.e(TAG,e.message.toString())
                                     requireContext().unexpectedErrorMessagePrint(e)

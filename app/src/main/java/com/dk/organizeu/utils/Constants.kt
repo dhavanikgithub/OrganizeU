@@ -10,6 +10,8 @@ class Constants {
         const val ACTION_DELETE_NOTIFICATION = "delete_notification"
 
         const val DATE_FORMAT_STRING = "dd-MM-yyyy"
-        const val TIME_FORMAT_STRING = "hh:mm aa"
+
+        const val TIME_FORMAT_12H_STRING = "hh:mm a"
+        const val TIME_FORMAT_24H_STRING = "HH:mm"
     }
 }

@@ -15,10 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.adapter.BatchAdapter
-import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
+import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
+import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.BatchCollection
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
@@ -31,7 +31,12 @@ import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class AddBatchFragment : Fragment() {
 
@@ -61,14 +66,19 @@ class AddBatchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        // Apply operations within the binding and viewModel contexts
         binding.apply {
             viewModel.apply {
                 try {
+                    // Select the Academic item in the drawer menu
                     (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
-                    academicSemTIL.isEnabled=false
-                    academicClassTIL.isEnabled=false
-                    academicBatchTIL.isEnabled=false
+                    // Disable UI elements related to subsequent selections until options are loaded
+                    tlAcademicSem.isEnabled=false
+                    tlAcademicClass.isEnabled=false
+                    tlAcademicBatch.isEnabled=false
                     btnAddBatch.isEnabled=false
+
+                    // Set selected values if previously set in AddAcademicFragment
                     if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
                     {
                         if(academicYearSelectedItem==null)
@@ -79,45 +89,58 @@ class AddBatchFragment : Fragment() {
                         {
                             academicTypeSelectedItem = AddAcademicFragment.academicType
                         }
-
+                        // Set text for academic year and type DropDown
                         actAcademicYear.setText(academicYearSelectedItem)
                         actAcademicType.setText(academicTypeSelectedItem)
+
+                        // Set text for academic semester DropDown if available
                         if(academicSemSelectedItem!=null)
                         {
-                            academicSemACTV.setText(academicSemSelectedItem)
+                            actAcademicSem.setText(academicSemSelectedItem)
                         }
+
+                        // Set text for academic class DropDown if available
                         if(academicClassSelectedItem!=null)
                         {
-                            academicClassACTV.setText(academicClassSelectedItem)
+                            actAcademicClass.setText(academicClassSelectedItem)
                         }
+
+                        // Load options for academic year and type Drop Down
                         loadACTAcademicYear()
                         loadACTAcademicType()
+
+                        // Initialize the Batch RecyclerView
                         initRecyclerView()
+
+                        // Enable subsequent UI elements based on selections
                         if(academicTypeSelectedItem!=null)
                         {
-                            academicSemTIL.isEnabled=true
+                            tlAcademicSem.isEnabled=true
                         }
                         if(academicSemSelectedItem!=null)
                         {
-                            academicClassTIL.isEnabled=true
+                            tlAcademicClass.isEnabled=true
                         }
                         if(academicClassSelectedItem!=null)
                         {
-                            academicBatchTIL.isEnabled=true
+                            tlAcademicBatch.isEnabled=true
                         }
-                        if(batchET.text.toString()!="")
+                        if(etAcademicBatch.text.toString()!="")
                         {
                             btnAddBatch.isEnabled=true
                         }
                     }
+                    // Load options for academic semester DropDown if academic year and type selections are available
                     if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null)
                     {
                         loadAcademicSemACTV()
                     }
-
+                    // Load options for academic class DropDown
                     loadAcademicClassACTV()
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log any unexpected exceptions that occur
+                    Log.e(TAG, e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -128,17 +151,25 @@ class AddBatchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+                // Set a refresh listener to the SwipeRefreshLayout
                 swipeRefresh.setOnRefreshListener {
+                    // Refresh the Batch RecyclerView by reinitializing it
                     initRecyclerView()
+                    // Hide the refreshing indicator after the Batch RecyclerView is refreshed
                     swipeRefresh.isRefreshing=false
                 }
                 actAcademicYear.setOnItemClickListener { parent, view, position, id ->
+                    // Get the selected academic year
                     academicYearSelectedItem = parent.getItemAtPosition(position).toString()
+
+                    // Disable UI elements related to subsequent selections until options are loaded
                     tlAcademicType.isEnabled=false
-                    academicSemTIL.isEnabled=false
-                    academicClassTIL.isEnabled=false
-                    academicBatchTIL.isEnabled=false
+                    tlAcademicSem.isEnabled=false
+                    tlAcademicClass.isEnabled=false
+                    tlAcademicBatch.isEnabled=false
                     btnAddBatch.isEnabled=false
+
+                    // Clear and reset AutoCompleteTextViews and adapters for subsequent selections
                     clearACTAcademicType()
                     clearAcademicSemACTV()
                     clearAcademicClassACTV()
@@ -146,67 +177,133 @@ class AddBatchFragment : Fragment() {
                     academicBatchAdapter.notifyDataSetChanged()
 
                     val job = lifecycleScope.launch(Dispatchers.Main) {
-                        val evenExists =
-                            isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
-                        if (evenExists) {
-                            academicTypeItemList.add(AcademicType.EVEN.name)
-                        }
+                        try {
+                            // Check if academic documents for even and odd semesters exist for the selected academic year
+                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
 
-                        val oddExists =
-                            isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
-                        if (oddExists) {
-                            academicTypeItemList.add(AcademicType.ODD.name)
-                        }
+                            // Add existing academic types to the academic type dropdown
+                            if (evenExists) {
+                                academicTypeItemList.add(AcademicType.EVEN.name)
+                            }
+                            if (oddExists) {
+                                academicTypeItemList.add(AcademicType.ODD.name)
+                            }
+                            // Set up the adapter for the academic type drop down
+                            academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                            actAcademicType.setAdapter(academicTypeItemAdapter)
 
-                        academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
-                        actAcademicType.setAdapter(academicTypeItemAdapter)
-                        tlAcademicType.isEnabled=true
+                            // Enable the academic type
+                            tlAcademicType.isEnabled=true
+                        } catch (e: Exception) {
+                            // Log any unexpected exceptions that occur
+                            Log.e(TAG,e.message.toString())
+                            // Display an unexpected error message to the user
+                            requireContext().unexpectedErrorMessagePrint(e)
+                        }
                     }
 
                     MainScope().launch{
+                        // Wait for the asynchronous task to complete
                         job.join()
                     }
                 }
                 actAcademicType.setOnItemClickListener { parent, view, position, id ->
-                    academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
-                    academicSemTIL.isEnabled=false
-                    academicClassTIL.isEnabled=false
-                    academicBatchTIL.isEnabled=false
-                    btnAddBatch.isEnabled=false
-                    clearAcademicSemACTV()
-                    loadAcademicSemACTV()
-                    clearAcademicClassACTV()
-                    academicBatchList.clear()
-                    academicBatchAdapter.notifyDataSetChanged()
-                    academicSemTIL.isEnabled=true
+                    try {
+                        // Update the selected academic type
+                        academicTypeSelectedItem = parent.getItemAtPosition(position).toString()
+
+                        // Disable related UI elements until options are loaded
+                        tlAcademicSem.isEnabled = false
+                        tlAcademicClass.isEnabled = false
+                        tlAcademicBatch.isEnabled = false
+                        btnAddBatch.isEnabled = false
+
+                        // Clear and load options for academic semester DropDown
+                        clearAcademicSemACTV()
+                        loadAcademicSemACTV()
+
+                        // Clear options for academic class DropDown
+                        clearAcademicClassACTV()
+
+                        // Clear and notify data set changed for academic batch list
+                        academicBatchList.clear()
+                        academicBatchAdapter.notifyDataSetChanged()
+
+                        // Enable academic semester DropDown
+                        tlAcademicSem.isEnabled = true
+                    } catch (e: Exception) {
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
+                        requireContext().unexpectedErrorMessagePrint(e)
+                    }
                 }
 
-                academicSemACTV.setOnItemClickListener { parent, view, position, id ->
-                    academicSemSelectedItem = parent.getItemAtPosition(position).toString()
 
-                    academicClassTIL.isEnabled=false
-                    academicBatchTIL.isEnabled=false
-                    btnAddBatch.isEnabled=false
-                    clearAcademicClassACTV()
-                    academicBatchList.clear()
-                    academicBatchAdapter.notifyDataSetChanged()
-                    loadAcademicClassACTV()
-                    academicClassTIL.isEnabled=true
-                }
-                academicClassACTV.setOnItemClickListener { parent, view, position, id ->
-                    academicClassSelectedItem = parent.getItemAtPosition(position).toString()
-                    academicBatchTIL.isEnabled=false
-                    btnAddBatch.isEnabled=false
-                    academicBatchList.clear()
-                    academicBatchAdapter.notifyDataSetChanged()
-                    initRecyclerView()
-                    academicBatchTIL.isEnabled=true
+                actAcademicSem.setOnItemClickListener { parent, view, position, id ->
+                    try {
+                        // Update the selected academic semester
+                        academicSemSelectedItem = parent.getItemAtPosition(position).toString()
+
+                        // Disable related UI elements until options are loaded
+                        tlAcademicClass.isEnabled = false
+                        tlAcademicBatch.isEnabled = false
+                        btnAddBatch.isEnabled = false
+
+                        // Clear options for academic class DropDown
+                        clearAcademicClassACTV()
+
+                        // Clear and notify data set changed for academic batch list
+                        academicBatchList.clear()
+                        academicBatchAdapter.notifyDataSetChanged()
+
+                        // Load options for academic class DropDown
+                        loadAcademicClassACTV()
+
+                        // Enable academic class DropDown
+                        tlAcademicClass.isEnabled = true
+                    } catch (e: Exception) {
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
+                        requireContext().unexpectedErrorMessagePrint(e)
+                    }
                 }
 
-                batchET.addTextChangedListener(object : TextWatcher {
+
+                actAcademicClass.setOnItemClickListener { parent, view, position, id ->
+                    try {
+                        // Update the selected academic class
+                        academicClassSelectedItem = parent.getItemAtPosition(position).toString()
+
+                        // Disable related UI elements until options are loaded
+                        tlAcademicBatch.isEnabled = false
+                        btnAddBatch.isEnabled = false
+
+                        // Clear and notify data set changed for academic batch list
+                        academicBatchList.clear()
+                        academicBatchAdapter.notifyDataSetChanged()
+
+                        // Initialize the RecyclerView
+                        initRecyclerView()
+
+                        // Enable academic batch input field
+                        tlAcademicBatch.isEnabled = true
+                    } catch (e: Exception) {
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
+                        requireContext().unexpectedErrorMessagePrint(e)
+                    }
+                }
+
+
+                etAcademicBatch.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        // Enable the Add Batch button if the batch text is not empty
                         btnAddBatch.isEnabled = s.toString() != ""
                     }
 
@@ -214,141 +311,239 @@ class AddBatchFragment : Fragment() {
                 })
 
                 btnAddBatch.setOnClickListener {
-                    if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && academicClassSelectedItem!=null && batchET.text!!.toString().isNotBlank() && batchET.text!!.toString().isNotEmpty())
-                    {
-                        academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
-                        semesterDocumentId = academicSemSelectedItem
-                        classDocumentId = academicClassSelectedItem
-                        batchDocumentId = batchET.text.toString()
-                        if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!="null")
+                    try {// Check if all required fields are not null and the batch EditText is not blank or empty
+                        if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && academicClassSelectedItem!=null && etAcademicBatch.text!!.toString().isNotBlank() && etAcademicBatch.text!!.toString().isNotEmpty())
                         {
-                            isBatchDocumentExists(academicDocumentId!!,
-                                semesterDocumentId!!, classDocumentId!!, batchDocumentId!!
-                            ){
-                                if(!it)
-                                {
-                                    val job = MainScope().launch(Dispatchers.IO) {
-                                        val inputHashMap = hashMapOf(
-                                            BatchCollection.BATCH.displayName to batchET.text.toString()
-                                        )
-                                        insertBatchDocument(academicDocumentId!!,
-                                            semesterDocumentId!!,
-                                            classDocumentId!!, batchDocumentId!!,inputHashMap,{
-                                            academicBatchList.add(batchET.text.toString())
-                                            academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
-                                            Toast.makeText(requireContext(),"Batch Added", Toast.LENGTH_SHORT).show()
-                                            batchET.setText("")
-                                        },{
-
-                                        })
-                                    }
-                                    runBlocking {
-                                        job.join()
+                            academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
+                            semesterDocumentId = academicSemSelectedItem
+                            classDocumentId = academicClassSelectedItem
+                            batchDocumentId = etAcademicBatch.text.toString()
+                            // Check if the required document IDs are not null and the batch document ID is not "null"
+                            if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!="null")
+                            {
+                                // Check if the required document IDs are not null and the batch document ID is not "null"
+                                isBatchDocumentExists(academicDocumentId!!,
+                                    semesterDocumentId!!, classDocumentId!!, batchDocumentId!!
+                                ){
+                                    if(!it)
+                                    {
+                                        // If the batch document does not exist, insert it into the database
+                                        val job = MainScope().launch(Dispatchers.IO) {
+                                            try {
+                                                val inputHashMap = hashMapOf(
+                                                    BatchCollection.BATCH.displayName to etAcademicBatch.text.toString()
+                                                )
+                                                // Call the insertBatchDocument function to add a new batch document to the database
+                                                insertBatchDocument(academicDocumentId!!, semesterDocumentId!!, classDocumentId!!, batchDocumentId!!,inputHashMap,{
+                                                    // Success Callback
+                                                        try {
+                                                            // Update UI and display a success message if the batch is added successfully
+                                                            // Add the batch from the EditText to the list
+                                                            academicBatchList.add(etAcademicBatch.text.toString())
+                                                            // Notify the adapter that an item has been inserted at the last position in the list
+                                                            academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
+                                                            Toast.makeText(requireContext(),"Batch Added", Toast.LENGTH_SHORT).show()
+                                                            // Clear the text in the batch EditText to prepare for the next input
+                                                            etAcademicBatch.setText("")
+                                                        } catch (e: Exception) {
+                                                            // Log any unexpected exceptions that occur
+                                                            Log.e(TAG, e.message.toString())
+                                                            // Display an unexpected error message to the user
+                                                            requireContext().unexpectedErrorMessagePrint(e)
+                                                            throw e
+                                                        }
+                                                    },{
+                                                        // Error Callback
+                                                        // Log any unexpected exceptions that occur
+                                                        Log.e(TAG, it.message.toString())
+                                                        // Display an unexpected error message to the user
+                                                        requireContext().unexpectedErrorMessagePrint(it)
+                                                        throw it
+                                                })
+                                            } catch (e: Exception) {
+                                                // Log any unexpected exceptions that occur
+                                                Log.e(TAG, e.message.toString())
+                                                // Display an unexpected error message to the user
+                                                requireContext().unexpectedErrorMessagePrint(e)
+                                                throw e
+                                            }
+                                        }
+                                        runBlocking {
+                                            // wait for async task
+                                            job.join()
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        }
+                    } catch (e: Exception) {
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
+                        requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
             }
         }
     }
 
+
+    /**
+     * Initializes the Batch RecyclerView to display the list of academic batches.
+     * Retrieves batch documents from the database based on the selected academic year, type, semester, and class.
+     * Populates the Batch RecyclerView with the retrieved batch documents using a BatchAdapter.
+     * Shows a progress bar while fetching batch documents from the database.
+     */
     private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
-                showProgressBar(rvBatch,progressBar)
+                try {
+                    // Show progress bar while fetching batch documents
+                    showProgressBar(rvBatch,progressBar)
 
-                MainScope().launch(Dispatchers.IO)
-                {
-                    academicBatchList.clear()
-                    academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
-                    semesterDocumentId = academicSemSelectedItem
-                    classDocumentId = academicClassSelectedItem
-                    if(academicDocumentId!="null" && semesterDocumentId != null && classDocumentId!=null)
+                    // Retrieve batch documents from the database in the background
+                    MainScope().launch(Dispatchers.IO)
                     {
-                        val documents = BatchRepository.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
-                        for (document in documents) {
-                            academicBatchList.add(document.id)
+                        // Clear the existing list of academic batches
+                        academicBatchList.clear()
+                        // Construct the academic document ID
+                        academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
+                        semesterDocumentId = academicSemSelectedItem
+                        classDocumentId = academicClassSelectedItem
+                        // Check if academic document ID, semester document ID, and class document ID are not null
+                        if(academicDocumentId!="null" && semesterDocumentId != null && classDocumentId!=null)
+                        {
+                            // Retrieve batch documents from the BatchRepository
+                            val documents = BatchRepository.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
+                            // Add retrieved batch documents to the academicBatchList
+                            for (document in documents) {
+                                academicBatchList.add(document.id)
+                            }
+                        }
+                        // Update UI on the main thread
+                        withContext(Dispatchers.Main)
+                        {
+                            // Initialize the academicBatchAdapter with the academicBatchList
+                            academicBatchAdapter = BatchAdapter(academicBatchList)
+                            // Set layout manager and adapter for the RecyclerView
+                            rvBatch.layoutManager = LinearLayoutManager(requireContext())
+                            rvBatch.adapter = academicBatchAdapter
+                            // Delay to simulate a smoother UI experience
+                            delay(500)
+                            // Hide progress bar after fetching batch documents
+                            hideProgressBar(rvBatch, progressBar)
                         }
                     }
-
-                    withContext(Dispatchers.Main)
-                    {
-                        academicBatchAdapter = BatchAdapter(academicBatchList)
-                        rvBatch.layoutManager = LinearLayoutManager(requireContext())
-                        rvBatch.adapter = academicBatchAdapter
-                        delay(500)
-                        hideProgressBar(rvBatch,progressBar)
-                    }
+                } catch (e: Exception) {
+                    // Log any unexpected exceptions that occur
+                    Log.e(TAG, e.message.toString())
+                    // Display an unexpected error message to the user
+                    requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
 
-    private fun clearACTAcademicType()
-    {
+    /**
+     * Clears the selected academic type and resets the dropdown list of academic types.
+     */
+    private fun clearACTAcademicType() {
         binding.apply {
             viewModel.apply {
                 try {
-                    academicTypeSelectedItem=null
+                    // Set the selected academic type to null
+                    academicTypeSelectedItem = null
+                    // Clear the list of academic types
                     academicTypeItemList.clear()
+                    // Notify the adapter that the data set has changed
                     academicTypeItemAdapter.notifyDataSetChanged()
+                    // Clear the text in the academic type DropDown
                     actAcademicType.setText("")
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log any unexpected exceptions that occur
+                    Log.e(TAG, e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
-    private fun clearAcademicClassACTV()
-    {
+
+    /**
+     * Clears the selected academic class and resets the dropdown list of academic classes.
+     */
+    private fun clearAcademicClassACTV() {
         binding.apply {
             viewModel.apply {
                 try {
-                    academicClassSelectedItem=null
+                    // Set the selected academic class to null
+                    academicClassSelectedItem = null
+                    // Clear the list of academic classes
                     academicClassItemList.clear()
+                    // Notify the adapter that the data set has changed
                     academicClassItemAdapter.notifyDataSetChanged()
-                    academicClassACTV.setText("")
+                    // Clear the text in the academic class DropDown
+                    actAcademicClass.setText("")
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log any unexpected exceptions that occur
+                    Log.e(TAG, e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
-    private fun clearAcademicSemACTV()
-    {
+    /**
+     * Clears the selected academic semester and resets the dropdown list of academic semesters.
+     */
+    private fun clearAcademicSemACTV() {
         binding.apply {
             viewModel.apply {
                 try {
-                    academicSemSelectedItem=null
+                    // Set the selected academic semester to null
+                    academicSemSelectedItem = null
+                    // Clear the list of academic semesters
                     academicSemItemList.clear()
+                    // Notify the adapter that the data set has changed
                     academicSemItemAdapter.notifyDataSetChanged()
-                    academicSemACTV.setText("")
+                    // Clear the text in the academic semester AutoCompleteTextView
+                    actAcademicSem.setText("")
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any unexpected exceptions
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
+
+    /**
+     * Loads the academic years from the database and populates the dropdown list of academic years.
+     */
     private fun loadACTAcademicYear()
     {
         binding.apply {
             viewModel.apply {
                 MainScope().launch(Dispatchers.IO){
                     try {
+                        // Clear the list of academic years
                         academicYearItemList.clear()
+                        // Retrieve all academic documents from the repository
                         val documents = AcademicRepository.getAllAcademicDocuments()
+                        // Iterate through each document
                         for (document in documents) {
+                            // Split the document ID to extract the academic year
                             val academicItem = document.id.split('_')
+                            // Add the academic year to the list if it's not already present
                             if(!academicYearItemList.contains(academicItem[0]))
                             {
                                 academicYearItemList.add(academicItem[0])
@@ -356,16 +551,24 @@ class AddBatchFragment : Fragment() {
                         }
                         withContext(Dispatchers.Main){
                             try {
+                                // Initialize the adapter with the list of academic years
                                 academicYearItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearItemList)
+                                // Set the adapter for the academic year dropdown
                                 actAcademicYear.setAdapter(academicYearItemAdapter)
                             } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
+                                // Log any unexpected exceptions that occur
+                                Log.e(TAG, e.message.toString())
+                                // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
+                                throw e
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
+                        throw e
                     }
                 }
 
@@ -373,46 +576,66 @@ class AddBatchFragment : Fragment() {
         }
     }
 
+    /**
+     * Loads the academic types (even or odd) based on the selected academic year and populates the dropdown list of academic types.
+     * This function also enables/disables the academic type text input layout based on the availability of academic types.
+     */
     private fun loadACTAcademicType()
     {
         binding.apply {
             viewModel.apply {
                 try {
-                    tlAcademicType.isEnabled=false
+                    // Disable the academic type text input layout initially
+                    tlAcademicType.isEnabled = false
+                    // Clear the list of academic types
                     academicTypeItemList.clear()
+                    // Use a coroutine to perform database operations asynchronously
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val evenExists =
-                                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                            // Check if an academic document for the even semester exists
+                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                            // If the even semester document exists, add "EVEN" to the list of academic types
                             if (evenExists) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
-
-                            val oddExists =
-                                isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                            // Check if an academic document for the odd semester exists
+                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                            // If the odd semester document exists, add "ODD" to the list of academic types
                             if (oddExists) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
-
+                            // Initialize the adapter with the list of academic types
                             academicTypeItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeItemList)
+                            // Set the adapter for the academic type DropDown
                             actAcademicType.setAdapter(academicTypeItemAdapter)
-                            tlAcademicType.isEnabled=true
+                            // Enable the academic type text input layout
+                            tlAcademicType.isEnabled = true
                         } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
+                            // Log and handle any unexpected exceptions related to database operations
+                            Log.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
+                            throw e
                         }
                     }
-                    MainScope().launch{
+                    // Wait for the coroutine job to complete before proceeding
+                    MainScope().launch {
                         job.join()
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log any unexpected exceptions that occur
+                    Log.e(TAG, e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
+
+    /**
+     * Loads the academic semesters based on the selected academic year and type, and populates the dropdown list of academic semesters.
+     */
     private fun loadAcademicSemACTV()
     {
         binding.apply {
@@ -420,34 +643,49 @@ class AddBatchFragment : Fragment() {
                 MainScope().launch(Dispatchers.IO)
                 {
                     try {
+                        // Clear the list of academic semesters
                         academicSemItemList.clear()
+                        // Construct the academic document ID using the selected academic year and type
                         academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                        if(academicDocumentId!="null")
-                        {
+                        // Check if the academic document ID is not null
+                        if (academicDocumentId != "null") {
+                            // Retrieve all semester documents for the specified academic document ID
                             val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
+                            // Iterate through the retrieved documents
                             for (document in documents) {
+                                // Add the semester ID to the list of academic semesters
                                 academicSemItemList.add(document.id.toInt())
                             }
                         }
-                        withContext(Dispatchers.Main)
-                        {
+                        withContext(Dispatchers.Main) {
                             try {
+                                // Initialize the adapter with the list of academic semesters
                                 academicSemItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicSemItemList)
-                                academicSemACTV.setAdapter(academicSemItemAdapter)
+                                // Set the adapter for the academic semester DropDown
+                                actAcademicSem.setAdapter(academicSemItemAdapter)
                             } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
+                                // Log any unexpected exceptions that occur
+                                Log.e(TAG, e.message.toString())
+                                // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
+                                throw e
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
+                        throw e
                     }
                 }
             }
         }
     }
 
+    /**
+     * Loads the academic classes based on the selected academic year, type, and semester, and populates the dropdown list of academic classes.
+     */
     private fun loadAcademicClassACTV()
     {
         binding.apply {
@@ -455,29 +693,41 @@ class AddBatchFragment : Fragment() {
                 MainScope().launch(Dispatchers.IO)
                 {
                     try {
+                        // Clear the list of academic classes
                         academicClassItemList.clear()
+                        // Construct the academic document ID using the selected academic year and type
                         academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                        semesterDocumentId = academicSemSelectedItem
-                        if(academicDocumentId!="null" && semesterDocumentId!=null)
-                        {
-                            val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
+                        // Check if the academic document ID and semester document ID are not null
+                        if (academicDocumentId != "null" && semesterDocumentId != null) {
+                            // Retrieve all class documents for the specified academic and semester document IDs
+                            val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!, semesterDocumentId!!)
+                            // Iterate through the retrieved documents
                             for (document in documents) {
+                                // Add the class ID to the list of academic classes
                                 academicClassItemList.add(document.id)
                             }
                         }
-                        withContext(Dispatchers.Main)
-                        {
+
+                        withContext(Dispatchers.Main) {
                             try {
+                                // Initialize the adapter with the list of academic classes
                                 academicClassItemAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicClassItemList)
-                                academicClassACTV.setAdapter(academicClassItemAdapter)
+                                // Set the adapter for the academic class DropDown
+                                actAcademicClass.setAdapter(academicClassItemAdapter)
                             } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
+                                // Log any unexpected exceptions that occur
+                                Log.e(TAG, e.message.toString())
+                                // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
+                                throw e
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log any unexpected exceptions that occur
+                        Log.e(TAG, e.message.toString())
+                        // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
+                        throw e
                     }
                 }
             }

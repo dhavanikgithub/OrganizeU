@@ -28,7 +28,7 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomControlsCL"
+        app:layout_constraintBottom_toTopOf="@+id/clBottomControl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomControlsCL"
+        android:id="@+id/clBottomControl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -114,7 +114,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/academicSemTIL"
+                android:id="@+id/tlAcademicSem"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <AutoCompleteTextView
-                    android:id="@+id/academicSemACTV"
+                    android:id="@+id/actAcademicSem"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -142,9 +142,9 @@
                 android:text="Add"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="@+id/academicSemTIL"
+                app:layout_constraintBottom_toBottomOf="@+id/tlAcademicSem"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/academicSemTIL" />
+                app:layout_constraintTop_toTopOf="@+id/tlAcademicSem" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

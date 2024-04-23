@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.pojo.TimetablePojo
-import com.dk.organizeu.utils.UtilFunction.Companion.convert24HourTo12Hour
+import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 
 
 class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
