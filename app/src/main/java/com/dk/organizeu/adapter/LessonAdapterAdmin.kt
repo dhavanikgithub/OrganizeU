@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.utils.UtilFunction.Companion.convert24HourTo12Hour
 
 
 class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -68,8 +69,8 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) :
             try {
                 itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
                 itemView.findViewById<TextView>(R.id.txtLessonSubjectName).text = item.subjectName
-                itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime
-                itemView.findViewById<TextView>(R.id.txtEndTime).text = item.endTime
+                itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime.convert24HourTo12Hour()
+                itemView.findViewById<TextView>(R.id.txtEndTime).text = item.endTime.convert24HourTo12Hour()
                 itemView.findViewById<TextView>(R.id.txtLessonDuration).text = item.duration
                 itemView.findViewById<TextView>(R.id.txtLessonType).text = item.type
                 itemView.findViewById<TextView>(R.id.txtLessonFacultyName).text = item.facultyName
