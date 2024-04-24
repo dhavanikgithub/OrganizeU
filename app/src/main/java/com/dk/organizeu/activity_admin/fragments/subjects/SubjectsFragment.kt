@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.adapter.SubjectAdapter
 import com.dk.organizeu.activity_admin.dialog.AddSubjectDialog
+import com.dk.organizeu.adapter.SubjectAdapter
 import com.dk.organizeu.databinding.FragmentSubjectsBinding
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
@@ -18,9 +18,14 @@ import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
@@ -50,86 +55,156 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         binding.apply {
             viewModel.apply {
                 try {
+                    // Initialize the Subject RecyclerView
                     initRecyclerView()
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur during Subject RecyclerView initialization
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
+
+                // Set a refresh listener for the swipeRefreshLayout
                 swipeRefresh.setOnRefreshListener {
+                    // When swipe refresh is triggered, reinitialize the Subject RecyclerView
                     initRecyclerView()
-                    swipeRefresh.isRefreshing=false
+                    // Hide the swipe refresh indicator after refreshing
+                    swipeRefresh.isRefreshing = false
                 }
+
                 btnAddSubject.setOnClickListener {
+                    // Create an instance of the AddSubjectDialog
                     val dialogFragment = AddSubjectDialog()
                     try {
+                        // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur while showing the dialog
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
             }
         }
     }
 
-    private fun initRecyclerView()
-    {
+    /**
+     * Initializes the Subject RecyclerView by fetching subject data from the repository and setting up the adapter.
+     */
+    private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
                 try {
-                    showProgressBar(rvSubjects,progressBar)
-                    MainScope().launch(Dispatchers.IO)
-                    {
+                    // Show progress bar while fetching data
+                    showProgressBar(rvSubjects, progressBar)
+
+
+                    MainScope().launch(Dispatchers.IO) {
                         try {
+                            // Clear the existing list of subjectPojoList
                             subjectPojoList.clear()
+
+                            // Retrieve all subject documents from the repository
                             val documents = SubjectRepository.getAllSubjectDocuments()
-                            for(document in documents)
-                            {
+
+                            // Convert subject documents to Subject objects and add them to the list
+                            for (document in documents) {
                                 val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(document)
                                 subjectPojoList.add(subjectItem)
                             }
-                            withContext(Dispatchers.Main)
-                            {
+
+                            // Switch to Main dispatcher to update UI
+                            withContext(Dispatchers.Main) {
                                 try {
-                                    subjectAdapter = SubjectAdapter(subjectPojoList,this@SubjectsFragment)
+                                    // Initialize SubjectAdapter with the updated list and set it to Subject RecyclerView
+                                    subjectAdapter = SubjectAdapter(subjectPojoList, this@SubjectsFragment)
                                     rvSubjects.layoutManager = LinearLayoutManager(requireContext())
                                     rvSubjects.adapter = subjectAdapter
                                     delay(500)
-                                    hideProgressBar(rvSubjects,progressBar)
+
+                                    // Hide progress bar after Subject RecyclerView setup
+                                    hideProgressBar(rvSubjects, progressBar)
                                 } catch (e: Exception) {
+                                    // Log any unexpected exceptions that occur
                                     Log.e(TAG,e.message.toString())
+                                    // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
+                                    throw e
                                 }
                             }
                         } catch (e: Exception) {
+                            // Log any unexpected exceptions that occur
                             Log.e(TAG,e.message.toString())
+                            // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
+                            throw e
                         }
                     }
                 } catch (e: Exception) {
+                    // Log any unexpected exceptions that occur
                     Log.e(TAG,e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
-    override fun onAdded(documentId: String,documentData: HashMap<String,String>) {
+
+    /**
+     * Callback function triggered when a new subject document is added.
+     * This function is responsible for updating the UI after a new subject is added.
+     *
+     * @param documentId The ID of the newly added subject document.
+     * @param documentData A HashMap containing the data of the newly added subject document.
+     */
+    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
         binding.apply {
             viewModel.apply {
                 try {
-                    val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(documentId,documentData)
+                    // Convert document data to a Subject object
+                    val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(documentId, documentData)
+
+                    // Add the new subject to the list
                     subjectPojoList.add(subjectItem)
+
+                    // Notify the adapter of the newly inserted item
                     subjectAdapter.notifyItemInserted(subjectAdapter.itemCount)
+                    requireContext().showToast("Subject Added Successfully")
                 } catch (e: Exception) {
+                    // Log any unexpected exceptions that occur
                     Log.e(TAG,e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
-    override fun onClick(position: Int) {}
 
-    override fun onDeleteClick(position: Int) {}
+    /**
+     * Callback function triggered when an item in the Subject RecyclerView is clicked.
+     * This function can be implemented to handle click events on Subject RecyclerView items.
+     *
+     * @param position The position of the clicked item in the Subject RecyclerView.
+     */
+    override fun onClick(position: Int) {
+        // You can use the 'position' parameter to identify which item was clicked.
+    }
+
+    /**
+     * Callback function triggered when the delete button of an item in the Subject RecyclerView is clicked.
+     * This function can be implemented to handle delete button click events  Subject RecyclerView items.
+     *
+     * @param position The position of the item whose delete button was clicked in the Subject RecyclerView.
+     */
+    override fun onDeleteClick(position: Int) {
+        // You can use the 'position' parameter to identify which item's delete button was clicked.
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
 }

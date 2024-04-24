@@ -13,6 +13,7 @@ import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -80,8 +81,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                                 try {
                                     if(exists)
                                     {
-                                        // Dismiss the dialog if the subject document already exists
-                                        dismiss()
+                                        requireContext().showToast("Subject is exists")
                                         return@isSubjectDocumentExists
                                     }
                                     // Add new subject if the subject document does not exist

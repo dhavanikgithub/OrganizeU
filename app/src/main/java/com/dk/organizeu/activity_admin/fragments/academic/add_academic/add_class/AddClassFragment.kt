@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,10 +17,12 @@ import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment
 import com.dk.organizeu.adapter.ClassAdapter
 import com.dk.organizeu.databinding.FragmentAddClassBinding
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.ClassCollection
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.ClassRepository
@@ -29,6 +31,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -36,7 +39,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddClassFragment : Fragment() {
+class AddClassFragment : Fragment(), OnItemClickListener {
 
     companion object {
         var viewModel2: AddAcademicViewModel?=null
@@ -311,7 +314,7 @@ class AddClassFragment : Fragment() {
                                                     academicClassList.add(etAcademicClass.text.toString())
                                                     academicClassAdapter.notifyItemInserted(academicClassAdapter.itemCount)
                                                     etAcademicClass.setText("")
-                                                    Toast.makeText(requireContext(),"Class Added", Toast.LENGTH_SHORT).show()
+                                                    requireContext().showToast("Class Added")
                                                 } catch (e: Exception) {
                                                     // Log any unexpected exceptions that occur
                                                     Log.e(TAG, e.message.toString())
@@ -327,6 +330,9 @@ class AddClassFragment : Fragment() {
                                                 throw it
                                             })
                                         }
+                                    }
+                                    else{
+                                        requireContext().showToast("Class is exists")
                                     }
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
@@ -379,7 +385,7 @@ class AddClassFragment : Fragment() {
                             {
                                 try {
                                     // Set up the Class RecyclerView adapter and layout manager
-                                    academicClassAdapter = ClassAdapter(academicClassList)
+                                    academicClassAdapter = ClassAdapter(academicClassList,this@AddClassFragment)
                                     rvClass.layoutManager = LinearLayoutManager(requireContext())
                                     rvClass.adapter = academicClassAdapter
                                     delay(500)
@@ -637,6 +643,105 @@ class AddClassFragment : Fragment() {
             Log.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
+            throw e
+        }
+    }
+
+    override fun onClick(position: Int) {
+    }
+
+    override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Class")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Class and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+                // Construct the academic document ID using selected year and type
+                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                // Get the selected semester document ID
+                val semesterDocumentId = viewModel.academicSemSelectedItem
+                // Get the class document ID at the specified position from the class list
+                val classDocumentId = viewModel.academicClassList[position]
+
+                // Call the deleteClass function with the academic document ID, semester document ID, class document ID, and a callback
+                deleteClass(academicDocumentId,semesterDocumentId!!,classDocumentId){
+                    try {
+                        // Check if the deletion was successful
+                        if(it)
+                        {
+                            // If successful, remove the class from the class list and notify the adapter
+                            viewModel.academicClassList.removeAt(position)
+                            viewModel.academicClassAdapter.notifyItemRemoved(position)
+                            // Show a toast message indicating successful deletion
+                            requireContext().showToast("Class deleted successfully.")
+                        }
+                        else{
+                            // If deletion was not successful, show a toast message indicating the error
+                            requireContext().showToast("Error occur while deleting class.")
+                        }
+                    } catch (e: Exception) {
+                        // Log any exceptions that occur during deletion
+                        Log.e(AddSemFragment.TAG, e.toString())
+
+                        // Re-throw the exception to propagate it further if needed
+                        throw e
+                    }
+                }
+            } catch (e: Exception) {
+                // Log any exceptions that occur outside the deletion process
+                Log.e(AddSemFragment.TAG,e.toString())
+                requireContext().showToast("Error occur while deleting class.")
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
+
+    /**
+     * Deletes the class document associated with the specified academic and semester documents.
+     * @param academicDocumentId The ID of the academic document containing the class.
+     * @param semesterDocumentId The ID of the semester document containing the class.
+     * @param classDocumentId The ID of the class document to delete.
+     * @param isDeleted Callback function to notify the caller whether the deletion was successful.
+     */
+    fun deleteClass(academicDocumentId:String, semesterDocumentId:String, classDocumentId:String, isDeleted:(Boolean) -> Unit){
+        try {
+            // Launch a coroutine in the IO dispatcher
+            MainScope().launch(Dispatchers.IO){
+                try {
+                    // Call the deleteClassDocument function from the repository to delete class
+                    ClassRepository.deleteClassDocument(academicDocumentId, semesterDocumentId, classDocumentId)
+                    // Check if the class document still exists after deletion
+                    isClassDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId){
+                        // Notify the caller whether the deletion was successful
+                        isDeleted(!it)
+                    }
+                } catch (e: Exception) {
+                    // Log any exceptions that occur during deletion
+                    Log.e(TAG, e.toString())
+
+                    // Re-throw the exception to propagate it further if needed
+                    throw e
+                }
+            }
+        }
+        catch (e: Exception){
+            // Log any exceptions that occur outside the coroutine scope
+            Log.e(TAG, e.toString())
+
+            // Re-throw the exception to propagate it further if needed
             throw e
         }
     }

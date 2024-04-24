@@ -1,10 +1,7 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.dk.organizeu.firebase.FirebaseConfig
-import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -100,5 +97,27 @@ class AcademicRepository {
                 throw e
             }
         }
+
+        suspend fun deleteAcademicDocument(academicDocumentId: String){
+            try {
+                SemesterRepository.deleteAllSemesterDocuments(academicDocumentId)
+                academicDocumentRef(academicDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllAcademicDocuments(){
+            try {
+                getAllAcademicDocuments().map {
+                    deleteAcademicDocument(it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
     }
 }

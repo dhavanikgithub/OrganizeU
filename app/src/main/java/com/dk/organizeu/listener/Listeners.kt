@@ -9,4 +9,6 @@ interface OnItemClickListener {
     fun onClick(position: Int)
 
     fun onDeleteClick(position: Int)
+
+    fun onEditClick(position: Int)
 }

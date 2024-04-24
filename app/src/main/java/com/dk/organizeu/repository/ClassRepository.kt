@@ -40,6 +40,29 @@ class ClassRepository {
             }
         }
 
+        suspend fun deleteClassDocument(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String){
+            try {
+                BatchRepository.deleteAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+                TimeTableRepository.deleteAllTimetableDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+                classDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllClassDocuments(academicDocumentId: String,semesterDocumentId: String)
+        {
+            try {
+                getAllClassDocuments(academicDocumentId, semesterDocumentId).map {
+                    deleteClassDocument(academicDocumentId,semesterDocumentId,it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
         fun insertClassDocument(
             academicDocumentId: String,
             semesterDocumentId: String,

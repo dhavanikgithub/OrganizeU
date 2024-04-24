@@ -2,15 +2,16 @@ package com.dk.organizeu.activity_admin.fragments.rooms
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.activity_admin.dialog.AddRoomDialog
+import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
+import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.databinding.FragmentRoomsBinding
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
@@ -19,9 +20,14 @@ import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomOb
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
@@ -51,90 +57,171 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         binding.apply {
             viewModel.apply {
                 try {
+                    // Attempt to initialize the Rooms RecyclerView
                    initRecyclerView()
                 } catch (e: Exception) {
-                   Log.e(TAG,e.message.toString())
-                   requireContext().unexpectedErrorMessagePrint(e)
+                    // Log any unexpected exceptions that occur
+                    Log.e(FacultyFragment.TAG, e.message.toString())
+                    // Display an unexpected error message to the user
+                    requireContext().unexpectedErrorMessagePrint(e)
                 }
                 swipeRefresh.setOnRefreshListener {
-                    initRecyclerView()
+                    try {
+                        // Attempt to reinitialize the Rooms RecyclerView when user do swipe refresh
+                        initRecyclerView()
+                    } catch (e: Exception) {
+                        // Log any exceptions that occur
+                        Log.e(FacultyFragment.TAG, e.message.toString())
+
+                        // Print an unexpected error message to the user
+                        requireContext().unexpectedErrorMessagePrint(e)
+                    }
+                    // Set refreshing state to false to indicate that the refresh is complete
                     swipeRefresh.isRefreshing=false
                 }
 
                 btnAddRoom.setOnClickListener {
                     try {
+                        // Create an instance of the AddRoomDialog
                         val dialogFragment = AddRoomDialog()
+
+                        // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // If any exception occurs, log the error message
+                        Log.e(TAG, e.message.toString())
+
+                        // Print an unexpected error message using a custom function
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
             }
         }
     }
 
-    private fun initRecyclerView()
-    {
+    /**
+     * Initializes the RecyclerView by fetching data from the repository and setting up the adapter.
+     */
+    private fun initRecyclerView() {
         binding.apply {
             viewModel.apply {
                 try {
-                    showProgressBar(rvRooms,progressBar)
-                    MainScope().launch(Dispatchers.IO){
+                    // Show progress bar while fetching data
+                    showProgressBar(rvRooms, progressBar)
+
+                    // Use MainScope to launch a coroutine in IO dispatcher
+                    MainScope().launch(Dispatchers.IO) {
                         try {
+                            // Clear the existing list of roomPojoList
                             roomPojoList.clear()
+
+                            // Retrieve all room documents from the repository
                             val documents = RoomRepository.getAllRoomDocument()
-                            for(document in documents)
-                            {
+
+                            // Convert room documents to Room objects and add them to the list
+                            for (document in documents) {
                                 val roomItem = roomDocumentToRoomObj(document)
                                 roomPojoList.add(roomItem)
                             }
-                            withContext(Dispatchers.Main)
-                            {
+
+                            // Switch to Main dispatcher to update UI
+                            withContext(Dispatchers.Main) {
                                 try {
-                                    roomAdapter = RoomAdapter(roomPojoList,this@RoomsFragment)
+                                    // Initialize RoomAdapter with the updated list and set it to Rooms RecyclerView
+                                    roomAdapter = RoomAdapter(roomPojoList, this@RoomsFragment)
                                     rvRooms.layoutManager = LinearLayoutManager(requireContext())
                                     rvRooms.adapter = roomAdapter
                                     delay(500)
-                                    hideProgressBar(rvRooms,progressBar)
+
+                                    // Hide progress bar after RecyclerView setup
+                                    hideProgressBar(rvRooms, progressBar)
                                 } catch (e: Exception) {
-                                    Log.e(TAG,e.message.toString())
+                                    // If any exception occurs, log the error message
+                                    Log.e(TAG, e.message.toString())
+
+                                    // Print an unexpected error message using a custom function
                                     requireContext().unexpectedErrorMessagePrint(e)
+                                    throw e
                                 }
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
+                            // If any exception occurs, log the error message
+                            Log.e(TAG, e.message.toString())
+
+                            // Print an unexpected error message using a custom function
                             requireContext().unexpectedErrorMessagePrint(e)
+                            throw e
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // If any exception occurs, log the error message
+                    Log.e(TAG, e.message.toString())
+
+                    // Print an unexpected error message using a custom function
                     requireContext().unexpectedErrorMessagePrint(e)
+                    throw e
                 }
             }
         }
     }
 
 
-    override fun onAdded(documentId: String,documentData: HashMap<String,String>) {
+    /**
+     * Callback function triggered when a new room document is added.
+     * This function is responsible for updating the UI after a new room is added.
+     *
+     * @param documentId The ID of the newly added document.
+     * @param documentData A HashMap containing the data of the newly added document.
+     */
+    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
         binding.apply {
             viewModel.apply {
                 try {
-                    val roomItem = roomDocumentToRoomObj(documentId,documentData)
+                    // Convert document data to a Room object
+                    val roomItem = roomDocumentToRoomObj(documentId, documentData)
+
+                    // Add the new room to the list
                     roomPojoList.add(roomItem)
+
+                    // Notify the adapter of the newly inserted item
                     roomAdapter.notifyItemInserted(roomAdapter.itemCount)
+                    requireContext().showToast("Room Added Successfully")
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log any exceptions that occur
+                    Log.e(TAG, e.message.toString())
+
+                    // Print an unexpected error message using a custom function
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
+
+    /**
+     * Callback function triggered when an item in the Rooms RecyclerView is clicked.
+     * This function can be implemented to handle click events on Rooms RecyclerView items.
+     *
+     * @param position The position of the clicked item in the Rooms RecyclerView.
+     */
     override fun onClick(position: Int) {
+        // Implement the desired behavior when an item is clicked.
+        // You can use the 'position' parameter to identify which item was clicked.
     }
 
+    /**
+     * Callback function triggered when the delete button of an item in the Rooms RecyclerView is clicked.
+     * This function can be implemented to handle delete button click events on Rooms RecyclerView items.
+     *
+     * @param position The position of the item whose delete button was clicked in the Rooms RecyclerView.
+     */
     override fun onDeleteClick(position: Int) {
-
+        // Implement the desired behavior when the delete button of an item is clicked.
+        // You can use the 'position' parameter to identify which item's delete button was clicked.
     }
+
+    override fun onEditClick(position: Int) {
+    }
+
 }

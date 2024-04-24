@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,13 +19,16 @@ import com.dk.organizeu.adapter.SemAdapter
 import com.dk.organizeu.databinding.FragmentAddSemBinding
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.SemesterCollection
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
+import com.dk.organizeu.repository.SemesterRepository.Companion.isSemesterDocumentExists
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -33,7 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddSemFragment : Fragment() {
+class AddSemFragment : Fragment(), OnItemClickListener {
 
     companion object {
         var viewModel2:AddAcademicViewModel?=null
@@ -290,7 +293,7 @@ class AddSemFragment : Fragment() {
                                                 // Clear and reload the Academic Semester dropdown
                                                 clearAcademicSemACTV()
                                                 loadAcademicSemACTV()
-                                                Toast.makeText(requireContext(),"Sem Added",Toast.LENGTH_SHORT).show()
+                                                requireContext().showToast("Sem Added")
                                             } catch (e: Exception) {
                                                 // Log any unexpected exceptions that occur
                                                 Log.e(TAG, e.message.toString())
@@ -359,7 +362,7 @@ class AddSemFragment : Fragment() {
                             withContext(Dispatchers.Main){
                                 try {
                                     // Initialize the semester adapter and layout manager
-                                    academicSemAdapter = SemAdapter(academicSemList)
+                                    academicSemAdapter = SemAdapter(academicSemList,this@AddSemFragment)
                                     academicSemLayoutManager = LinearLayoutManager(requireContext())
                                     // Set adapter and layout manager to Semester RecyclerView
                                     rvSemester.layoutManager = academicSemLayoutManager
@@ -614,6 +617,104 @@ class AddSemFragment : Fragment() {
                     throw e
                 }
             }
+        }
+    }
+
+    override fun onClick(position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Semester")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Semester and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+                // Get the semester at the specified position from the semester list
+                val semester = viewModel.academicSemList[position]
+                // Construct the academic document ID using selected year and type
+                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                // Call the deleteSemester function with the academic document ID, semester, and a callback
+                deleteSemester(academicDocumentId,semester){
+                    try {
+                        // Check if the deletion was successful
+                        if(it)
+                        {
+                            // If successful, remove the semester from the semester list and notify the adapter
+                            viewModel.academicSemList.removeAt(position)
+                            viewModel.academicSemAdapter.notifyItemRemoved(position)
+                            // Reload the Academic Semester dropdown
+                            loadAcademicSemACTV()
+                            // Show a toast message indicating successful deletion
+                            requireContext().showToast("Semester deleted successfully.")
+                        }
+                        else{
+                            // If deletion was not successful, show a toast message indicating the error
+                            requireContext().showToast("Error occur while deleting semester.")
+                        }
+                    } catch (e: Exception) {
+                        // Log any exceptions that occur during deletion
+                        Log.e(TAG,e.toString())
+                    }
+                }
+            } catch (e: Exception) {
+                // Log any exceptions that occur outside the deletion process
+                Log.e(TAG,e.toString())
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
+    /**
+     * Deletes the semester document associated with the specified academic document.
+     * @param academicDocumentId The ID of the academic document containing the semester.
+     * @param semesterDocumentId The ID of the semester document to delete.
+     * @param isDeleted Callback function to notify the caller whether the deletion was successful.
+     */
+    fun deleteSemester(academicDocumentId:String, semesterDocumentId: String,isDeleted:(Boolean) -> Unit){
+        try {
+            // Launch a coroutine in the IO dispatcher
+            MainScope().launch(Dispatchers.IO){
+                try {
+                    // Call the deleteSemesterDocument function from the repository to delete semester
+                    SemesterRepository.deleteSemesterDocument(academicDocumentId,semesterDocumentId)
+                    // Check if the semester document still exists after deletion
+                    isSemesterDocumentExists(academicDocumentId,semesterDocumentId){
+                        // Notify the caller whether the deletion was successful
+                        isDeleted(!it)
+                    }
+
+                } catch (e: Exception) {
+                    // Log any exceptions that occur during deletion
+                    Log.e(TAG, e.toString())
+
+                    // Show a toast message for deletion error
+                    withContext(Dispatchers.Main) {
+                        requireContext().showToast("Error occurred while deleting semester.")
+                    }
+
+                    // Re-throw the exception to propagate it further if needed
+                    throw e
+                }
+            }
+        } catch (e: Exception) {
+            // Log any exceptions that occur outside the coroutine scope
+            Log.e(TAG, e.toString())
+
+            // Re-throw the exception to propagate it further if needed
+            throw e
         }
     }
 

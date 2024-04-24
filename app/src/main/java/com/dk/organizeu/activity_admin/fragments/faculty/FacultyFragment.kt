@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -94,7 +94,7 @@ class FacultyFragment : Fragment() {
                                     facultyList.add(txtFacultyName)
                                     facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
                                     etFacultyName.setText("")
-                                    Toast.makeText(requireContext(), "Faculty Added", Toast.LENGTH_SHORT).show()
+                                    requireContext().showToast("Faculty Added")
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
                                     Log.e(TAG, e.message.toString())
@@ -112,6 +112,7 @@ class FacultyFragment : Fragment() {
                         } else {
                             // If the faculty name is invalid, show an error message
                             tlFacultyName.error = "Faculty name only allows alphabets, -, _, with a length of 2-20 characters"
+                            requireContext().showToast("Invalid Faculty Name")
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
@@ -125,15 +126,6 @@ class FacultyFragment : Fragment() {
         }
     }
 
-    /**
-     * Displays a toast message with the provided text.
-     *
-     * @param message The text to be displayed in the toast message.
-     */
-    fun showToast(message: String) {
-        // Create and display a toast message with the provided text
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
 
     /**
      * Initializes the RecyclerView to display faculty items.

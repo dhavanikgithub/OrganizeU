@@ -12,6 +12,7 @@ import com.dk.organizeu.databinding.AddRoomDialogLayoutBinding
 import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.RoomRepository
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class AddRoomDialog : AppCompatDialogFragment() {
@@ -65,7 +66,7 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                     // If the room document already exists, dismiss the dialog and return
                                     if(exists)
                                     {
-                                        dismiss()
+                                        requireContext().showToast("Room is exists")
                                         return@isRoomDocumentExists
                                     }
                                     // If the room document does not exist, add it to the database
@@ -123,6 +124,7 @@ class AddRoomDialog : AppCompatDialogFragment() {
                 Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
                 // Notify the listener about the addition of the room document
                 roomAddListener?.onAdded(roomDocumentId,roomData)
+
                 dismiss() // Dismiss dialog
             } catch (e: Exception) {
                 // Log any exceptions that occur

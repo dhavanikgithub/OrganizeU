@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -22,11 +23,13 @@ import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.DocumentChange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
@@ -87,9 +90,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                         val dialogFragment = AddAcademicDialog()
                         dialogFragment.show(childFragmentManager, "customDialog")
                     }
-                    academicList.observe(viewLifecycleOwner){ // Observes changes in the academic list LiveData.
-                        academicAdapter.notifyDataSetChanged() // Notifies the adapter when changes occur.
-                    }
+
                 } catch (e: Exception) {
                     Log.e(TAG,e.message.toString()) // Logs any unexpected exceptions.
                     requireContext().unexpectedErrorMessagePrint(e) // Displays an unexpected error message.
@@ -120,9 +121,9 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     // Show progress bar while loading data
                     showProgressBar(rvAcademic,progressBar)
                     // Clear existing data in the academic list
-                    academicList.value!!.clear()
+                    academicList.clear()
                     // Initialize the adapter with the academic list and click listener
-                    academicAdapter = AcademicAdapter(academicList.value!!,this@AcademicFragment)
+                    academicAdapter = AcademicAdapter(academicList,this@AcademicFragment)
                     // Set Academic RecyclerView layout manager and adapter
                     rvAcademic.layoutManager = LinearLayoutManager(requireContext())
                     rvAcademic.adapter = academicAdapter
@@ -146,24 +147,28 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                                             {
                                                 DocumentChange.Type.ADDED -> {
                                                     // Add the new academic item
-                                                    academicList.value!!.add(academicPojo)
-                                                    academicList.value = academicList.value
+                                                    if(academicList.add(academicPojo))
+                                                    {
+                                                        academicAdapter.notifyItemInserted(academicList.size)
+                                                    }
                                                 }
                                                 DocumentChange.Type.MODIFIED -> {
                                                     // Update the modified academic item
-                                                    if(academicList.value!!.contains(academicPojo))
+                                                    if(academicList.contains(academicPojo))
                                                     {
-                                                        val index = academicList.value!!.indexOf(academicPojo)
-                                                        academicList.value!![index] = academicPojo
-                                                        academicList.value = academicList.value
+                                                        val index = academicList.indexOf(academicPojo)
+                                                        academicList[index] = academicPojo
+                                                        academicAdapter.notifyItemChanged(index)
                                                     }
                                                 }
                                                 DocumentChange.Type.REMOVED -> {
                                                     // Remove the deleted academic item
-                                                    if(academicList.value!!.contains(academicPojo))
+                                                    if(academicList.contains(academicPojo))
                                                     {
-                                                        academicList.value!!.remove(academicPojo)
-                                                        academicList.value = academicList.value
+                                                        if(academicList.remove(academicPojo))
+                                                        {
+                                                            academicAdapter.notifyDataSetChanged()
+                                                        }
                                                     }
                                                 }
                                             }
@@ -210,11 +215,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         binding.apply {
             viewModel.apply {
                 try {
-                    // Extracting academic information from the document ID
-                    val academicItem = documentId.split('_')
-
-                    // Creating an AcademicPojo object and adding it to the academicList LiveData
-                    academicList.value!!.add(AcademicPojo("${academicItem[0]}", "${academicItem[1]}"))
+                    requireContext().showToast("Academic Added Successfully")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
                     Log.e(AddAcademicFragment.TAG, e.message.toString())
@@ -239,8 +240,8 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     // Creating a Bundle to pass data to the destination fragment
                     val bundle = Bundle().apply {
                         // Extracting academic year and type information from the clicked item
-                        putString("academic_year", "${academicList.value!![position].academic}")
-                        putString("academic_type", "${academicList.value!![position].sem}")
+                        putString("academic_year", "${academicList[position].academic}")
+                        putString("academic_type", "${academicList[position].sem}")
                     }
 
                     // Navigating to the addAcademicFragment with the provided data
@@ -263,6 +264,74 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
      * @param position The position of the item whose delete button is clicked in the RecyclerView.
      */
     override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Academic")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the academic and its data?")
 
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+                val academic = viewModel.academicList[position]
+                val academicDocumentId = "${academic.academic}_${academic.sem}"
+                deleteAcademic(academicDocumentId)
+            } catch (e: Exception) {
+                Log.e(TAG,e.toString())
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+    }
+
+    override fun onEditClick(position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    /**
+     * Deletes the academic document and its data from Firestore.
+     * @param academicDocumentId The ID of the academic document to delete.
+     */
+    fun deleteAcademic(academicDocumentId:String)
+    {
+        try {
+            // Launch a coroutine in the IO dispatcher
+            MainScope().launch(Dispatchers.IO){
+                try {
+                    // Call the deleteAcademicDocument function from the repository to delete academic
+                    AcademicRepository.deleteAcademicDocument(academicDocumentId)
+                    withContext(Dispatchers.Main) {
+                        // Check if the academic document still exists after deletion
+                        if (AcademicRepository.isAcademicDocumentExists(academicDocumentId)) {
+                            // Show a toast message if the document still exists (indicating deletion failure)
+                            requireContext().showToast("Error occur while deleting academic.")
+                        } else {
+                            // Show a toast message if the document was successfully deleted
+                            requireContext().showToast("Academic deleted successfully.")
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Log any exceptions that occur during deletion
+                    Log.e(TAG,e.toString())
+                    withContext(Dispatchers.Main) {
+                        // Show a toast message for deletion error
+                        requireContext().showToast("Error occur while deleting academic.")
+                    }
+                    // Re-throw the exception to propagate it further if needed
+                    throw e
+                }
+            }
+        } catch (e: Exception) {
+            // Log any exceptions that occur outside the coroutine scope
+            Log.e(TAG, e.toString())
+
+            // Re-throw the exception to propagate it further if needed
+            throw e
+        }
     }
 }

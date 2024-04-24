@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +20,7 @@ import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.BatchCollection
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.BatchRepository
@@ -30,6 +31,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -38,7 +40,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class AddBatchFragment : Fragment() {
+class AddBatchFragment : Fragment(), OnItemClickListener {
 
     companion object {
         fun newInstance() = AddBatchFragment()
@@ -342,7 +344,7 @@ class AddBatchFragment : Fragment() {
                                                             academicBatchList.add(etAcademicBatch.text.toString())
                                                             // Notify the adapter that an item has been inserted at the last position in the list
                                                             academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
-                                                            Toast.makeText(requireContext(),"Batch Added", Toast.LENGTH_SHORT).show()
+                                                            requireContext().showToast("Batch Added")
                                                             // Clear the text in the batch EditText to prepare for the next input
                                                             etAcademicBatch.setText("")
                                                         } catch (e: Exception) {
@@ -373,7 +375,13 @@ class AddBatchFragment : Fragment() {
                                             job.join()
                                         }
                                     }
+                                    else{
+                                        requireContext().showToast("Batch is exists")
+                                    }
                                 }
+                            }
+                            else{
+                                requireContext().showToast("Invalid Input")
                             }
 
                         }
@@ -425,7 +433,7 @@ class AddBatchFragment : Fragment() {
                         withContext(Dispatchers.Main)
                         {
                             // Initialize the academicBatchAdapter with the academicBatchList
-                            academicBatchAdapter = BatchAdapter(academicBatchList)
+                            academicBatchAdapter = BatchAdapter(academicBatchList,this@AddBatchFragment)
                             // Set layout manager and adapter for the RecyclerView
                             rvBatch.layoutManager = LinearLayoutManager(requireContext())
                             rvBatch.adapter = academicBatchAdapter
@@ -698,6 +706,7 @@ class AddBatchFragment : Fragment() {
                         // Construct the academic document ID using the selected academic year and type
                         academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
                         // Check if the academic document ID and semester document ID are not null
+                        semesterDocumentId = academicSemSelectedItem
                         if (academicDocumentId != "null" && semesterDocumentId != null) {
                             // Retrieve all class documents for the specified academic and semester document IDs
                             val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!, semesterDocumentId!!)
@@ -734,5 +743,93 @@ class AddBatchFragment : Fragment() {
         }
     }
 
+    override fun onClick(position: Int) {
+    }
 
+    override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Batch")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Batch and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+                // Construct the academic document ID using selected year and type
+                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                // Get the selected semester document ID
+                val semesterDocumentId = viewModel.academicSemSelectedItem
+                // Get the selected class document ID
+                val classDocumentId = viewModel.academicClassSelectedItem
+                // Get the batch document ID at the specified position from the Batch list
+                val batchDocumentId = viewModel.academicBatchList[position]
+
+                // Call the deleteBatch function with the academic document ID, semester document ID, class document ID, batch document ID, and a callback
+                deleteBatch(academicDocumentId,semesterDocumentId!!,classDocumentId!!,batchDocumentId){
+                    try {
+                        // Check if the deletion was successful
+                        if(it)
+                        {
+                            // If successful, remove the batch from the ViewModel's list and notify the adapter
+                            viewModel.academicBatchList.removeAt(position)
+                            viewModel.academicBatchAdapter.notifyItemRemoved(position)
+                            requireContext().showToast("Batch deleted successfully.")
+                        }
+                        else{
+                            requireContext().showToast("Error occur while deleting batch.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG,e.toString())
+                        throw e
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.toString())
+                requireContext().showToast("Error occur while deleting batch.")
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
+    /**
+     * Deletes the batch document associated with the specified academic, semester, class, and batch documents.
+     * @param academicDocumentId The ID of the academic document containing the batch.
+     * @param semesterDocumentId The ID of the semester document containing the batch.
+     * @param classDocumentId The ID of the class document containing the batch.
+     * @param batchDocumentId The ID of the batch document to delete.
+     * @param isDeleted Callback function to notify the caller whether the deletion was successful.
+     */
+    private fun deleteBatch(academicDocumentId:String, semesterDocumentId:String, classDocumentId:String, batchDocumentId:String, isDeleted:(Boolean) -> Unit)
+    {
+        try {
+            MainScope().launch(Dispatchers.IO){
+                try {
+                    // Call the deleteBatchDocument function from the repository
+                    BatchRepository.deleteBatchDocument(academicDocumentId, semesterDocumentId, classDocumentId, batchDocumentId)
+
+                    // Check if the batch document still exists after deletion
+                    isBatchDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId,batchDocumentId){
+                        // Notify the caller whether the deletion was successful
+                        isDeleted(!it)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    throw e
+                }
+            }
+        }
+        catch (e: Exception){
+            Log.e(TAG,e.toString())
+            throw e
+        }
+    }
 }

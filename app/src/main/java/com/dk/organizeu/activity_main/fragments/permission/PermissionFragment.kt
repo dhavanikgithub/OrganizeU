@@ -45,42 +45,53 @@ class PermissionFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
                 try {
+                    // Check if the necessary permissions are granted
                     btnStart.isEnabled = permissionCheck()
-                    if(btnStart.isEnabled)
-                    {
-                       gotoSplashFragment()
+
+                    // If permissions are granted, proceed to the splash fragment
+                    if (btnStart.isEnabled) {
+                        gotoSplashFragment()
                     }
                 } catch (e: Exception) {
+                    // Handle any exceptions that occur during permission check
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
 
+                // Set up click listener for the start button to navigate to the splash fragment
                 btnStart.setOnClickListener {
                     gotoSplashFragment()
                 }
 
+                // Set up click listener for the allow notification button
                 btnAllowNotification.setOnClickListener {
                     btnNotificationClickListener()
                 }
 
+                // Set up click listener for the allow do not disturb button
                 btnAllowDoNotDisturb.setOnClickListener {
                     try {
-                        if (txtAllowDoNotDisturb.text.toString().equals(getString(R.string.Allow),true)){
+                        // Check if the permission to access do not disturb mode is not granted
+                        if (txtAllowDoNotDisturb.text.toString().equals(getString(R.string.Allow), true)) {
                             if (!isDoNotDisturbPermissionGranted(requireContext())) {
+                                // If not granted, launch the notification policy access intent
                                 appNotificationSettingIntent().apply {
                                     notificationPolicyAccessLauncher.launch(this)
                                 }
                             }
                         }
                     } catch (e: Exception) {
+                        // Handle any exceptions that occur during do not disturb permission check
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
 
+                // Set up click listener for the allow audio button
                 btnAllowAudio.setOnClickListener {
                     btnAudioClickListener()
                 }
@@ -88,134 +99,221 @@ class PermissionFragment : Fragment() {
         }
     }
 
-    private fun gotoSplashFragment()
-    {
+
+    /**
+     * Navigate to the SplashFragment.
+     * This function pops the back stack to remove any fragments in the navigation stack
+     * and then navigates to the SplashFragment.
+     */
+    private fun gotoSplashFragment() {
+        // Pop the back stack to remove any fragments in the navigation stack
         findNavController().popBackStack()
+
+        // Navigate to the SplashFragment
         findNavController().navigate(R.id.splashFragment)
     }
 
-    fun btnNotificationClickListener()
-    {
+
+    /**
+     * Handles the click event for the allow notification button.
+     * This function checks if the notification permission is allowed,
+     * requests the permission if not, and launches the app settings if needed.
+     */
+    fun btnNotificationClickListener() {
         binding.apply {
-            if (txtAllowNotification.text.toString().equals(getString(R.string.Allow),true)){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    requestPermission(requireContext(),NOTIFICATION_PERMISSION,{
-                        try {
-                            btnStart.isEnabled = permissionCheck()
-                        } catch (e: Exception) {
-                            requireContext().unexpectedErrorMessagePrint(e)
-                        }
-                    },{
-                        try {
-                            appSettingIntent(requireContext()).apply {
-                                settingsActivityResultLauncher.launch(this)
+            // Check if the button text indicates permission is allowed
+            if (txtAllowNotification.text.toString().equals(getString(R.string.Allow), true)) {
+                // Check if the device's SDK version is supported
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // Request notification permission using a custom function
+                    requestPermission(requireContext(), NOTIFICATION_PERMISSION,
+                        {
+                            // Permission granted callback
+                            try {
+                                // Update UI based on permission status
+                                btnStart.isEnabled = permissionCheck()
+                            } catch (e: Exception) {
+                                // Handle any exceptions that occur
+                                requireContext().unexpectedErrorMessagePrint(e)
                             }
-                        } catch (e: Exception) {
-                            requireContext().unexpectedErrorMessagePrint(e)
-                        }
-                    })
-                }
-                else{
+                        },
+                        {
+                            // Permission denied callback
+                            try {
+                                // Launch app settings to allow the user to grant permission manually
+                                appSettingIntent(requireContext()).apply {
+                                    settingsActivityResultLauncher.launch(this)
+                                }
+                            } catch (e: Exception) {
+                                // Handle any exceptions that occur
+                                requireContext().unexpectedErrorMessagePrint(e)
+                            }
+                        })
+                } else {
+                    // If the SDK version is not supported, update UI based on permission status
                     btnStart.isEnabled = permissionCheck()
                 }
             }
         }
     }
-    fun btnAudioClickListener()
-    {
+
+    /**
+     * Handles the click event for the allow audio button.
+     * This function checks if the audio setting permission is allowed,
+     * requests the permission if not, and launches the app settings if needed.
+     */
+    fun btnAudioClickListener() {
         binding.apply {
-            if (txtAllowAudio.text.toString().equals(getString(R.string.Allow),true)){
-                requestPermission(requireContext(), AUDIO_SETTING_PERMISSION,{
-                    try {
-                        btnStart.isEnabled = permissionCheck()
-                    } catch (e: Exception) {
-                        requireContext().unexpectedErrorMessagePrint(e)
-                    }
-                },{
-                    try {
-                        appSettingIntent(requireContext()).apply {
-                            settingsActivityResultLauncher.launch(this)
+            // Check if the button text indicates permission is allowed
+            if (txtAllowAudio.text.toString().equals(getString(R.string.Allow), true)) {
+                // Request audio setting permission using a custom function
+                requestPermission(requireContext(), AUDIO_SETTING_PERMISSION,
+                    {
+                        // Permission granted callback
+                        try {
+                            // Update UI based on permission status
+                            btnStart.isEnabled = permissionCheck()
+                        } catch (e: Exception) {
+                            // Handle any exceptions that occur
+                            requireContext().unexpectedErrorMessagePrint(e)
                         }
-                    } catch (e: Exception) {
-                        requireContext().unexpectedErrorMessagePrint(e)
-                    }
-                })
+                    },
+                    {
+                        // Permission denied callback
+                        try {
+                            // Launch app settings to allow the user to grant permission manually
+                            appSettingIntent(requireContext()).apply {
+                                settingsActivityResultLauncher.launch(this)
+                            }
+                        } catch (e: Exception) {
+                            // Handle any exceptions that occur
+                            requireContext().unexpectedErrorMessagePrint(e)
+                        }
+                    })
             }
         }
     }
 
 
+
+    /**
+     * Activity result launcher for handling notification policy access request.
+     * This launcher is registered to handle the result of starting an activity for
+     * granting notification policy access. It enables the start button if the permission is granted.
+     */
     private val notificationPolicyAccessLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {
+    ) { result ->
         try {
+            // Enable/Disable Start button based on permission status after the activity result is received
             binding.btnStart.isEnabled = permissionCheck()
         } catch (e: Exception) {
+            // Handle any exceptions that occur
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }
 
-    private val settingsActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+    /**
+     * Activity result launcher for handling app settings request.
+     * This launcher is registered to handle the result of starting an activity for
+     * opening the app settings. It enables the start button if the permission is granted.
+     */
+    private val settingsActivityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         try {
-            binding.btnStart.isEnabled=permissionCheck()
+            // Enable/Disable Start button based on permission status after the activity result is received
+            binding.btnStart.isEnabled = permissionCheck()
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            // Log and rethrow any exceptions that occur
+            Log.e(TAG, e.message.toString())
             throw e
         }
     }
 
-    private fun setPermissionDone(textView: TextView, layout:LinearLayout)
-    {
+
+    /**
+     * Sets the visual indicators to indicate that the permission is done.
+     * This function updates the text color and background color of the given TextView and LinearLayout
+     * to visually indicate that the permission has been granted or completed.
+     *
+     * @param textView The TextView to update the text and text color.
+     * @param layout The LinearLayout to update the background color.
+     */
+    private fun setPermissionDone(textView: TextView, layout: LinearLayout) {
+        // Update text and text color of the TextView
         textView.text = getString(R.string.Done)
         textView.setTextColor(requireContext().getColor(R.color.colorSecondary))
+        // Update background color of the LinearLayout
         layout.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
     }
 
-    private fun setPermissionAllow(textView: TextView, layout:LinearLayout)
-    {
+
+    /**
+     * Sets the visual indicators to indicate that permission is allowed.
+     * This function updates the text color and background color of the given TextView and LinearLayout
+     * to visually indicate that permission is allowed or pending.
+     *
+     * @param textView The TextView to update the text and text color.
+     * @param layout The LinearLayout to update the background color.
+     */
+    private fun setPermissionAllow(textView: TextView, layout: LinearLayout) {
+        // Update text and text color of the TextView
         textView.text = getString(R.string.Allow)
         textView.setTextColor(requireContext().getColor(R.color.colorPrimary))
+        // Update background color of the LinearLayout
         layout.setBackgroundColor(requireContext().getColor(R.color.colorPrimaryContainer))
     }
 
-    private fun permissionCheck():Boolean {
+
+    /**
+     * Checks the status of various permissions required by the app.
+     * This function checks if audio settings permission, notification permission, and do not disturb permission are granted.
+     * It updates the UI components to indicate the status of each permission.
+     *
+     * @return true if all permissions are granted, false otherwise.
+     */
+    private fun permissionCheck(): Boolean {
         binding.apply {
             try {
-                var notificationPermission = true
+                var notificationPermission = true // Assume notification permission is granted by default
                 val audioSettingPermission = isAudioSettingsPermissionGranted(requireContext())
                 val doNotDisturb = isDoNotDisturbPermissionGranted(requireContext())
 
                 // Do not disturb
                 if (doNotDisturb) {
-                    setPermissionDone(binding.txtAllowDoNotDisturb,binding.btnAllowDoNotDisturb)
+                    setPermissionDone(binding.txtAllowDoNotDisturb, binding.btnAllowDoNotDisturb)
                 } else {
-                    setPermissionAllow(binding.txtAllowDoNotDisturb,binding.btnAllowDoNotDisturb)
+                    setPermissionAllow(binding.txtAllowDoNotDisturb, binding.btnAllowDoNotDisturb)
                 }
 
-                //Notification Permission
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                // Notification Permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     notificationPermission = isNotificationPermissionGranted(requireContext())
                     if (notificationPermission) {
-                        setPermissionDone(txtAllowNotification,btnAllowNotification)
+                        setPermissionDone(txtAllowNotification, btnAllowNotification)
                     } else {
-                        setPermissionAllow(txtAllowNotification,btnAllowNotification)
+                        setPermissionAllow(txtAllowNotification, btnAllowNotification)
                     }
-                }
-                else{
-                    setPermissionDone(txtAllowNotification,btnAllowNotification)
+                } else {
+                    setPermissionDone(txtAllowNotification, btnAllowNotification)
                 }
 
-                //Audio Permission
+                // Audio Permission
                 if (audioSettingPermission) {
-                    setPermissionDone(txtAllowAudio,btnAllowAudio)
+                    setPermissionDone(txtAllowAudio, btnAllowAudio)
                 } else {
-                    setPermissionAllow(txtAllowAudio,btnAllowAudio)
+                    setPermissionAllow(txtAllowAudio, btnAllowAudio)
                 }
+
+                // Return true if all permissions are granted, false otherwise
                 return audioSettingPermission && notificationPermission && doNotDisturb
             } catch (e: Exception) {
-                throw  e
+                // Rethrow any exceptions that occur
+                throw e
             }
         }
-
     }
+
 }

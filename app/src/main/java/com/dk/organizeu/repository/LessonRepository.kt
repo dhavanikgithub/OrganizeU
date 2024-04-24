@@ -8,6 +8,7 @@ import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
 
@@ -17,6 +18,14 @@ class LessonRepository {
         fun lessonCollectionRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId:String): CollectionReference {
             try {
                 return TimeTableRepository.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).collection(WEEKDAY_COLLECTION)
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+        fun lessonDocumentRef(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonDocumentId: String): DocumentReference {
+            try {
+                return lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).document(lessonDocumentId)
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -79,6 +88,28 @@ class LessonRepository {
                 throw e
             }
 
+        }
+
+        suspend fun deleteLessonDocument(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonDocumentId:String)
+        {
+            try {
+                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllLessonDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String)
+        {
+            try {
+                getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).map {
+                    deleteLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
         }
 
         fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetablePojo {

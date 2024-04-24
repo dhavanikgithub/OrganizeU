@@ -1,10 +1,10 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.pojo.RoomPojo
-import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
 import com.dk.organizeu.firebase.key_mapping.RoomCollection
+import com.dk.organizeu.pojo.RoomPojo
+import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -59,6 +59,7 @@ class RoomRepository {
                 throw e
             }
         }
+
 
         fun insertRoomDocument(
             roomDocumentId: String,
@@ -118,6 +119,26 @@ class RoomRepository {
                          Log.w("TAG", "Error checking document existence", exception)
                          callback(false)
                      }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteRoomDocument(roomDocumentId: String){
+            try {
+                roomDocumentRef(roomDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllRoomDocuments(){
+            try {
+                getAllRoomDocument().map {
+                    deleteRoomDocument(it.id)
+                }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e

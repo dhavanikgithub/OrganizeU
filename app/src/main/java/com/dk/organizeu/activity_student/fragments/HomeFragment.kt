@@ -1,6 +1,5 @@
 package com.dk.organizeu.activity_student.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -64,115 +63,126 @@ class HomeFragment : Fragment() {
         binding.apply {
             viewModel.apply {
 
-                /*val context = requireContext() // Replace applicationContext with your actual context
-                val lessonName = "Math Lesson"
-                val startTimeStr = "11:50 AM" // Example time
-                val weekday = Calendar.MONDAY // Example: Schedule for Monday
-
-                scheduleNotification(context, lessonName, startTimeStr, weekday,12345)
-                scheduleNotification(context, "Science", "11:51 AM", weekday,12346)
-*/
-
-
                 MainScope().launch(Dispatchers.Main) {
                     try {
+                        // Determine the current day of the week
                         dayOfWeek = if(UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1 == 0) {
                             7
                         } else {
                             UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1
                         }
 
+                        // Set the selectedWeekDayTab to the current day of the week if savedInstanceState is null
                         if (savedInstanceState == null){
                             selectedWeekDayTab = dayOfWeek-1
                             println(selectedWeekDayTab)
                         }
 
+                        // Load tabs and show progress bar
                         withContext(Dispatchers.Main)
                         {
                             loadTabs()
                             showProgressBar(rvLesson,progressBar)
                         }
 
+                        // Define academic, semester, and class IDs
                         val academicDocumentId = "2024-2025_EVEN"
                         val semesterDocumentId = "2"
                         val classDocumentId = "CEIT-A"
 
+                        // Load timetable data based on academic, semester, and class IDs
                         loadTimeTableData(academicDocumentId, semesterDocumentId, classDocumentId)
 
+                        // Set refresh listener for swipeRefreshLayout
                         swipeRefresh.setOnRefreshListener {
+                            // Load timetable for the selected week day tab
                             loadTimeTable(selectedWeekDayTab+1)
+                            // Stop the refreshing animation
                             swipeRefresh.isRefreshing=false
                         }
                     } catch (e: Exception) {
+                        // Handle any exceptions and log error messages
                         Log.e(TAG,e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
 
+
+                // Add a listener to the TabLayout for tab selection events
                 tbLayoutAction.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         try {
+                            // Update the selected tab position in the view model
                             viewModel.selectedTab = tab.position
+                            // Check which tab is selected
                             when (tab.position) {
                                 0 -> {
+                                    // Load current lesson for the selected tab
                                     loadCurrentLesson()
                                 }
                                 1 -> {
+                                    // Load the timetable data for the current day
                                     try {
-                                        if(timetableData[dayOfWeek]!=null) {
+                                        // Check if timetable data exists for the current day
+                                        if (timetableData[dayOfWeek] != null) {
+                                            // Clear the current day's timetable data
                                             currentDayTimeTableData.value!!.clear()
-                                            //timetableAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.count())
+                                            // Add all timetable data for the current day to the currentDayTimeTableData LiveData
                                             currentDayTimeTableData.value!!.addAll(timetableData[dayOfWeek]!!)
+                                            // Update the value of currentDayTimeTableData to trigger observers
                                             currentDayTimeTableData.value = currentDayTimeTableData.value
+                                            // Create a new LessonAdapter with the updated timetable data
                                             lessonAdapter = LessonAdapterStudent(currentDayTimeTableData.value!!)
+                                            // Set the adapter for the RecyclerView to display the updated timetable data
                                             rvLesson.adapter = lessonAdapter
-                                            //timetableAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.count())
                                         }
-                                    }
-                                    catch (e:Exception)
-                                    {
+                                    } catch (e: Exception) {
+                                        // Handle any exceptions that occur during the loading of timetable data
                                         Log.e(TAG,e.message.toString())
                                         requireContext().unexpectedErrorMessagePrint(e)
                                     }
                                 }
                             }
                         } catch (e: Exception) {
+                            // Handle any exceptions that occur during the tab selection process
                             Log.e(TAG,e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                     override fun onTabUnselected(tab: TabLayout.Tab?) {}
-
                     override fun onTabReselected(tab: TabLayout.Tab?) {}
-
                 })
 
+
+                // Add a listener to the TabLayout for tab selection events
                 tbLayoutWeekDay.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                    @SuppressLint("NotifyDataSetChanged")
                     override fun onTabSelected(tab: TabLayout.Tab) {
+                        // Set the selectedWeekDayTab variable in the view model to the selected tab position
                         viewModel.selectedWeekDayTab = tab.position
-                        try{
-                            if(dayOfWeek==tab.position+1)
-                            {
-                                tbLayoutAction.visibility= View.VISIBLE
+                        try {
+                            // Check if the selected tab corresponds to the current day of the week
+                            if (dayOfWeek == tab.position + 1) {
+                                // If yes, make the action tab layout visible
+                                tbLayoutAction.visibility = View.VISIBLE
+                            } else {
+                                // If not, hide the action tab layout
+                                tbLayoutAction.visibility = View.GONE
                             }
-                            else{
-                                tbLayoutAction.visibility= View.GONE
+                            // Check if timetable data is available for the selected tab position
+                            if (timetableData[tab.position + 1]!!.isNotEmpty()) {
+                                // If yes, load the timetable for the selected day
+                                loadTimeTable(tab.position + 1)
                             }
-                            if(timetableData[tab.position+1]!!.isNotEmpty())
-                            {
-                                loadTimeTable(tab.position+1)
-                            }
-                        }
-                        catch (e:Exception){
-                            if(currentDayTimeTableData.value!!.size>0)
-                            {
+                        } catch (e: Exception) {
+                            // If an exception occurs while loading the timetable data, clear the current day's timetable data
+                            if (currentDayTimeTableData.value!!.size > 0) {
                                 currentDayTimeTableData.value!!.clear()
                                 lessonAdapter.notifyDataSetChanged()
                             }
                         }
 
-                        /*when (tab.position) {
+                        /* Uncomment the following code block if you want to load timetable data based on tab position
+                        when (tab.position) {
                             0 -> {
                                 loadTimeTable(1)
                             }
@@ -191,7 +201,8 @@ class HomeFragment : Fragment() {
                             5 -> {
                                 loadTimeTable(6)
                             }
-                        }*/
+                        }
+                        */
                     }
 
                     override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -199,111 +210,142 @@ class HomeFragment : Fragment() {
 
                     override fun onTabReselected(tab: TabLayout.Tab?) {
                     }
-
                 })
+
             }
         }
     }
 
 
-    private suspend fun loadTimeTableData(academicDocumentId:String,semesterDocumentId:String,classDocumentId:String)
-    {
+    /**
+     * Asynchronously loads timetable data for a specific academic year, semester, and class.
+     * @param academicDocumentId The ID of the academic document.
+     * @param semesterDocumentId The ID of the semester document.
+     * @param classDocumentId The ID of the class document.
+     */
+    private suspend fun loadTimeTableData(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String) {
         binding.apply {
             viewModel.apply {
                 try {
+                    // Initialize an empty list to store timetable data
                     val timetableList: ArrayList<TimetablePojo> = ArrayList()
-                    val timetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicDocumentId,semesterDocumentId, classDocumentId)
-                    for(timetableDocument in timetableDocuments)
-                    {
+
+                    // Retrieve all timetable documents for the specified academic year, semester, and class
+                    val timetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+
+                    // Iterate through each timetable document
+                    for (timetableDocument in timetableDocuments) {
+                        // Clear the timetable list for each day
                         timetableList.clear()
+
+                        // Get the weekday number from the timetable document's ID
                         val weekDayNumber = Weekday.getWeekdayNumberByName(timetableDocument.id)
-                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocument.id,WeekdayCollection.START_TIME.displayName)
+
+                        // Retrieve all lesson documents for the current timetable document
+                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocument.id, WeekdayCollection.START_TIME.displayName)
+
                         var count = 1
                         var lesson: TimetablePojo
-                        for(lessonDocument in lessonDocuments)
-                        {
-                            lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument,count++)
+
+                        // Iterate through each lesson document
+                        for (lessonDocument in lessonDocuments) {
+                            // Convert the lesson document to a TimetablePojo object
+                            lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument, count++)
                             timetableList.add(lesson)
 
-                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.startTime,ACTION_START_LESSON,lesson.muteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
-                            //lessonMuteManagement.scheduleLessonAlarm(requireContext(),lesson.endTime,ACTION_END_LESSON,lesson.unmuteRequestCode,Weekday.getSystemWeekDayByNumber(weekDayNumber))
+
+                            // lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.startTime, ACTION_START_LESSON, lesson.muteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                            // lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.endTime, ACTION_END_LESSON, lesson.unmuteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
                         }
+
+                        // Add the timetable data for the current day to the timetableData map
                         timetableData[weekDayNumber] = ArrayList(timetableList)
                     }
-                    withContext(Dispatchers.Main)
-                    {
-                        try {
 
+                    // Update the UI on the main thread
+                    withContext(Dispatchers.Main) {
+                        try {
+                            // Initialize the lesson recycler view and hide the progress bar
                             initLessonRecyclerView()
                             delay(500)
-                            hideProgressBar(rvLesson,progressBar)
+                            hideProgressBar(rvLesson, progressBar)
                         } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
+                            Log.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    private fun loadTimeTable(position: Int)
-    {
+
+    /**
+     * Loads the timetable data for the specified position (day) and updates the UI accordingly.
+     * @param position The position (day) for which the timetable data should be loaded.
+     */
+    private fun loadTimeTable(position: Int) {
         binding.apply {
             viewModel.apply {
                 try {
-                    if(currentDayTimeTableData.value!!.size==0)
-                    {
-                        if(timetableData[position]!=null)
-                        {
+                    // Check if the current day timetable data is empty
+                    if (currentDayTimeTableData.value!!.isEmpty()) {
+                        // If the timetable data for the position is not null, add it to the current day timetable data
+                        if (timetableData[position] != null) {
                             currentDayTimeTableData.value!!.addAll(timetableData[position]!!)
+                            // Initialize the lesson adapter and set it to the recycler view
                             lessonAdapter = LessonAdapterStudent(currentDayTimeTableData.value!!)
                             rvLesson.adapter = lessonAdapter
                         }
-                    }
-                    else{
-                        lessonAdapter.notifyItemRangeRemoved(0,currentDayTimeTableData.value!!.count())
+                    } else {
+                        // If the current day timetable data is not empty, clear it and update the adapter
+                        lessonAdapter.notifyItemRangeRemoved(0, currentDayTimeTableData.value!!.size)
                         currentDayTimeTableData.value!!.clear()
-                        if(timetableData[position]!=null)
-                        {
+                        // If the timetable data for the position is not null, add it to the current day timetable data
+                        if (timetableData[position] != null) {
                             currentDayTimeTableData.value!!.addAll(timetableData[position]!!)
-                            lessonAdapter.notifyItemRangeInserted(0,currentDayTimeTableData.value!!.count())
+                            // Notify the adapter about the data changes
+                            lessonAdapter.notifyItemRangeInserted(0, currentDayTimeTableData.value!!.size)
                         }
                     }
 
-                    if(tbLayoutAction.isVisible)
-                    {
+                    // Check if the action tab layout is visible
+                    if (tbLayoutAction.isVisible) {
+                        // Get the current selected tab
                         val currentTab = tbLayoutAction.getTabAt(0)!!
-                        if(currentTab.isSelected)
-                        {
+                        if (currentTab.isSelected) {
+                            // If the first tab is selected, load the current lesson
                             loadCurrentLesson()
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    private fun loadCurrentLesson()
-    {
+
+    /**
+     * Removes the lessons from the current day timetable data that have already ended.
+     * This function checks the end time of each lesson and removes it if the lesson has ended.
+     * It updates the adapter to reflect the changes in the UI.
+     */
+    private fun loadCurrentLesson() {
         binding.apply {
             viewModel.apply {
                 try {
                     var len = currentDayTimeTableData.value!!.size
                     var i = 0
-                    while (i<len)
-                    {
-                        if (!checkLessonStatus(
-                                currentDayTimeTableData.value!![i].endTime
-                            )
-                        )
-                        {
+                    // Iterate through each lesson in the current day timetable data
+                    while (i < len) {
+                        // Check if the lesson has already ended
+                        if (!checkLessonStatus(currentDayTimeTableData.value!![i].endTime)) {
+                            // If the lesson has ended, remove it from the timetable data and update the adapter
                             currentDayTimeTableData.value!!.removeAt(i)
                             lessonAdapter.notifyItemRemoved(i)
                             len--
@@ -312,40 +354,53 @@ class HomeFragment : Fragment() {
                         i++
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    private fun initLessonRecyclerView()
-    {
+
+    /**
+     * Initializes the lesson recycler view by setting up its layout manager,
+     * populating it with lesson data for the selected weekday, and setting up the adapter.
+     * If the action tab is selected and it's the first tab, it loads the current lesson.
+     */
+    private fun initLessonRecyclerView() {
         binding.apply {
             viewModel.apply {
                 try {
+                    // Set up the layout manager for the recycler view
                     rvLesson.layoutManager = LinearLayoutManager(requireContext())
+
+                    // Clear the current day's timetable data
                     currentDayTimeTableData.value!!.clear()
-                    if(timetableData[selectedWeekDayTab+1]!=null)
-                    {
-                        currentDayTimeTableData.value!!.addAll(timetableData[selectedWeekDayTab+1]!!)
-                    }
-                    else{
+
+                    // Populate the current day's timetable data with the lessons for the selected weekday
+                    if (timetableData[selectedWeekDayTab + 1] != null) {
+                        currentDayTimeTableData.value!!.addAll(timetableData[selectedWeekDayTab + 1]!!)
+                    } else {
                         currentDayTimeTableData.value!!.addAll(ArrayList())
                     }
+
+                    // Set up the adapter for the recycler view
                     lessonAdapter = LessonAdapterStudent(currentDayTimeTableData.value!!)
-                    if(tbLayoutAction.selectedTabPosition==0 && selectedTab==0 && tbLayoutAction.isVisible)
-                    {
+
+                    // If the action tab is selected, it's the first tab, and it's visible, load the current lesson
+                    if (tbLayoutAction.selectedTabPosition == 0 && selectedTab == 0 && tbLayoutAction.isVisible) {
                         loadCurrentLesson()
                     }
+
                     rvLesson.adapter = lessonAdapter
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
+
 
     private fun loadTabs()
     {
@@ -397,11 +452,16 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
+            // Select the home item in the navigation drawer
             (activity as? StudentActivity)?.drawerMenuSelect(R.id.nav_home)
+
+            // Enable the back button in the action bar
             (activity as? StudentActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+            // Set the home button indicator to the menu icon
             (activity as? StudentActivity)?.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Log.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }

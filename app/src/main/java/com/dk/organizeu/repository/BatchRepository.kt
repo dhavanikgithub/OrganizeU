@@ -41,6 +41,25 @@ class BatchRepository {
             }
         }
 
+        suspend fun deleteBatchDocument(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,batchDocumentId: String){
+            try {
+                batchDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, batchDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+        suspend fun deleteAllBatchDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String){
+            try {
+                getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId).map {
+                    deleteBatchDocument(academicDocumentId,semesterDocumentId,classDocumentId,it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
         fun insertBatchDocument(
             academicDocumentId: String,
             semesterDocumentId: String,

@@ -1,9 +1,9 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
 import com.dk.organizeu.firebase.key_mapping.SubjectCollection
+import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -100,6 +100,26 @@ class SubjectRepository {
                         Log.w("TAG", "Error checking document existence", exception)
                         callback(false)
                     }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteSubjectDocument(subjectDocumentId: String){
+            try {
+                subjectDocumentRef(subjectDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllSubjectDocuments(){
+            try {
+                getAllSubjectDocuments().map {
+                    deleteSubjectDocument(it.id)
+                }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e

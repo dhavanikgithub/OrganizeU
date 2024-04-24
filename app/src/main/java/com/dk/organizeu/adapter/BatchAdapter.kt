@@ -4,12 +4,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
-import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import com.dk.organizeu.listener.OnItemClickListener
 
-class BatchAdapter(private val academicBatchList: ArrayList<String>) :
+class BatchAdapter(private val academicBatchList: ArrayList<String>,private val listener: OnItemClickListener) :
     RecyclerView.Adapter<BatchAdapter.AcademicViewHolder>() {
 
     companion object{
@@ -26,6 +27,15 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>) :
         try {
             val currentItem = academicBatchList[position]
             holder.batchNameTxt.text = "Batch: ${currentItem}"
+            holder.itemView.setOnClickListener {
+                listener.onClick(position)
+            }
+            holder.btnDelete.setOnClickListener {
+                listener.onDeleteClick(position)
+            }
+            holder.btnEdit.setOnClickListener {
+                listener.onEditClick(position)
+            }
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -38,9 +48,9 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>) :
 
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         val batchNameTxt: TextView = itemView.findViewById(R.id.txtBatchName)
-
+        val btnEdit: LinearLayout = itemView.findViewById(R.id.btnEdit)
+        val btnDelete: LinearLayout = itemView.findViewById(R.id.btnDelete)
     }
 
 }

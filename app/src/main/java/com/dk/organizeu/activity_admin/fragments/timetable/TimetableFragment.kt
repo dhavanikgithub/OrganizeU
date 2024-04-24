@@ -51,275 +51,373 @@ class TimetableFragment : Fragment() {
         binding.apply {
             viewModel.apply {
                 try {
+                    // Load academic year drop-down menu
                     loadAcademicYearDropDown()
 
-                    btnGoToTimetable.isEnabled=false
+                    // Disable the "Go to Timetable" button initially
+                    btnGoToTimetable.isEnabled = false
 
-                    if (selectedAcademicTypeItem==null)
-                    {
-                        tlAcademicType.isEnabled=false
-                    }
-                    else{
-                        if(selectedAcademicYearItem!=null)
-                        {
+                    // Enable/disable academic type drop-down menu based on selection
+                    if (selectedAcademicTypeItem == null) {
+                        tlAcademicType.isEnabled = false
+                    } else {
+                        if (selectedAcademicYearItem != null) {
                             loadAcademicTypeDropDown()
                         }
                     }
 
-                    if(selectedSemesterItem==null)
-                    {
-                        tlAcademicSem.isEnabled=false
-                    }
-                    else{
-                        if(selectedAcademicYearItem!=null && selectedAcademicTypeItem!=null)
-                        {
+                    // Enable/disable semester drop-down menu based on selection
+                    if (selectedSemesterItem == null) {
+                        tlAcademicSem.isEnabled = false
+                    } else {
+                        if (selectedAcademicYearItem != null && selectedAcademicTypeItem != null) {
                             loadSemesterDropDown()
                         }
                     }
 
-                    if(selectedClassItem==null)
-                    {
-
-                        classTIL.isEnabled=false
-                    }
-                    else{
-                        if(selectedAcademicYearItem!=null && selectedAcademicTypeItem!=null && selectedSemesterItem!=null)
-                        {
+                    // Enable/disable class drop-down menu based on selection
+                    if (selectedClassItem == null) {
+                        classTIL.isEnabled = false
+                    } else {
+                        if (selectedAcademicYearItem != null && selectedAcademicTypeItem != null && selectedSemesterItem != null) {
                             loadClassDropDown()
                         }
                     }
 
-                    if(selectedAcademicYearItem!=null && selectedAcademicTypeItem!=null && selectedSemesterItem!=null && selectedClassItem!=null)
-                    {
-                        btnGoToTimetable.isEnabled=true
+                    // Enable the "Go to Timetable" button if all selections are made
+                    if (selectedAcademicYearItem != null && selectedAcademicTypeItem != null && selectedSemesterItem != null && selectedClassItem != null) {
+                        btnGoToTimetable.isEnabled = true
                     }
                 } catch (e: Exception) {
+                    // Log any unexpected exceptions that occur
                     Log.e(TAG,e.message.toString())
+                    // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
+
                 actAcademicYear.setOnItemClickListener { parent, view, position, id ->
                     try {
+                        // Get the selected academic year item
                         selectedAcademicYearItem = parent.getItemAtPosition(position).toString()
+
+                        // Clear selections for related dropdown menus
                         clearAcademicType()
                         clearSemester()
                         clearClass()
+
+                        // Load academic type dropdown menu based on the selected academic year
                         loadAcademicTypeDropDown()
 
-                        tlAcademicSem.isEnabled=false
-                        classTIL.isEnabled=false
-                        btnGoToTimetable.isEnabled=false
+                        // Disable semester and class dropdown menus
+                        tlAcademicSem.isEnabled = false
+                        classTIL.isEnabled = false
+
+                        // Disable the "Go to Timetable" button
+                        btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
 
                 actAcademicType.setOnItemClickListener { parent, view, position, id ->
                     try {
+                        // Get the selected academic type item
                         selectedAcademicTypeItem = parent.getItemAtPosition(position).toString()
+
+                        // Clear selections for related dropdown menus
                         clearSemester()
                         clearClass()
+
+                        // Load semester dropdown menu based on the selected academic type
                         loadSemesterDropDown()
 
-                        classTIL.isEnabled=false
-                        btnGoToTimetable.isEnabled=false
+                        // Disable class dropdown menu
+                        classTIL.isEnabled = false
+
+                        // Disable the "Go to Timetable" button
+                        btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
-
                 }
+
+
 
                 actAcademicSem.setOnItemClickListener { parent, view, position, id ->
                     try {
+                        // Get the selected academic semester item
                         selectedSemesterItem = parent.getItemAtPosition(position).toString()
+
+                        // Clear selections for the class dropdown menu
                         clearClass()
+
+                        // Load class dropdown menu based on the selected academic semester
                         loadClassDropDown()
 
-                        btnGoToTimetable.isEnabled=false
+                        // Disable the "Go to Timetable" button
+                        btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
 
                 classACTV.setOnItemClickListener { parent, view, position, id ->
                     try {
+                        // Get the selected class item
                         selectedClassItem = parent.getItemAtPosition(position).toString()
-                        btnGoToTimetable.isEnabled=true
+
+                        // Enable the "Go to Timetable" button
+                        btnGoToTimetable.isEnabled = true
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
 
                 btnGoToTimetable.setOnClickListener {
                     try {
-                        if(selectedAcademicYearItem!=null && selectedAcademicTypeItem!=null && selectedSemesterItem!=null && selectedClassItem!=null)
-                        {
+                        // Check if all required selections are made
+                        if (selectedAcademicYearItem != null && selectedAcademicTypeItem != null && selectedSemesterItem != null && selectedClassItem != null) {
+                            // Create a bundle to pass selected data to the addTimetableFragment
                             val bundle = Bundle().apply {
-                                putString("academic_year", "${selectedAcademicYearItem}")
-                                putString("academic_type", "${selectedAcademicTypeItem}")
-                                putString("academic_semester", "${selectedSemesterItem}")
-                                putString("academic_class", "${selectedClassItem}")
+                                putString("academic_year", selectedAcademicYearItem)
+                                putString("academic_type", selectedAcademicTypeItem)
+                                putString("academic_semester", selectedSemesterItem)
+                                putString("academic_class", selectedClassItem)
                             }
-                            findNavController().navigate(R.id.addTimetableFragment,bundle)
+
+                            // Navigate to the addTimetableFragment with the selected data
+                            findNavController().navigate(R.id.addTimetableFragment, bundle)
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        // Log and handle any exceptions that occur
+                        Log.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
+
             }
         }
     }
 
 
-    fun clearSemester()
-    {
+    /**
+     * Clears the selection and data related to the academic semester.
+     */
+    fun clearSemester() {
         binding.apply {
             viewModel.apply {
                 try {
-                    tlAcademicSem.isEnabled=false
+                    // Disable the academic semester dropdown menu
+                    tlAcademicSem.isEnabled = false
+
+                    // Clear the text in the academic semester dropdown text
                     actAcademicSem.setText("")
+
+                    // Clear the semesterList data
                     semesterList.clear()
-                    if(semesterAdapter!=null)
-                    {
+
+                    // Notify the adapter of changes in data if it's not null
+                    if (semesterAdapter != null) {
                         semesterAdapter!!.notifyDataSetChanged()
                     }
-                    selectedSemesterItem=null
+
+                    // Reset the selected semester item
+                    selectedSemesterItem = null
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    fun clearClass()
-    {
+
+    /**
+     * Clears the selection and data related to the class.
+     */
+    fun clearClass() {
         binding.apply {
             viewModel.apply {
                 try {
-                    classTIL.isEnabled=false
+                    // Disable the class dropdown menu
+                    classTIL.isEnabled = false
+
+                    // Clear the text in the class dropdown text
                     classACTV.setText("")
+
+                    // Clear the classList data
                     classList.clear()
-                    if(classAdapter!=null)
-                    {
+
+                    // Notify the adapter of changes in data if it's not null
+                    if (classAdapter != null) {
                         classAdapter!!.notifyDataSetChanged()
                     }
-                    selectedClassItem=null
+
+                    // Reset the selected class item
+                    selectedClassItem = null
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    fun clearAcademicType()
-    {
+
+    /**
+     * Clears the selection and data related to the academic type.
+     */
+    fun clearAcademicType() {
         binding.apply {
             viewModel.apply {
                 try {
-                    tlAcademicType.isEnabled=false
+                    // Disable the academic type dropdown menu
+                    tlAcademicType.isEnabled = false
+
+                    // Clear the text in the academic type dropdown text
                     actAcademicType.setText("")
+
+                    // Clear the academicTypeList data
                     academicTypeList.clear()
-                    if(academicTypeAdapter!=null)
-                    {
+
+                    // Notify the adapter of changes in data if it's not null
+                    if (academicTypeAdapter != null) {
                         academicTypeAdapter!!.notifyDataSetChanged()
                     }
-                    selectedAcademicTypeItem=null
+
+                    // Reset the selected academic type item
+                    selectedAcademicTypeItem = null
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    fun loadAcademicYearDropDown()
-    {
-        binding.apply {
-            viewModel.apply {
-                MainScope().launch(Dispatchers.IO)
-                {
-                    try {
-                        academicYearList.clear()
-                        val documents = AcademicRepository.getAllAcademicDocuments()
-                        for(document in documents)
-                        {
-                            val academicItem = document.id.split('_')
-                            if(!academicYearList.contains(academicItem[0]))
-                            {
-                                academicYearList.add(academicItem[0])
-                            }
-                        }
 
-                        withContext(Dispatchers.Main)
-                        {
-                            try {
-                                academicYearAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,academicYearList)
-                                actAcademicYear.setAdapter(academicYearAdapter)
-                            } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
-                                requireContext().unexpectedErrorMessagePrint(e)
+    /**
+     * Loads academic year dropdown menu with available academic years.
+     */
+    fun loadAcademicYearDropDown() {
+        try {
+            binding.apply {
+                viewModel.apply {
+                    MainScope().launch(Dispatchers.IO) {
+                        try {
+                            // Clear the existing academic year list
+                            academicYearList.clear()
+
+                            // Retrieve academic documents from the repository
+                            val documents = AcademicRepository.getAllAcademicDocuments()
+
+                            // Extract and add unique academic years from the documents to the list
+                            for (document in documents) {
+                                val academicItem = document.id.split('_')
+                                if (!academicYearList.contains(academicItem[0])) {
+                                    academicYearList.add(academicItem[0])
+                                }
                             }
+
+                            withContext(Dispatchers.Main) {
+                                try {
+                                    // Set up the adapter for the academic year dropdown menu
+                                    academicYearAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYearList)
+                                    actAcademicYear.setAdapter(academicYearAdapter)
+                                } catch (e: Exception) {
+                                    // Log and handle any exceptions that occur during UI update
+                                    Log.e(TAG, e.message.toString())
+                                    requireContext().unexpectedErrorMessagePrint(e)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            // Log and handle any exceptions that occur during data retrieval
+                            Log.e(TAG, e.message.toString())
+                            requireContext().unexpectedErrorMessagePrint(e)
                         }
-                    } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
-                        requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
             }
+        } catch (e: Exception) {
+            // Log and handle any exceptions that occur
+            Log.e(TAG, e.message.toString())
+            requireContext().unexpectedErrorMessagePrint(e)
         }
     }
 
 
-    fun loadAcademicTypeDropDown()
-    {
+
+    /**
+     * Loads academic type dropdown menu with available academic types for the selected academic year.
+     */
+    fun loadAcademicTypeDropDown() {
         binding.apply {
             viewModel.apply {
                 try {
-                    tlAcademicType.isEnabled=false
+                    // Disable the academic type dropdown menu initially
+                    tlAcademicType.isEnabled = false
+
+                    // Clear the existing academic type list
                     academicTypeList.clear()
+
+                    // Launch a coroutine to fetch academic type data in the background
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val evenExists =
-                                isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.EVEN.name}")
+                            // Check if even academic type exists for the selected academic year
+                            val evenExists = isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.EVEN.name}")
                             if (evenExists) {
                                 academicTypeList.add(AcademicType.EVEN.name)
                             }
 
-                            val oddExists =
-                                isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.ODD.name}")
+                            // Check if odd academic type exists for the selected academic year
+                            val oddExists = isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.ODD.name}")
                             if (oddExists) {
                                 academicTypeList.add(AcademicType.ODD.name)
                             }
 
+                            // Set up the adapter for the academic type dropdown menu
                             academicTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicTypeList)
                             actAcademicType.setAdapter(academicTypeAdapter)
-                            tlAcademicType.isEnabled=true
+
+                            // Enable the academic type dropdown menu
+                            tlAcademicType.isEnabled = true
                         } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
+                            // Log and handle any exceptions that occur during data retrieval
+                            Log.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
-
                     }
 
-                    MainScope().launch{
+                    // Wait for the coroutine job to complete
+                    MainScope().launch {
                         job.join()
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -327,82 +425,124 @@ class TimetableFragment : Fragment() {
     }
 
 
-    fun loadSemesterDropDown()
-    {
+    /**
+     * Loads semester dropdown menu with available semesters for the selected academic year and type.
+     */
+    fun loadSemesterDropDown() {
         binding.apply {
             viewModel.apply {
                 try {
-                    tlAcademicSem.isEnabled=false
+                    // Disable the semester dropdown menu initially
+                    tlAcademicSem.isEnabled = false
+
+                    // Clear the existing semester list
                     semesterList.clear()
+
+                    // Construct the academic document ID based on the selected academic year and type
                     val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
-                    MainScope().launch(Dispatchers.IO)
-                    {
+
+                    // Launch a coroutine to fetch semester data in the background
+                    MainScope().launch(Dispatchers.IO) {
                         try {
+                            // Retrieve semester documents from the repository
                             val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
-                            for(document in documents)
-                            {
+
+                            // Add semesters from the documents to the list
+                            for (document in documents) {
                                 semesterList.add(document.id)
                             }
-                            withContext(Dispatchers.Main)
-                            {
+
+                            // Update the UI on the main thread
+                            withContext(Dispatchers.Main) {
                                 try {
-                                    semesterAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,semesterList)
+                                    // Set up the adapter for the semester dropdown menu
+                                    semesterAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, semesterList)
                                     actAcademicSem.setAdapter(semesterAdapter)
-                                    tlAcademicSem.isEnabled=true
+
+                                    // Enable the semester dropdown menu
+                                    tlAcademicSem.isEnabled = true
                                 } catch (e: Exception) {
-                                    Log.e(TAG,e.message.toString())
+                                    // Log and handle any exceptions that occur during UI update
+                                    Log.e(TAG, e.message.toString())
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
+                            // Log and handle any exceptions that occur during data retrieval
+                            Log.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }
     }
 
-    fun loadClassDropDown()
-    {
+    /**
+     * Loads class dropdown menu with available classes for the selected academic year, type, and semester.
+     */
+    fun loadClassDropDown() {
         binding.apply {
             viewModel.apply {
                 try {
-                    classTIL.isEnabled=false
+                    // Disable the class dropdown menu initially
+                    classTIL.isEnabled = false
+
+                    // Clear the existing class list
                     classList.clear()
+
+                    // Construct the academic document ID based on the selected academic year and type
                     val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
+
+                    // Get the selected semester document ID
                     val semesterDocumentId = selectedSemesterItem
-                    if(semesterDocumentId!=null)
-                    {
-                        MainScope().launch(Dispatchers.IO)
-                        {
-                            val documents = ClassRepository.getAllClassDocuments(academicDocumentId,semesterDocumentId)
-                            for(document in documents)
-                            {
-                                classList.add(document.id)
-                            }
-                            withContext(Dispatchers.Main){
-                                try {
-                                    classAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,classList)
-                                    classACTV.setAdapter(classAdapter)
-                                    classTIL.isEnabled=true
-                                } catch (e: Exception) {
-                                    Log.e(TAG,e.message.toString())
-                                    requireContext().unexpectedErrorMessagePrint(e)
+
+                    // Check if semesterDocumentId is not null
+                    if (semesterDocumentId != null) {
+                        // Launch a coroutine to fetch class data in the background
+                        MainScope().launch(Dispatchers.IO) {
+                            try {
+                                // Retrieve class documents from the repository
+                                val documents = ClassRepository.getAllClassDocuments(academicDocumentId, semesterDocumentId)
+
+                                // Add classes from the documents to the list
+                                for (document in documents) {
+                                    classList.add(document.id)
                                 }
+
+                                // Update the UI on the main thread
+                                withContext(Dispatchers.Main) {
+                                    try {
+                                        // Set up the adapter for the class dropdown menu
+                                        classAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, classList)
+                                        classACTV.setAdapter(classAdapter)
+
+                                        // Enable the class dropdown menu
+                                        classTIL.isEnabled = true
+                                    } catch (e: Exception) {
+                                        // Log and handle any exceptions that occur during UI update
+                                        Log.e(TAG, e.message.toString())
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                // Log and handle any exceptions that occur during data retrieval
+                                Log.e(TAG, e.message.toString())
+                                requireContext().unexpectedErrorMessagePrint(e)
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    // Log and handle any exceptions that occur
+                    Log.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
-
             }
         }
     }
+
 }

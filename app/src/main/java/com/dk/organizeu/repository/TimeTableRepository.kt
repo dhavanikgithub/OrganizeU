@@ -40,6 +40,27 @@ class TimeTableRepository {
             }
         }
 
+        suspend fun deleteTimetableDocument(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String){
+            try {
+                LessonRepository.deleteAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
+                timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllTimetableDocuments(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String){
+            try {
+                getAllTimeTableDocuments(academicDocumentId, semesterDocumentId, classDocumentId).map {
+                    deleteTimetableDocument(academicDocumentId,semesterDocumentId,classDocumentId,it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
         fun insertTimeTableDocument(
             academicDocumentId: String,
             semesterDocumentId: String,

@@ -14,6 +14,7 @@ import com.dk.organizeu.firebase.key_mapping.AcademicCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.dk.organizeu.utils.Validation.Companion.isItemSelected
 import kotlinx.coroutines.Dispatchers
@@ -34,18 +35,13 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
         binding = AddAcademicDialogLayoutBinding.bind(view)
         var builder:AlertDialog.Builder? = null
-        try {
-            academicAddListener = parentFragment as? AddDocumentListener
-            // Create object of AlertDialog box
-            builder = AlertDialog.Builder(requireContext())
-                .setView(view)
-                .setTitle("Add Academic")
-        } catch (e: Exception) {
-            requireContext().unexpectedErrorMessagePrint(e)
-        }
+        academicAddListener = parentFragment as? AddDocumentListener
+        // Create object of AlertDialog box
+        builder = AlertDialog.Builder(requireContext())
+            .setView(view)
+            .setTitle("Add Academic")
         binding.apply {
             try {
-
                 // Prepare academic year list for Initialize academic year drop down
                 val currentYear = Calendar.getInstance().get(Calendar.YEAR)
                 val academicYears = mutableListOf<String>()
@@ -57,9 +53,18 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                 // Initialize the Academic year drop down
                 val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)
                 actAcademicYear.setAdapter(academicYearsAdapter)
+            } catch (e: IllegalStateException) {
+                // Handle IllegalStateException
+                requireContext().showToast("Could not initialize academic year list. Please try again later.")
+                Log.e(TAG, "An IllegalStateException occurred", e)
+            } catch (e: IllegalArgumentException) {
+                // Handle IllegalArgumentException
+                requireContext().showToast("Could not initialize academic year list due to invalid arguments. Please try again later.")
+                Log.e(TAG, "An IllegalArgumentException occurred", e)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                requireContext().unexpectedErrorMessagePrint(e)
+                // Handle other exceptions
+                requireContext().showToast("An unexpected error occurred. Please try again later.")
+                Log.e(TAG, "An unexpected error occurred", e)
             }
 
             // closed dialog box when user click on close button of dialog box
@@ -77,29 +82,24 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         {
                             var academicDocumentId: String? = null
                             var academicData: HashMap<String,String>? = null
-                            try {
-                                // Determine the academic type based on the checked state of chips
-                                // If the chipEven is checked, set the academic type to EVEN
-                                // If the chipOdd is checked, set the academic type to ODD
-                                val aType = if(chipEven.isChecked) chipEven.text.toString() else chipOdd .text.toString()
+                            // Determine the academic type based on the checked state of chips
+                            // If the chipEven is checked, set the academic type to EVEN
+                            // If the chipOdd is checked, set the academic type to ODD
+                            val aType = if(chipEven.isChecked) chipEven.text.toString() else chipOdd .text.toString()
 
-                                academicDocumentId = "${actAcademicYear.text}_${aType}"
+                            academicDocumentId = "${actAcademicYear.text}_${aType}"
 
-                                academicData = hashMapOf(
-                                    AcademicCollection.YEAR.displayName to actAcademicYear.text.toString(),
-                                    AcademicCollection.TYPE.displayName to aType
-                                )
-                            } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
-                                requireContext().unexpectedErrorMessagePrint(e)
-                            }
+                            academicData = hashMapOf(
+                                AcademicCollection.YEAR.displayName to actAcademicYear.text.toString(),
+                                AcademicCollection.TYPE.displayName to aType
+                            )
 
                             if (academicDocumentId != null) {
-
-                                isAcademicDocumentExists(academicDocumentId) { exists -> // Check if academic document exists
+                                // Check if academic document exists
+                                isAcademicDocumentExists(academicDocumentId) { exists ->
                                     try {
                                         if(exists) {
-                                            dismiss() // Dismiss dialog
+                                            requireContext().showToast("Academic Already Exist")
                                             return@isAcademicDocumentExists // Exit the callback function
                                         }
                                         if (academicData != null) { // If academic data is not null, insert it into the repository

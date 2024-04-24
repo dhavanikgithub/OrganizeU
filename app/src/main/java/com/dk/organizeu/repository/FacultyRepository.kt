@@ -1,8 +1,8 @@
 package com.dk.organizeu.repository
 
 import android.util.Log
-import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.FACULTY_COLLECTION
+import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -66,6 +66,26 @@ class FacultyRepository {
             catch (e:java.lang.Exception)
             {
                 failureCallback(e)
+            }
+        }
+
+        suspend fun deleteFacultyDocument(facultyDocumentId: String){
+            try {
+                facultyDocumentRef(facultyDocumentId).delete().await()
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAllFacultyDocuments(){
+            try {
+                getAllFacultyDocuments().map {
+                    deleteFacultyDocument(it.id)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
             }
         }
     }
