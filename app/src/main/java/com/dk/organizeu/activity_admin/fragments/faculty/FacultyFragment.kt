@@ -5,10 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
 import com.dk.organizeu.firebase.key_mapping.FacultyCollection
@@ -24,7 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FacultyFragment : Fragment() {
+class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListener {
 
     companion object {
         fun newInstance() = FacultyFragment()
@@ -155,7 +158,7 @@ class FacultyFragment : Fragment() {
                             withContext(Dispatchers.Main) {
                                 try {
                                     // Initialize the adapter with the faculty list
-                                    facultyAdapter = FacultyAdapter(facultyList)
+                                    facultyAdapter = FacultyAdapter(facultyList,this@FacultyFragment)
 
                                     // Set Faculty RecyclerView layout manager and adapter
                                     rvFaculty.layoutManager = LinearLayoutManager(requireContext())
@@ -189,6 +192,77 @@ class FacultyFragment : Fragment() {
                     throw e
                 }
             }
+        }
+    }
+
+    override fun onClick(position: Int) {
+    }
+
+    override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Faculty")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Faculty and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+
+                // Get the faculty document ID at the specified position from the Faculty list
+                val facultyDocumentId = viewModel.facultyList[position]
+
+                deleteFaculty(facultyDocumentId){
+                    try {
+                        if(it)
+                        {
+                            viewModel.facultyList.removeAt(position)
+                            viewModel.facultyAdapter.notifyItemRemoved(position)
+                            requireContext().showToast("Faculty deleted successfully.")
+                        }
+                        else{
+                            requireContext().showToast("Error occur while deleting faculty.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG,e.toString())
+                        throw e
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e(TAG,e.toString())
+                requireContext().showToast("Error occur while deleting faculty.")
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
+    fun deleteFaculty(facultyDocumentId: String, isDeleted:(Boolean) -> Unit)
+    {
+        try {
+            MainScope().launch(Dispatchers.IO)
+            {
+                try {
+                    FacultyRepository.deleteFacultyDocument(facultyDocumentId)
+                    FacultyRepository.isFacultyDocumentExists(facultyDocumentId){
+                        isDeleted(!it)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    throw e
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG,e.toString())
+            throw e
         }
     }
 }

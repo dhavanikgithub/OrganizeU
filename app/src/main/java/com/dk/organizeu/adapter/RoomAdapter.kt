@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
@@ -33,6 +34,12 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
             holder.itemView.setOnClickListener {
                 listener.onClick(position)
             }
+            holder.btnDelete.setOnClickListener {
+                listener.onDeleteClick(position)
+            }
+            holder.btnEdit.setOnClickListener {
+                listener.onEditClick(position)
+            }
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -46,6 +53,8 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
         val roomNameTxt: TextView = itemView.findViewById(R.id.txtRoomName)
         val roomLocationTxt: TextView = itemView.findViewById(R.id.txtRoomLocation)
         val roomTypeTxt: TextView = itemView.findViewById(R.id.txtRoomType)
+        val btnEdit: LinearLayout = itemView.findViewById(R.id.btnEdit)
+        val btnDelete: LinearLayout = itemView.findViewById(R.id.btnDelete)
     }
 
 }

@@ -4,14 +4,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 
 
-class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,private val listener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_EMPTY = 0
     private val VIEW_TYPE_ITEM = 1
     companion object{
@@ -43,11 +45,21 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) :
             holder.bind(item)*/
             if (holder is ItemViewHolder) {
                 holder.bind(timetablePojos[position])
+                holder.itemView.setOnClickListener { listener.onClick(position) }
+                holder.btnEdit.setOnClickListener {
+                    listener.onEditClick(position)
+
+                }
+                holder.btnDelete.setOnClickListener {
+                    listener.onDeleteClick(position)
+                }
             }
+
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
     }
+
     override fun getItemCount(): Int {
         return if (timetablePojos.isEmpty()) {
             1
@@ -65,6 +77,8 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) :
         }
     }
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val btnEdit = itemView.findViewById<LinearLayout>(R.id.btnEdit)
+        val btnDelete = itemView.findViewById<LinearLayout>(R.id.btnDelete)
         fun bind(item: TimetablePojo) {
             try {
                 itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
@@ -75,6 +89,9 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>) :
                 itemView.findViewById<TextView>(R.id.txtLessonType).text = item.type
                 itemView.findViewById<TextView>(R.id.txtLessonFacultyName).text = item.facultyName
                 itemView.findViewById<TextView>(R.id.txtLessonNumber).text = "Lesson: ${item.lessonNumber}"
+
+
+
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
             }

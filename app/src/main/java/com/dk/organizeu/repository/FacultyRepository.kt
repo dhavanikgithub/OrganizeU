@@ -88,5 +88,22 @@ class FacultyRepository {
                 throw e
             }
         }
+
+        fun isFacultyDocumentExists(facultyDocumentId: String, callback: (Boolean) -> Unit) {
+            try {
+                facultyDocumentRef(facultyDocumentId)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false) // Assume document doesn't exist if there's an error
+                    }
+            } catch (e: Exception) {
+                Log.e(ClassRepository.TAG,e.message.toString())
+                throw e
+            }
+        }
     }
 }

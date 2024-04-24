@@ -115,6 +115,7 @@ class LessonRepository {
         fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetablePojo {
             try {
                 return TimetablePojo(
+                    document.id,
                     document.get(WeekdayCollection.CLASS_NAME.displayName).toString(),
                     document.get(WeekdayCollection.SUBJECT_NAME.displayName).toString(),
                     document.get(WeekdayCollection.SUBJECT_CODE.displayName).toString(),
@@ -129,6 +130,23 @@ class LessonRepository {
                     document.get(WeekdayCollection.UNMUTE_REQUEST_CODE.displayName).toString().toInt(),
                     document.get(WeekdayCollection.NOTIFICATION_CODE.displayName).toString().toInt()
                 )
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun isLessonDocumentExists(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonDocumentId: String,callback: (Boolean) -> Unit){
+            try {
+                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        callback(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false) // Assume document doesn't exist if there's an error
+                    }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e

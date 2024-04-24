@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.dialog.AddRoomDialog
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
 import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.databinding.FragmentRoomsBinding
@@ -219,9 +221,68 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     override fun onDeleteClick(position: Int) {
         // Implement the desired behavior when the delete button of an item is clicked.
         // You can use the 'position' parameter to identify which item's delete button was clicked.
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Room")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Room and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+
+                // Get the room document ID at the specified position from the Room list
+                val room = viewModel.roomPojoList[position]
+
+                deleteRoom(room.name){
+                    try {
+                        if(it)
+                        {
+                            viewModel.roomPojoList.removeAt(position)
+                            viewModel.roomAdapter.notifyItemRemoved(position)
+                            requireContext().showToast("Room deleted successfully.")
+                        }
+                        else{
+                            requireContext().showToast("Error occur while deleting room.")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG,e.toString())
+                        throw e
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e(TAG,e.toString())
+                requireContext().showToast("Error occur while deleting room.")
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
     }
 
+    fun deleteRoom(roomDocumentId:String, isDeleted:(Boolean) -> Unit)
+    {
+        try {
+            MainScope().launch(Dispatchers.IO)
+            {
+                try {
+                    RoomRepository.deleteRoomDocument(roomDocumentId)
+                    RoomRepository.isRoomDocumentExists(roomDocumentId){
+                        isDeleted(!it)
+                    }
+                } catch (e: Exception) {
+                    throw e
+                }
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }

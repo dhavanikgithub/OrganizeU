@@ -2,6 +2,7 @@ package com.dk.organizeu.pojo
 
 
 data class TimetablePojo(
+    val id:String,
     val className: String,
     val subjectName: String,
     val subjectCode: String,

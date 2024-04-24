@@ -5,15 +5,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.dialog.AddLessonDialog
+import com.dk.organizeu.activity_admin.fragments.rooms.RoomsFragment
 import com.dk.organizeu.adapter.LessonAdapterAdmin
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
+import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.LessonRepository.Companion.lessonDocumentToLessonObj
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -31,7 +34,7 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 import kotlin.properties.Delegates
 
-class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
+class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClickListener {
 
     companion object {
         lateinit var academicYear:String
@@ -219,7 +222,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                     rvLesson.layoutManager = LinearLayoutManager(requireContext())
 
                     // Initialize the adapter with empty timetableData list
-                    lessonAdapter = LessonAdapterAdmin(timetableData)
+                    lessonAdapter = LessonAdapterAdmin(timetableData,this@AddLessonFragment)
 
                     // Set the adapter to Lesson RecyclerView
                     rvLesson.adapter = lessonAdapter
@@ -274,7 +277,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
                             withContext(Dispatchers.Main) {
                                 try {
                                     // Initialize the adapter with the updated timetableData and set it to Lesson RecyclerView
-                                    lessonAdapter = LessonAdapterAdmin(timetableData)
+                                    lessonAdapter = LessonAdapterAdmin(timetableData,this@AddLessonFragment)
                                     rvLesson.adapter = lessonAdapter
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
@@ -328,6 +331,83 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener {
         // Show a toast message indicating that the lesson already exists
         MainScope().launch(Dispatchers.Main) {
             requireContext().showToast("Lesson is Exists")
+        }
+    }
+
+    override fun onClick(position: Int) {
+    }
+
+    override fun onDeleteClick(position: Int) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete Lesson")
+        alertDialogBuilder.setMessage("Are you sure you want to delete the Lesson and its data?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            // Call the Cloud Function to initiate delete operation
+            try {
+
+                // Get the room document ID at the specified position from the lesson list
+                val academicDocumentId = "${academicYear}_${academicType}"
+                val semesterDocumentId = semesterNumber
+                val classDocumentId = className
+                val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab+1)
+                val lesson = viewModel.timetableData[position]
+                deleteLesson(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lesson.id){
+                    try {
+                        if(it)
+                        {
+                            viewModel.timetableData.removeAt(position)
+                            viewModel.lessonAdapter.notifyItemRemoved(position)
+                            requireContext().showToast("Lesson deleted successfully.")
+                        }
+                        else{
+                            requireContext().showToast("Error occur while deleting lesson.")
+                        }
+                    } catch (e: Exception) {
+                        throw e
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e(TAG,e.toString())
+                requireContext().showToast("Error occur while deleting lesson.")
+            }
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
+            // User clicked "No", do nothing or dismiss the dialog
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    override fun onEditClick(position: Int) {
+    }
+
+    fun deleteLesson(
+        academicDocumentId:String,
+        semesterDocumentId:String,
+        classDocumentId:String,
+        timetableDocumentId:String,
+        lessonDocumentId:String,
+        isDeleted:(Boolean) -> Unit
+    ){
+        try {
+            MainScope().launch(Dispatchers.IO)
+            {
+                try {
+                    LessonRepository.deleteLessonDocument(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId)
+                    LessonRepository.isLessonDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lessonDocumentId){
+                        isDeleted(!it)
+                    }
+                } catch (e: Exception) {
+                    throw e
+                }
+            }
+        } catch (e: Exception) {
+            throw e
         }
     }
 
