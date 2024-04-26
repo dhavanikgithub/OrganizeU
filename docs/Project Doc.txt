@@ -1,0 +1,214 @@
+---
+I am developing a project related to a timetable Android application with compatible light and dark modes. The name of my project is "OrganizeU". Let's discuss the functions my project provides. Firstly, it offers two user modules: one for Admin and another for students. The Admin module is singular, while the student module can have multiple users.
+---
+---
+Why this project?
+
+This project was chosen because, in my college, I observed that the timetable sheet is uploaded to the website for every semester in PDF format. The issue arises when the timetable sheet changes, as students do not receive notifications of these changes until the management or faculty send a message in a WhatsApp group. Since WhatsApp groups are different for each semester, this creates some difficulty. Another challenge I faced during college is the difficulty in finding free, available classrooms, whether I search for them using a timetable or visit them physically to check their availability. Additionally, another issue faced by many faculty members during classroom lessons is that students' mobile devices are often not muted, leading to disruptions in class.
+
+My application or project addresses all of these issues.
+---
+
+---
+
+**Admin Accessibility in this Application**
+
+1. Authentication (Login)
+
+2. Manipulating Academic:
+   - Academic refers to the semester system. For example, if the academic year is `2023-2024`, it comprises two semester types: `EVEN` and `ODD`. In the `EVEN` semester system, semesters `1, 3, 5, 7` are active, while in the `ODD` semester system, semesters `2, 4, 6, 8` are active.
+   - Both the `EVEN` and `ODD` semesters have a duration of 6 months, totaling 12 months.
+   - Every 6 months, the semester changes from `EVEN` to `ODD` or vice versa.
+   - Admin can add, update, or delete multiple academic years with either `EVEN` or `ODD` semester types.
+   - At a time, admin can add or update only one academic year.
+   - Admin can delete multiple academics at once.
+
+3. Manipulating Semester:
+   - There are a total of 8 semesters.
+   - Each academic includes semesters based on the academic year (e.g., `2023-2024_EVEN` or `2023-2024_ODD`).
+   - If the academic is `EVEN`, only `EVEN` semesters can be added (e.g., `2023-2024_EVEN` includes semesters `2, 4, 6, 8`).
+   - If the academic is `ODD`, only `ODD` semesters can be added (e.g., `2023-2024_ODD` includes semesters `1, 3, 5, 7`).
+   - Admin can add, update, or delete multiple semesters in academics.
+   - Admin can add or update only one semester at a time, but can delete multiple semesters at once.
+
+4. Manipulating Class or Group:
+   - A class is a group of students in a semester.
+   - Multiple classes are included in a semester.
+   - Every semester has its own list of classes.
+   - Admin can add, update, or delete multiple classes.
+   - Admin can add or update only one class at a time, but can delete multiple classes at once.
+   - Each class has its own timetable sheet.
+
+5. Manipulating Batch or LAB:
+   - A batch is a division of class students.
+   - Each class has its own batches.
+   - Batches are divided for practical lessons, as some subjects require practical lessons in college labs.
+   - Admin can add, update, or delete multiple batches.
+   - Admin can add or update only one batch at a time, but can delete multiple batches at once.
+
+6. Manipulating Faculty:
+   - Admin can add, update, or delete multiple faculty data.
+   - Admin can add or update only one faculty data at a time, but can delete multiple faculty data at once.
+   - Faculty data is necessary for creating lessons.
+
+7. Manipulating Room:
+   - A room is a classroom where students can sit and attend lessons.
+   - Rooms include classrooms and labs.
+   - In classrooms, students attend lessons for specific subjects, while labs are used for practical sessions.
+   - Labs are equipped with computer systems for practicals.
+   - Admin can add, update, or delete multiple classroom or lab data.
+   - Admin can add or update only one classroom or lab data at a time, but can delete multiple classroom or lab data at once.
+   - Room data is necessary for creating lessons.
+
+8. Manipulating Subject:
+   - Admin can add, update, or delete multiple subject data.
+   - Admin can add or update only one subject data at a time, but can delete multiple subject data at once.
+   - Subject data is necessary for creating lessons.
+
+9. Manipulating Timetable Sheet:
+   - Every class has its own timetable sheet.
+   - The timetable sheet contains details of lessons for each weekday.
+   - Each weekday may have multiple lessons for students.
+   - Lessons can be either lecture sessions or lab practical sessions.
+   - Admin can add, update, or delete multiple lesson data based on the timetable for each weekday.
+   - Admin can add or update only one lesson data at a time, but can delete multiple lesson data at once.
+
+--- 
+---
+Student Accessibility in this Application:
+
+1. Students can view the timetable sheet for each weekday.
+2. Students can check available classrooms for their further free time study.
+3. Students can use the dark or light mode of the application.
+4. Students receive notifications about upcoming lessons.
+5. Students' devices are automatically muted when the lesson starts and unmuted when the lesson ends.
+6. Students receive notifications about timetable sheet changes.
+7. Students can filter lessons.
+---
+
+---
+Database Structure in Firebase
+
+Collection: academic
+    Document: year+type [even or odd]
+        Field: year {number}
+        Field: type {string}
+        Collection: semester
+            Document: sem_number
+                Collection: class
+                    Document: class_name
+                        Field: batches {list}
+                Collection: time_table
+                    Document: semester_number
+                        Collection: class
+                            Document: weekday_name
+                                Collection: lesson
+                                    Document: lesson_number
+                                        Field: type {String}
+                                        Field: batch_name {String} [May be NUll]
+                                        Field: subject {String}
+                                        Field: faculty {String}
+                                        Field: room_name {String}
+                                        Field: room_location {String}
+                                        Field: start_time {Time}
+                                        Field: end_time {Time}
+					Field: notification_code {Int}
+					Field: mute_code {Int}
+					Field: unmute_code {Int}
+
+
+Collection: faculty
+    Document: faculty_name
+        Field: name {string}
+
+Collection: student
+    Document: enrollment
+        Field: name {String}
+        Field: semester {number}
+        Field: active {String}
+
+
+Collection: room
+    Document: room_name
+        Field: location {String}
+        Field: type {String}
+
+---
+
+Library which are i am using in my project.
+
+1. AppCompact: Provide view components compatible with older and newer android devices.
+implementation 'androidx.appcompat:appcompat:1.6.1'
+
+2. Material Design: Provide attractive ui view components for attractive design.
+implementation 'com.google.android.material:material:1.11.0'
+
+
+3. Constraint Layout: Provide powerfull compatibility with attributes to easy create complex design ui.
+implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+4. Kotlin Coroutines: Powerfull library for performing background task with capability of manage small process thread inside thread.
+implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+5. Kotlin Components: 
+1.LiveData: Use for observer variable. Observe only when variable in active state. Help to make code relible, maintainable and readable.
+2.ViewModel: It's lifecycle aware component to store data even if application configration change till the Activity or Fragment destroy.
+implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+
+6. Navigation Component: help to automate and manage fragment navigation easly
+implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
+implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+
+
+7. SDP: Help to create respomsive UI
+implementation 'com.intuit.sdp:sdp-android:1.1.0'
+
+8. Firebase: Used for uses firebase service like Firebase Authentication for user authentication with different login providers, Firebase Firestore for storing data in collections and documents format. Firebase storage for store documents or files.
+
+implementation 'com.google.firebase:firebase-firestore:24.11.0'
+implementation 'com.google.firebase:firebase-database:20.3.1'
+implementation 'com.google.firebase:firebase-storage:20.3.0'
+implementation 'com.google.firebase:firebase-auth:22.3.1'
+
+9. Swipe Refresh: For implement Functionality of swipe and refresh content of the screen
+implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+10. Range Time Picker: Used for pick start [Initial time|Begning time] and end time range.
+implementation 'com.github.ashiqursuperfly:Android-Material-Ranged-Time-Picker-Dialog:1.0.2'
+
+11. Dexter: Provide easy way to handle android application runtime permissions
+implementation 'com.karumi:dexter:6.2.3'
+
+in feature many include some other library as per project need
+like `dagger & hilt`, `room database`, `prefrense datstore`, `lottie animation` or also many be implement data binding feature in aplication code.
+
+Project minimum requirement to run.
+1. Android 7 or up
+2. minimum android sdk 24 require
+3. Internet connection
+
+Permission that are required in this application
+1. Internet
+2. notification
+3. alarm
+4. do not disturb
+
+----------------------------------------------------------------------------------------------
+**Introduction: Introducing OrganizeU - The Timetable Solution for Our College's IT Department**
+
+In the dynamic realm of academic management, precision and efficiency are essential, particularly within the corridors of our college's IT department. Enter OrganizeU, a bespoke Android application meticulously crafted to cater exclusively to the unique needs of our college's IT department. Tailored with a sharp focus on addressing the challenges faced by IT administrators and students alike, OrganizeU promises to revolutionize the way our department manages timetables, classes, and resources.
+
+**Tailored for Our College's IT Administrators:**
+OrganizeU presents a comprehensive suite of specialized tools designed to streamline administrative tasks within our college's IT department. From seamlessly managing academic years and semesters to efficiently organizing classes, batches, faculty, rooms, subjects, and timetable sheets, OrganizeU empowers IT administrators with the tools they need to ensure the smooth operation of academic activities. With its intuitive interface and robust feature set, OrganizeU simplifies complex administrative tasks, enabling IT administrators to devote their efforts to fostering a conducive learning environment.
+
+**Empowering Our College's IT Students:**
+For students within our college's IT department, OrganizeU serves as a reliable companion throughout their academic journey. With instant access to timetables for each weekday, students can effortlessly stay informed about upcoming lessons and changes. The application's dark and light modes cater to individual preferences, while timely notifications keep students updated on timetable alterations and upcoming classes. Moreover, OrganizeU's innovative feature automatically mutes students' devices during lessons, ensuring minimal disruptions and facilitating a focused learning environment conducive to academic success.
+
+**Underpinned by Cutting-Edge Technology:**
+Powered by Firebase and leveraging a host of sophisticated libraries including AppCompat, Material Design, Kotlin Coroutines, and Navigation Component, OrganizeU embodies the pinnacle of technological innovation. Cloud-based storage and authentication services provided by Firebase ensure seamless data management and user authentication, while a responsive UI design and streamlined navigation enhance the user experience across a diverse range of Android devices. With OrganizeU, our college's IT department can embrace the future of academic management with confidence and ease.
+
+**Conclusion:**
+With OrganizeU, our college's IT department gains a powerful ally in the pursuit of academic excellence. Seamlessly blending precision, efficiency, and innovation, OrganizeU is poised to redefine the way our department manages timetables, classes, and resources. Say goodbye to scheduling woes and embrace the simplicity and efficiency of OrganizeU – our college IT department's indispensable tool for organized academic success.
+--------------------------------------------------------------------

@@ -89,6 +89,5 @@ dependencies {
     //Dexter Permission
     implementation 'com.karumi:dexter:6.2.3'
 
-    //implementation 'com.github.RohitSurwase.UCE-Handler:uce_handler:1.4'
 
 }
