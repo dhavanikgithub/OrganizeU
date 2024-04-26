@@ -17,6 +17,7 @@ import com.dk.organizeu.databinding.FragmentFacultyBinding
 import com.dk.organizeu.firebase.key_mapping.FacultyCollection
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -199,50 +200,48 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
     }
 
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Faculty")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Faculty and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
+        dialog.setTitle("Delete Faculty")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Faculty and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
+                    // Get the faculty document ID at the specified position from the Faculty list
+                    val facultyDocumentId = viewModel.facultyList[position]
 
-                // Get the faculty document ID at the specified position from the Faculty list
-                val facultyDocumentId = viewModel.facultyList[position]
-
-                deleteFaculty(facultyDocumentId){
-                    try {
-                        if(it)
-                        {
-                            viewModel.facultyList.removeAt(position)
-                            viewModel.facultyAdapter.notifyItemRemoved(position)
-                            requireContext().showToast("Faculty deleted successfully.")
+                    deleteFaculty(facultyDocumentId){
+                        try {
+                            if(it)
+                            {
+                                viewModel.facultyList.removeAt(position)
+                                viewModel.facultyAdapter.notifyItemRemoved(position)
+                                requireContext().showToast("Faculty deleted successfully.")
+                            }
+                            else{
+                                requireContext().showToast("Error occur while deleting faculty.")
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG,e.toString())
+                            throw e
                         }
-                        else{
-                            requireContext().showToast("Error occur while deleting faculty.")
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
-                        throw e
                     }
+
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting faculty.")
                 }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-            } catch (e: Exception) {
-                Log.e(TAG,e.toString())
-                requireContext().showToast("Error occur while deleting faculty.")
-            }
-        }
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     fun deleteFaculty(facultyDocumentId: String, isDeleted:(Boolean) -> Unit)

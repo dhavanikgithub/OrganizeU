@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_admin.fragments.academic.AcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment
@@ -29,6 +30,7 @@ import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.ClassRepository.Companion.isClassDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -651,61 +653,59 @@ class AddClassFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Class")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Class and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
-                // Construct the academic document ID using selected year and type
-                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                // Get the selected semester document ID
-                val semesterDocumentId = viewModel.academicSemSelectedItem
-                // Get the class document ID at the specified position from the class list
-                val classDocumentId = viewModel.academicClassList[position]
+        dialog.setTitle("Delete Class")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Class and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
+                    // Construct the academic document ID using selected year and type
+                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                    // Get the selected semester document ID
+                    val semesterDocumentId = viewModel.academicSemSelectedItem
+                    // Get the class document ID at the specified position from the class list
+                    val classDocumentId = viewModel.academicClassList[position]
 
-                // Call the deleteClass function with the academic document ID, semester document ID, class document ID, and a callback
-                deleteClass(academicDocumentId,semesterDocumentId!!,classDocumentId){
-                    try {
-                        // Check if the deletion was successful
-                        if(it)
-                        {
-                            // If successful, remove the class from the class list and notify the adapter
-                            viewModel.academicClassList.removeAt(position)
-                            viewModel.academicClassAdapter.notifyItemRemoved(position)
-                            // Show a toast message indicating successful deletion
-                            requireContext().showToast("Class deleted successfully.")
+                    // Call the deleteClass function with the academic document ID, semester document ID, class document ID, and a callback
+                    deleteClass(academicDocumentId,semesterDocumentId!!,classDocumentId){
+                        try {
+                            // Check if the deletion was successful
+                            if(it)
+                            {
+                                // If successful, remove the class from the class list and notify the adapter
+                                viewModel.academicClassList.removeAt(position)
+                                viewModel.academicClassAdapter.notifyItemRemoved(position)
+                                // Show a toast message indicating successful deletion
+                                requireContext().showToast("Class deleted successfully.")
+                            }
+                            else{
+                                // If deletion was not successful, show a toast message indicating the error
+                                requireContext().showToast("Error occur while deleting class.")
+                            }
+                        } catch (e: Exception) {
+                            // Log any exceptions that occur during deletion
+                            Log.e(AddSemFragment.TAG, e.toString())
+
+                            // Re-throw the exception to propagate it further if needed
+                            throw e
                         }
-                        else{
-                            // If deletion was not successful, show a toast message indicating the error
-                            requireContext().showToast("Error occur while deleting class.")
-                        }
-                    } catch (e: Exception) {
-                        // Log any exceptions that occur during deletion
-                        Log.e(AddSemFragment.TAG, e.toString())
-
-                        // Re-throw the exception to propagate it further if needed
-                        throw e
                     }
+                } catch (e: Exception) {
+                    // Log any exceptions that occur outside the deletion process
+                    Log.e(AddSemFragment.TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting class.")
                 }
-            } catch (e: Exception) {
-                // Log any exceptions that occur outside the deletion process
-                Log.e(AddSemFragment.TAG,e.toString())
-                requireContext().showToast("Error occur while deleting class.")
-            }
-        }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
 

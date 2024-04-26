@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityStudentBinding
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class StudentActivity : AppCompatActivity() {
@@ -83,9 +84,20 @@ class StudentActivity : AppCompatActivity() {
                     }
                     // Handle selection of the "Available Class Rooms" menu item
                     R.id.nav_available_class_rooms -> {
-                        // Toggle the drawer menu
-                        toggleDrawerMenu()
+                        this@StudentActivity.showToast("!Implement Soon!")
                         false // Return false to indicate that the item selection has not been handled
+                    }
+                    R.id.nav_aboutUs -> {
+                        this@StudentActivity.showToast("!Implement Soon!")
+                        false
+                    }
+                    R.id.nav_signOut -> {
+                        this@StudentActivity.showToast("!Implement Soon!")
+                        false
+                    }
+                    R.id.nav_settings -> {
+                        this@StudentActivity.showToast("!Implement Soon!")
+                        false
                     }
                     else -> false // Return false for any other menu items
                 }

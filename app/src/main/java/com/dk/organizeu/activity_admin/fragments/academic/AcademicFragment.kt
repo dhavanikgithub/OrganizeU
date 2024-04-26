@@ -1,10 +1,14 @@
 package com.dk.organizeu.activity_admin.fragments.academic
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,10 +25,12 @@ import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.AcademicPojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.DocumentChange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -264,7 +270,26 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
      * @param position The position of the item whose delete button is clicked in the RecyclerView.
      */
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        val dialog = DialogUtils(requireContext()).build()
+
+        dialog.setTitle("Delete Academic")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the academic and its data?")
+            .show({
+                try {
+                    val academic = viewModel.academicList[position]
+                    val academicDocumentId = "${academic.academic}_${academic.sem}"
+                    deleteAcademic(academicDocumentId)
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
+
+
+        /*val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("Delete Academic")
         alertDialogBuilder.setMessage("Are you sure you want to delete the academic and its data?")
 
@@ -285,12 +310,12 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         }
 
         val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
+        alertDialog.show()*/
 
     }
 
     override fun onEditClick(position: Int) {
-        TODO("Not yet implemented")
+        requireContext().showToast("!Implement Soon!")
     }
 
     /**

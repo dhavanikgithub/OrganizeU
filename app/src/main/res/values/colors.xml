@@ -41,4 +41,5 @@
     <color name="danger">#D61C1C</color>
     <color name="permissionDoneText">#45C560</color>
     <color name="permissionAllowText">#0C79F5</color>
+
 </resources>

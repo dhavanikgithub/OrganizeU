@@ -18,6 +18,7 @@ import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -203,51 +204,49 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
      * @param position The position of the item whose delete button was clicked in the Subject RecyclerView.
      */
     override fun onDeleteClick(position: Int) {
-        // You can use the 'position' parameter to identify which item's delete button was clicked.
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Subject")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Subject and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
+        dialog.setTitle("Delete Subject")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Subject and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
 
-                // Get the room document ID at the specified position from the subject list
-                val subject = viewModel.subjectPojoList[position]
+                    // Get the room document ID at the specified position from the subject list
+                    val subject = viewModel.subjectPojoList[position]
 
-                deleteSubject(subject.name){
-                    try {
-                        if(it)
-                        {
-                            viewModel.subjectPojoList.removeAt(position)
-                            viewModel.subjectAdapter.notifyItemRemoved(position)
-                            requireContext().showToast("Subject deleted successfully.")
+                    deleteSubject(subject.name){
+                        try {
+                            if(it)
+                            {
+                                viewModel.subjectPojoList.removeAt(position)
+                                viewModel.subjectAdapter.notifyItemRemoved(position)
+                                requireContext().showToast("Subject deleted successfully.")
+                            }
+                            else{
+                                requireContext().showToast("Error occur while deleting subject.")
+                            }
+                        } catch (e: Exception) {
+                            Log.e(RoomsFragment.TAG,e.toString())
+                            throw e
                         }
-                        else{
-                            requireContext().showToast("Error occur while deleting subject.")
-                        }
-                    } catch (e: Exception) {
-                        Log.e(RoomsFragment.TAG,e.toString())
-                        throw e
                     }
+
+                } catch (e: Exception) {
+                    Log.e(RoomsFragment.TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting subject.")
                 }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-            } catch (e: Exception) {
-                Log.e(RoomsFragment.TAG,e.toString())
-                requireContext().showToast("Error occur while deleting subject.")
-            }
-        }
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     fun deleteSubject(subjectDocumentId:String, isDeleted:(Boolean) -> Unit)

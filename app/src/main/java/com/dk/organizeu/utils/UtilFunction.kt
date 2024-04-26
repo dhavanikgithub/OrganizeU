@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.utils.Constants.Companion.DATE_FORMAT_STRING
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat24H
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -43,7 +44,10 @@ class UtilFunction {
 
         fun Context.showToast(message: String)
         {
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+            MainScope().launch(Dispatchers.Main)
+            {
+                Toast.makeText(this@showToast,message,Toast.LENGTH_SHORT).show()
+            }
         }
 
         fun Context.unexpectedErrorMessagePrint(e:Exception)

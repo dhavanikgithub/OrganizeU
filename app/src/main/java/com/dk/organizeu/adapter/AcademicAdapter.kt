@@ -35,6 +35,9 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
             holder.btnDelete.setOnClickListener {
                 listener.onDeleteClick(position)
             }
+            holder.btnEdit.setOnClickListener {
+                listener.onEditClick(position)
+            }
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }

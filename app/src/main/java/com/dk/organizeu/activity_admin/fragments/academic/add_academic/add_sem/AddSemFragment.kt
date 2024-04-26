@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_admin.fragments.academic.AcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.adapter.SemAdapter
@@ -25,6 +26,7 @@ import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocume
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.SemesterRepository.Companion.isSemesterDocumentExists
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -621,60 +623,59 @@ class AddSemFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onClick(position: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Semester")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Semester and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
-                // Get the semester at the specified position from the semester list
-                val semester = viewModel.academicSemList[position]
-                // Construct the academic document ID using selected year and type
-                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                // Call the deleteSemester function with the academic document ID, semester, and a callback
-                deleteSemester(academicDocumentId,semester){
-                    try {
-                        // Check if the deletion was successful
-                        if(it)
-                        {
-                            // If successful, remove the semester from the semester list and notify the adapter
-                            viewModel.academicSemList.removeAt(position)
-                            viewModel.academicSemAdapter.notifyItemRemoved(position)
-                            // Reload the Academic Semester dropdown
-                            loadAcademicSemACTV()
-                            // Show a toast message indicating successful deletion
-                            requireContext().showToast("Semester deleted successfully.")
+
+        dialog.setTitle("Delete Semester")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Semester and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
+                    // Get the semester at the specified position from the semester list
+                    val semester = viewModel.academicSemList[position]
+                    // Construct the academic document ID using selected year and type
+                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                    // Call the deleteSemester function with the academic document ID, semester, and a callback
+                    deleteSemester(academicDocumentId,semester){
+                        try {
+                            // Check if the deletion was successful
+                            if(it)
+                            {
+                                // If successful, remove the semester from the semester list and notify the adapter
+                                viewModel.academicSemList.removeAt(position)
+                                viewModel.academicSemAdapter.notifyItemRemoved(position)
+                                // Reload the Academic Semester dropdown
+                                loadAcademicSemACTV()
+                                // Show a toast message indicating successful deletion
+                                requireContext().showToast("Semester deleted successfully.")
+                            }
+                            else{
+                                // If deletion was not successful, show a toast message indicating the error
+                                requireContext().showToast("Error occur while deleting semester.")
+                            }
+                        } catch (e: Exception) {
+                            // Log any exceptions that occur during deletion
+                            Log.e(TAG,e.toString())
                         }
-                        else{
-                            // If deletion was not successful, show a toast message indicating the error
-                            requireContext().showToast("Error occur while deleting semester.")
-                        }
-                    } catch (e: Exception) {
-                        // Log any exceptions that occur during deletion
-                        Log.e(TAG,e.toString())
                     }
+                } catch (e: Exception) {
+                    // Log any exceptions that occur outside the deletion process
+                    Log.e(TAG,e.toString())
                 }
-            } catch (e: Exception) {
-                // Log any exceptions that occur outside the deletion process
-                Log.e(TAG,e.toString())
-            }
-        }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
 
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     /**
