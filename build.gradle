@@ -1,8 +1,5 @@
 buildscript {
-    ext {
-        kotlinxCoroutines = '1.6.4'
-        navigationVersion = '2.5.3'
-    }
+
     dependencies {
         classpath 'com.google.gms:google-services:4.4.1'
     }

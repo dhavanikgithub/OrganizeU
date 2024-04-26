@@ -1,10 +1,10 @@
 ---
-I am developing a project related to a timetable Android application with compatible light and dark modes. The name of my project is "OrganizeU". Let's discuss the functions my project provides. Firstly, it offers two user modules: one for Admin and another for students. The Admin module is singular, while the student module can have multiple users.
+I am developing an app for Android that displays timetables in both light and dark settings. The project is titled 'OrganizeU.' Let's discuss the functions of my project. First, it provides two user modules: one for Admin and one for students. The Admin module is singular, while the student module can accommodate multiple users.
 ---
 ---
-Why this project?
+What is the reason for this project?
 
-This project was chosen because, in my college, I observed that the timetable sheet is uploaded to the website for every semester in PDF format. The issue arises when the timetable sheet changes, as students do not receive notifications of these changes until the management or faculty send a message in a WhatsApp group. Since WhatsApp groups are different for each semester, this creates some difficulty. Another challenge I faced during college is the difficulty in finding free, available classrooms, whether I search for them using a timetable or visit them physically to check their availability. Additionally, another issue faced by many faculty members during classroom lessons is that students' mobile devices are often not muted, leading to disruptions in class.
+I chose this project because at my college, I noticed that the timetable sheet is regularly uploaded to the website in PDF format each semester. However, problems occur when there are changes to the timetable without students being notified, except through messages in separate WhatsApp groups for each semester. This setup poses challenges. Another issue I encountered in college was the struggle to locate free classrooms either by checking the timetable or physically visiting them to verify availability. Moreover, faculty often face distractions during lessons because students' mobile devices are frequently not on silent mode, causing disruptions.
 
 My application or project addresses all of these issues.
 ---
@@ -16,73 +16,73 @@ My application or project addresses all of these issues.
 1. Authentication (Login)
 
 2. Manipulating Academic:
-   - Academic refers to the semester system. For example, if the academic year is `2023-2024`, it comprises two semester types: `EVEN` and `ODD`. In the `EVEN` semester system, semesters `1, 3, 5, 7` are active, while in the `ODD` semester system, semesters `2, 4, 6, 8` are active.
-   - Both the `EVEN` and `ODD` semesters have a duration of 6 months, totaling 12 months.
-   - Every 6 months, the semester changes from `EVEN` to `ODD` or vice versa.
-   - Admin can add, update, or delete multiple academic years with either `EVEN` or `ODD` semester types.
-   - At a time, admin can add or update only one academic year.
-   - Admin can delete multiple academics at once.
+-> In academia, the academic year `2023-2024` consists of two semester types: `EVEN` and `ODD`. Under the `EVEN` system, semesters `1, 3, 5, 7` are active, whereas in the `ODD` system, semesters `2, 4, 6, 8` are active.
+-> Both the `EVEN` and `ODD` semesters each last for 6 months, which adds up to a total of 12 months.
+-> The semester switches from `EVEN` to `ODD` or vice versa every 6 months.
+-> The administrator has the ability to include, modify, or remove various academic years with `EVEN` or `ODD` semester designations.
+-> At any given moment, the administrator can only add or update a single academic year.
+-> Multiple academics can be deleted by the administrator in one action.
 
 3. Manipulating Semester:
-   - There are a total of 8 semesters.
-   - Each academic includes semesters based on the academic year (e.g., `2023-2024_EVEN` or `2023-2024_ODD`).
-   - If the academic is `EVEN`, only `EVEN` semesters can be added (e.g., `2023-2024_EVEN` includes semesters `2, 4, 6, 8`).
-   - If the academic is `ODD`, only `ODD` semesters can be added (e.g., `2023-2024_ODD` includes semesters `1, 3, 5, 7`).
-   - Admin can add, update, or delete multiple semesters in academics.
-   - Admin can add or update only one semester at a time, but can delete multiple semesters at once.
+-> There are a total of 8 academic terms.
+-> Each academic year is divided into semesters such as '2023-2024_EVEN' or '2023-2024_ODD'.
+-> If the academic year is `EVEN`, only `EVEN` semesters can be added (for example, `2023-2024_EVEN` includes semesters `2, 4, 6, 8`).
+-> For `ODD` academic years, only `ODD` semesters can be included, such as `2023-2024_ODD` where semesters `1, 3, 5, 7` are involved.
+-> The administrator is able to include, modify, or remove various academic terms.
+-> The administrator has the ability to add or modify one semester individually, but can remove multiple semesters simultaneously.
 
 4. Manipulating Class or Group:
-   - A class is a group of students in a semester.
-   - Multiple classes are included in a semester.
-   - Every semester has its own list of classes.
-   - Admin can add, update, or delete multiple classes.
-   - Admin can add or update only one class at a time, but can delete multiple classes at once.
-   - Each class has its own timetable sheet.
+-> A group of students is represented by a class in a semester.
+-> A semester includes multiple classes.
+-> A list of classes is had by every semester.
+-> Multiple classes can be added, updated, or deleted by the Admin.
+-> Only one class can be added or updated at a time by the admin, but multiple classes can be deleted at once.
+-> Its own timetable sheet is had by each class.
 
 5. Manipulating Batch or LAB:
-   - A batch is a division of class students.
-   - Each class has its own batches.
-   - Batches are divided for practical lessons, as some subjects require practical lessons in college labs.
-   - Admin can add, update, or delete multiple batches.
-   - Admin can add or update only one batch at a time, but can delete multiple batches at once.
+-> A batch refers to a group of students within a class.
+-> Each class possesses its individual sets of batches.
+-> Batches are separated for hands-on sessions, since certain subjects necessitate practical demonstrations in college laboratories.
+-> The administrator has the ability to add, modify, or remove several batches.
+-> Admins have the ability to add or update a single batch at a time, although they can delete multiple batches simultaneously.
 
 6. Manipulating Faculty:
-   - Admin can add, update, or delete multiple faculty data.
-   - Admin can add or update only one faculty data at a time, but can delete multiple faculty data at once.
-   - Faculty data is necessary for creating lessons.
+-> The administrator has the ability to input, modify, or remove various faculty information.
+-> Administrators have the ability to add or update one faculty record at a time, but they can delete multiple faculty records simultaneously.
+-> Faculty information is essential for developing lessons.
 
 7. Manipulating Room:
-   - A room is a classroom where students can sit and attend lessons.
-   - Rooms include classrooms and labs.
-   - In classrooms, students attend lessons for specific subjects, while labs are used for practical sessions.
-   - Labs are equipped with computer systems for practicals.
-   - Admin can add, update, or delete multiple classroom or lab data.
-   - Admin can add or update only one classroom or lab data at a time, but can delete multiple classroom or lab data at once.
-   - Room data is necessary for creating lessons.
+-> Students can sit and attend lessons in a classroom.
+-> Classrooms and labs are included in the rooms.
+-> Students attend lessons for specific subjects in classrooms, and they use labs for practical sessions.
+-> Practicals in labs have computer systems.
+-> Admin can add, update, or delete multiple classroom or lab data.
+-> The admin can add or update only one classroom or lab data at a time, but can delete multiple classroom or lab data at once.
+-> Creating lessons requires room data.
 
 8. Manipulating Subject:
-   - Admin can add, update, or delete multiple subject data.
-   - Admin can add or update only one subject data at a time, but can delete multiple subject data at once.
-   - Subject data is necessary for creating lessons.
+-> Multiple subject data can be added, updated, or deleted by the admin.
+-> Only one subject data can be added or updated by the admin at a time, but multiple subject data can be deleted at once.
+-> Lessons are created with the necessity of subject data.
 
 9. Manipulating Timetable Sheet:
-   - Every class has its own timetable sheet.
-   - The timetable sheet contains details of lessons for each weekday.
-   - Each weekday may have multiple lessons for students.
-   - Lessons can be either lecture sessions or lab practical sessions.
-   - Admin can add, update, or delete multiple lesson data based on the timetable for each weekday.
-   - Admin can add or update only one lesson data at a time, but can delete multiple lesson data at once.
+-> Each class possesses a unique schedule sheet.
+-> The schedule document includes information about classes scheduled for every day of the week.
+-> Each weekday could consist of several lessons for students.
+-> Lessons may consist of either lecture sessions or laboratory practical sessions.
+-> Admin has the ability to include, modify, or remove various lesson information in accordance with the schedule for each day of the week.
+-> The administrator is able to add or update a single lesson's data at once and can delete multiple lesson data simultaneously.
 
 --- 
 ---
 Student Accessibility in this Application:
 
-1. Students can view the timetable sheet for each weekday.
-2. Students can check available classrooms for their further free time study.
-3. Students can use the dark or light mode of the application.
-4. Students receive notifications about upcoming lessons.
-5. Students' devices are automatically muted when the lesson starts and unmuted when the lesson ends.
-6. Students receive notifications about timetable sheet changes.
+1. Students have the option to access the schedule for each day of the week.
+2. Students have the option to verify the classrooms that are open for their additional study time.
+3. Students have the option to utilize either the dark or light mode of the application.
+4. Students are informed about upcoming lessons through notifications.
+5. When the lesson begins, students' devices are muted automatically and unmuted when the lesson concludes.
+6. Students are informed about any updates or modifications to their timetable sheet.
 7. Students can filter lessons.
 ---
 
@@ -196,19 +196,19 @@ Permission that are required in this application
 4. do not disturb
 
 ----------------------------------------------------------------------------------------------
-**Introduction: Introducing OrganizeU - The Timetable Solution for Our College's IT Department**
+Introducing OrganizeU - The scheduling solution for the IT Department at our college
 
-In the dynamic realm of academic management, precision and efficiency are essential, particularly within the corridors of our college's IT department. Enter OrganizeU, a bespoke Android application meticulously crafted to cater exclusively to the unique needs of our college's IT department. Tailored with a sharp focus on addressing the challenges faced by IT administrators and students alike, OrganizeU promises to revolutionize the way our department manages timetables, classes, and resources.
+In the fast-paced world of academic administration, accuracy and effectiveness are crucial, especially in our college's IT department. Meet OrganizeU, a custom Android app designed specifically for our college's IT department. With a strong emphasis on solving the issues encountered by IT staff and students, OrganizeU aims to transform how our department handles schedules, classes, and assets.
 
-**Tailored for Our College's IT Administrators:**
-OrganizeU presents a comprehensive suite of specialized tools designed to streamline administrative tasks within our college's IT department. From seamlessly managing academic years and semesters to efficiently organizing classes, batches, faculty, rooms, subjects, and timetable sheets, OrganizeU empowers IT administrators with the tools they need to ensure the smooth operation of academic activities. With its intuitive interface and robust feature set, OrganizeU simplifies complex administrative tasks, enabling IT administrators to devote their efforts to fostering a conducive learning environment.
+Customized for the IT administrators at our college:
+OrganizeU offers a complete set of specialized tools to streamline administrative tasks in our college's IT department. These tools help manage academic years, semesters, classes, batches, faculty, rooms, subjects, and timetables efficiently. OrganizeU provides IT administrators with the necessary tools to ensure smooth academic operations, with its user-friendly interface and strong features making complex administrative tasks easier. This enables IT administrators to focus on creating a positive learning environment.
 
-**Empowering Our College's IT Students:**
-For students within our college's IT department, OrganizeU serves as a reliable companion throughout their academic journey. With instant access to timetables for each weekday, students can effortlessly stay informed about upcoming lessons and changes. The application's dark and light modes cater to individual preferences, while timely notifications keep students updated on timetable alterations and upcoming classes. Moreover, OrganizeU's innovative feature automatically mutes students' devices during lessons, ensuring minimal disruptions and facilitating a focused learning environment conducive to academic success.
+Supporting the IT students at our college:
+OrganizeU is a valuable tool for students in our college's IT department, offering easy access to daily timetables, customizable dark and light modes, and timely notifications for schedule changes and upcoming classes. Additionally, the app includes a feature that automatically mutes devices during lessons to reduce distractions and create a conducive learning environment for academic success.
 
-**Underpinned by Cutting-Edge Technology:**
-Powered by Firebase and leveraging a host of sophisticated libraries including AppCompat, Material Design, Kotlin Coroutines, and Navigation Component, OrganizeU embodies the pinnacle of technological innovation. Cloud-based storage and authentication services provided by Firebase ensure seamless data management and user authentication, while a responsive UI design and streamlined navigation enhance the user experience across a diverse range of Android devices. With OrganizeU, our college's IT department can embrace the future of academic management with confidence and ease.
+Supported by advanced technology:
+Utilizing Firebase and various advanced libraries such as AppCompat, Material Design, Kotlin Coroutines, and Navigation Component, OrganizeU represents cutting-edge technological advancement. Firebase offers cloud-based storage and authentication services for efficient data management and user verification. The user experience is further improved with a responsive UI and simplified navigation on different Android devices. OrganizeU enables our college's IT department to adapt to the future of academic management effortlessly and confidently.
 
-**Conclusion:**
-With OrganizeU, our college's IT department gains a powerful ally in the pursuit of academic excellence. Seamlessly blending precision, efficiency, and innovation, OrganizeU is poised to redefine the way our department manages timetables, classes, and resources. Say goodbye to scheduling woes and embrace the simplicity and efficiency of OrganizeU – our college IT department's indispensable tool for organized academic success.
+Conclusion:
+Our college's IT department benefits greatly from OrganizeU, a powerful ally in achieving academic excellence. This tool seamlessly combines precision, efficiency, and innovation to revolutionize how our department handles timetables, classes, and resources. Say farewell to scheduling issues and welcome the ease and effectiveness of OrganizeU - an essential tool for successful organization within our college's IT department.
 --------------------------------------------------------------------
