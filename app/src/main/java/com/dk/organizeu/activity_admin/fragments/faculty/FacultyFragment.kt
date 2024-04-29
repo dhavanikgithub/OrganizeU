@@ -92,27 +92,35 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                             // If the name is valid, create a HashMap with the faculty name
                             val inputHashMap = hashMapOf(FacultyCollection.FACULTY_NAME.displayName to txtFacultyName)
                             // Insert the new faculty document into the database
-                            FacultyRepository.insertFacultyDocument(txtFacultyName, inputHashMap, {
-                                try {
-                                    // If insertion is successful
-                                    facultyList.add(txtFacultyName)
-                                    facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
-                                    etFacultyName.setText("")
-                                    requireContext().showToast("Faculty Added")
-                                } catch (e: Exception) {
-                                    // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(e)
-                                    throw e
+                            FacultyRepository.isFacultyDocumentExists(txtFacultyName){
+                                if(it)
+                                {
+                                    requireContext().showToast("Faculty Exists")
+                                    return@isFacultyDocumentExists
                                 }
-                            }, {
-                                // Log any unexpected exceptions that occur
-                                Log.e(TAG, it.message.toString())
-                                // Display an unexpected error message to the user
-                                requireContext().unexpectedErrorMessagePrint(it)
-                                throw it
-                            })
+                                FacultyRepository.insertFacultyDocument(txtFacultyName, inputHashMap, {
+                                    try {
+                                        // If insertion is successful
+                                        facultyList.add(txtFacultyName)
+                                        facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
+                                        etFacultyName.setText("")
+                                        requireContext().showToast("Faculty Added")
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG, e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        throw e
+                                    }
+                                }, {
+                                    // Log any unexpected exceptions that occur
+                                    Log.e(TAG, it.message.toString())
+                                    // Display an unexpected error message to the user
+                                    requireContext().unexpectedErrorMessagePrint(it)
+                                    throw it
+                                })
+                            }
+
                         } else {
                             // If the faculty name is invalid, show an error message
                             tlFacultyName.error = "Faculty name only allows alphabets, -, _, with a length of 2-20 characters"

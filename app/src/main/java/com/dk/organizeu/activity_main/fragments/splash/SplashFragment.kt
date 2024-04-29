@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_main.fragments
+package com.dk.organizeu.activity_main.fragments.splash
 
 import android.content.Intent
 import android.os.Bundle

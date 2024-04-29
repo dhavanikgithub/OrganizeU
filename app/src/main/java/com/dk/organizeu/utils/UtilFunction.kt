@@ -50,6 +50,17 @@ class UtilFunction {
             }
         }
 
+        fun String.containsOnlyAllowedCharacters(): Boolean {
+            val regex = Regex("[^a-zA-Z0-9-_]") // Regular expression to match any character except letters, digits, '-', and '_'
+            return !regex.containsMatchIn(this)
+        }
+
+        fun String.isValidSubjectCode(): Boolean {
+            val regex = Regex("^[a-zA-Z0-9_-]{5,15}$") // Regular expression to match subject code with length 5 to 15, containing only letters, digits, hyphens, and underscores
+            return regex.matches(this)
+        }
+
+
         fun Context.unexpectedErrorMessagePrint(e:Exception)
         {
             MainScope().launch(Dispatchers.Main)

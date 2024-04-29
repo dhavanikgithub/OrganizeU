@@ -89,7 +89,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     } else {
                         UtilFunction.calendar.get(Calendar.DAY_OF_WEEK) - 1
                     }
-
+                    selectedTab = dayOfWeek
                     // Load tabs based on the selected day of the week
                     loadTabs()
 
@@ -112,7 +112,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
 
                     // Refresh lessons for the currently selected tab
                     // Note: Assuming selectedTab is 0-based index, so adding 1 to match day of the week (1 for Monday, 2 for Tuesday, ..., 7 for Sunday)
-                    initLesson(selectedTab + 1)
+                    initLesson(selectedTab )
 
                     // Hide the swipe refresh indicator after refreshing
                     swipeRefresh.isRefreshing = false
@@ -141,11 +141,11 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                         // When a tab is selected
                         try {
                             // Update the selectedTab variable with the position of the selected tab
-                            selectedTab = tab.position
+                            selectedTab = tab.position+1
 
                             // Initialize lessons for the selected day of the week
                             // Note: Assuming selectedTab is 0-based index, so adding 1 to match day of the week (1 for Monday, 2 for Tuesday, ..., 7 for Sunday)
-                            initLesson(selectedTab + 1)
+                            initLesson(selectedTab)
 
                             // Optionally, you can handle different actions based on the selected tab position
                             /*when (tab.position) {
@@ -315,7 +315,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
     override fun onAddLesson() {
         try {
             // Reinitialize lesson data for the currently selected day of the week
-            initLesson(selectedTab + 1)
+            initLesson(selectedTab)
             requireContext().showToast("Lesson Added Successfully")
         } catch (e: Exception) {
             // Log and handle any exceptions that occur
@@ -351,7 +351,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     val academicDocumentId = "${academicYear}_${academicType}"
                     val semesterDocumentId = semesterNumber
                     val classDocumentId = className
-                    val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab+1)
+                    val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab)
                     val lesson = viewModel.timetableData[position]
                     deleteLesson(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lesson.id){
                         try {

@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_main.fragments
+package com.dk.organizeu.activity_main.fragments.splash
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers

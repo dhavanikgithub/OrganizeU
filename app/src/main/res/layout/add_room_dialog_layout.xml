@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:hint="Room Name"
+        app:helperText="Room name only contain alphabets, number and - or  _"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -38,6 +39,7 @@
         android:hint="Room Location"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
+        app:helperText="Room location only contain alphabets, number and - or  _"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tlRoomName">

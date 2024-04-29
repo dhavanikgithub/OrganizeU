@@ -17,7 +17,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:title="@string/app_name"
-            app:titleTextAppearance="@dimen/_10sdp"
+            android:fontFamily="@font/harabara_mais_demo"
             app:titleTextColor="@color/colorPrimaryContainer"
             app:navigationIcon="@drawable/ic_menu"
             app:navigationIconTint="@color/colorPrimaryContainer"

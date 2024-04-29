@@ -13,6 +13,8 @@ import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
+import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
+import com.dk.organizeu.utils.UtilFunction.Companion.isValidSubjectCode
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
@@ -69,21 +71,34 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
 
                             // get subject name from input field
                             val subjectDocumentId = etSubjectName.text.toString().trim()
+                            val subjectCode = etSubjectCode.text.toString().trim()
 
                             // hashmap dataset of subject
                             val subjectData = hashMapOf(
-                                SubjectCollection.CODE.displayName to etSubjectCode.text.toString().trim(),
+                                SubjectCollection.CODE.displayName to subjectCode,
                                 SubjectCollection.TYPE.displayName to subjectType
                             )
 
                             // Check if the subject document already exists
-                            isSubjectDocumentExists(subjectDocumentId) { exists ->
+                            isSubjectDocumentExists(subjectDocumentId, subjectCode) { exists ->
                                 try {
                                     if(exists)
                                     {
                                         requireContext().showToast("Subject is exists")
                                         return@isSubjectDocumentExists
                                     }
+                                    if(!subjectDocumentId.containsOnlyAllowedCharacters())
+                                    {
+                                        tlSubjectName.error = "Subject name only contain alphabets, number and - or  _ "
+                                        return@isSubjectDocumentExists
+                                    }
+                                    tlSubjectName.error = null
+                                    if(!subjectCode.isValidSubjectCode())
+                                    {
+                                        tlSubjectCode.error = "Subject code only contain alphabets, number and - or  _  with length 5 to 15"
+                                        return@isSubjectDocumentExists
+                                    }
+                                    tlSubjectCode.error = null
                                     // Add new subject if the subject document does not exist
                                     addNewSubject(subjectDocumentId,subjectData)
                                 } catch (e: Exception) {

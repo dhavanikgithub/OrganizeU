@@ -90,6 +90,41 @@ class SubjectRepository {
             }
         }
 
+        fun isSubjectDocumentExists(subjectDocumentId: String, code:String, callback: (Boolean) -> Unit) {
+            try {
+                subjectDocumentRef(subjectDocumentId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        if(!documentSnapshot.exists())
+                        {
+                            subjectCollectionRef()
+                                .get().addOnSuccessListener {documents ->
+                                for(document in documents.documents)
+                                {
+                                    val subjectCode = document.getString(SubjectCollection.CODE.displayName)
+                                    if (subjectCode==code)
+                                    {
+                                        callback(true)
+                                        return@addOnSuccessListener
+                                    }
+                                }
+                                callback(false)
+                                return@addOnSuccessListener
+                            }
+                        }
+                        else{
+                            callback(true)
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        callback(false)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
         fun isSubjectDocumentExists(subjectDocumentId: String, callback: (Boolean) -> Unit) {
             try {
                 subjectDocumentRef(subjectDocumentId).get()

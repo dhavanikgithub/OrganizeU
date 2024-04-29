@@ -12,6 +12,7 @@ import com.dk.organizeu.databinding.AddRoomDialogLayoutBinding
 import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.repository.RoomRepository
+import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
@@ -51,12 +52,14 @@ class AddRoomDialog : AppCompatDialogFragment() {
 
                 btnAdd.setOnClickListener {
                     try {
+                        val roomName = etRoomName.text.toString().trim()
+                        val roomLocation = etRoomLocation.text.toString().trim()
                         // Check if roomName, roomLocation, and roomType are not empty and at least one type (lab or class) is selected
-                        if(etRoomName.text.toString().trim()!="" && etRoomLocation.text.toString().trim()!="" && (chipLab.isChecked || chipClass.isChecked))
+                        if(roomName!="" && roomLocation!="" && (chipLab.isChecked || chipClass.isChecked))
                         {
-                            val roomName = etRoomName.text.toString().trim()
+
                             val roomData = hashMapOf(
-                                RoomCollection.LOCATION.displayName to etRoomLocation.text.toString().trim(),
+                                RoomCollection.LOCATION.displayName to roomLocation,
                                 RoomCollection.TYPE.displayName to if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
                             )
 
@@ -69,6 +72,18 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                         requireContext().showToast("Room is exists")
                                         return@isRoomDocumentExists
                                     }
+                                    if(!roomName.containsOnlyAllowedCharacters())
+                                    {
+                                        tlRoomName.error = "Room name only contain alphabets, number and - or  _"
+                                        return@isRoomDocumentExists
+                                    }
+                                    tlRoomName.error = null
+                                    if(!roomLocation.containsOnlyAllowedCharacters())
+                                    {
+                                        tlRoomLocation.error = "Room location only contain alphabets, number and - or  _"
+                                        return@isRoomDocumentExists
+                                    }
+                                    tlRoomLocation.error = null
                                     // If the room document does not exist, add it to the database
                                     addNewRoom(roomName,roomData)
                                 } catch (e: Exception) {
@@ -79,6 +94,9 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                 }
                             }
 
+                        }
+                        else{
+                            requireContext().showToast("All fields are required")
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
