@@ -17,6 +17,7 @@ import com.dk.organizeu.databinding.FragmentFacultyBinding
 import com.dk.organizeu.firebase.key_mapping.FacultyCollection
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -91,27 +92,35 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                             // If the name is valid, create a HashMap with the faculty name
                             val inputHashMap = hashMapOf(FacultyCollection.FACULTY_NAME.displayName to txtFacultyName)
                             // Insert the new faculty document into the database
-                            FacultyRepository.insertFacultyDocument(txtFacultyName, inputHashMap, {
-                                try {
-                                    // If insertion is successful
-                                    facultyList.add(txtFacultyName)
-                                    facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
-                                    etFacultyName.setText("")
-                                    requireContext().showToast("Faculty Added")
-                                } catch (e: Exception) {
-                                    // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(e)
-                                    throw e
+                            FacultyRepository.isFacultyDocumentExists(txtFacultyName){
+                                if(it)
+                                {
+                                    requireContext().showToast("Faculty Exists")
+                                    return@isFacultyDocumentExists
                                 }
-                            }, {
-                                // Log any unexpected exceptions that occur
-                                Log.e(TAG, it.message.toString())
-                                // Display an unexpected error message to the user
-                                requireContext().unexpectedErrorMessagePrint(it)
-                                throw it
-                            })
+                                FacultyRepository.insertFacultyDocument(txtFacultyName, inputHashMap, {
+                                    try {
+                                        // If insertion is successful
+                                        facultyList.add(txtFacultyName)
+                                        facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
+                                        etFacultyName.setText("")
+                                        requireContext().showToast("Faculty Added")
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG, e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        throw e
+                                    }
+                                }, {
+                                    // Log any unexpected exceptions that occur
+                                    Log.e(TAG, it.message.toString())
+                                    // Display an unexpected error message to the user
+                                    requireContext().unexpectedErrorMessagePrint(it)
+                                    throw it
+                                })
+                            }
+
                         } else {
                             // If the faculty name is invalid, show an error message
                             tlFacultyName.error = "Faculty name only allows alphabets, -, _, with a length of 2-20 characters"
@@ -199,50 +208,48 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
     }
 
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Faculty")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Faculty and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
+        dialog.setTitle("Delete Faculty")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Faculty and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
+                    // Get the faculty document ID at the specified position from the Faculty list
+                    val facultyDocumentId = viewModel.facultyList[position]
 
-                // Get the faculty document ID at the specified position from the Faculty list
-                val facultyDocumentId = viewModel.facultyList[position]
-
-                deleteFaculty(facultyDocumentId){
-                    try {
-                        if(it)
-                        {
-                            viewModel.facultyList.removeAt(position)
-                            viewModel.facultyAdapter.notifyItemRemoved(position)
-                            requireContext().showToast("Faculty deleted successfully.")
+                    deleteFaculty(facultyDocumentId){
+                        try {
+                            if(it)
+                            {
+                                viewModel.facultyList.removeAt(position)
+                                viewModel.facultyAdapter.notifyItemRemoved(position)
+                                requireContext().showToast("Faculty deleted successfully.")
+                            }
+                            else{
+                                requireContext().showToast("Error occur while deleting faculty.")
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG,e.toString())
+                            throw e
                         }
-                        else{
-                            requireContext().showToast("Error occur while deleting faculty.")
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
-                        throw e
                     }
+
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting faculty.")
                 }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-            } catch (e: Exception) {
-                Log.e(TAG,e.toString())
-                requireContext().showToast("Error occur while deleting faculty.")
-            }
-        }
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     fun deleteFaculty(facultyDocumentId: String, isDeleted:(Boolean) -> Unit)

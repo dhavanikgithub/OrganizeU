@@ -29,6 +29,7 @@ import com.dk.organizeu.repository.BatchRepository.Companion.isBatchDocumentExis
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -747,57 +748,56 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onDeleteClick(position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Batch")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Batch and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
-                // Construct the academic document ID using selected year and type
-                val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                // Get the selected semester document ID
-                val semesterDocumentId = viewModel.academicSemSelectedItem
-                // Get the selected class document ID
-                val classDocumentId = viewModel.academicClassSelectedItem
-                // Get the batch document ID at the specified position from the Batch list
-                val batchDocumentId = viewModel.academicBatchList[position]
+        dialog.setTitle("Delete Batch")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Batch and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
+                    // Construct the academic document ID using selected year and type
+                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+                    // Get the selected semester document ID
+                    val semesterDocumentId = viewModel.academicSemSelectedItem
+                    // Get the selected class document ID
+                    val classDocumentId = viewModel.academicClassSelectedItem
+                    // Get the batch document ID at the specified position from the Batch list
+                    val batchDocumentId = viewModel.academicBatchList[position]
 
-                // Call the deleteBatch function with the academic document ID, semester document ID, class document ID, batch document ID, and a callback
-                deleteBatch(academicDocumentId,semesterDocumentId!!,classDocumentId!!,batchDocumentId){
-                    try {
-                        // Check if the deletion was successful
-                        if(it)
-                        {
-                            // If successful, remove the batch from the ViewModel's list and notify the adapter
-                            viewModel.academicBatchList.removeAt(position)
-                            viewModel.academicBatchAdapter.notifyItemRemoved(position)
-                            requireContext().showToast("Batch deleted successfully.")
+                    // Call the deleteBatch function with the academic document ID, semester document ID, class document ID, batch document ID, and a callback
+                    deleteBatch(academicDocumentId,semesterDocumentId!!,classDocumentId!!,batchDocumentId){
+                        try {
+                            // Check if the deletion was successful
+                            if(it)
+                            {
+                                // If successful, remove the batch from the ViewModel's list and notify the adapter
+                                viewModel.academicBatchList.removeAt(position)
+                                viewModel.academicBatchAdapter.notifyItemRemoved(position)
+                                requireContext().showToast("Batch deleted successfully.")
+                            }
+                            else{
+                                requireContext().showToast("Error occur while deleting batch.")
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG,e.toString())
+                            throw e
                         }
-                        else{
-                            requireContext().showToast("Error occur while deleting batch.")
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
-                        throw e
                     }
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting batch.")
                 }
-            } catch (e: Exception) {
-                Log.e(TAG,e.toString())
-                requireContext().showToast("Error occur while deleting batch.")
-            }
-        }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
 
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     /**

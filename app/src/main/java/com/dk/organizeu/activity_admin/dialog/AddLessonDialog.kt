@@ -291,7 +291,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                 val academicDocumentId = "${academicYear}_${academicType}"
                                 val semesterDocumentId = semesterNumber
                                 val classDocumentId = className
-                                val timetableDocumentId = Weekday.getWeekdayNameByNumber((selectedTab+1))
+                                val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab)
 
 
                                 // Check if there's a conflict with existing lesson documents

@@ -29,7 +29,7 @@
         <item name="colorOnTertiaryFixed">@color/colorOnTertiaryFixed</item>
         <item name="colorOnTertiaryFixedVariant">@color/colorOnTertiaryFixedVariant</item>
 
-        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/transparent</item>
 
         <item name="chipBackgroundColor">@color/colorPrimaryContainer</item>
         <item name="chipIconTint">@color/colorPrimary</item>

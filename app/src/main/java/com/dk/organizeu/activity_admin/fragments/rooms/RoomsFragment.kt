@@ -20,6 +20,7 @@ import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomObj
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -219,52 +220,48 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
      * @param position The position of the item whose delete button was clicked in the Rooms RecyclerView.
      */
     override fun onDeleteClick(position: Int) {
-        // Implement the desired behavior when the delete button of an item is clicked.
-        // You can use the 'position' parameter to identify which item's delete button was clicked.
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("Delete Room")
-        alertDialogBuilder.setMessage("Are you sure you want to delete the Room and its data?")
+        val dialog = DialogUtils(requireContext()).build()
 
-        alertDialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            // Call the Cloud Function to initiate delete operation
-            try {
+        dialog.setTitle("Delete Room")
+            .setCancelable(false)
+            .setMessage("Are you sure you want to delete the Room and its data?")
+            .show({
+                // Call the Cloud Function to initiate delete operation
+                try {
 
-                // Get the room document ID at the specified position from the Room list
-                val room = viewModel.roomPojoList[position]
+                    // Get the room document ID at the specified position from the Room list
+                    val room = viewModel.roomPojoList[position]
 
-                deleteRoom(room.name){
-                    try {
-                        if(it)
-                        {
-                            viewModel.roomPojoList.removeAt(position)
-                            viewModel.roomAdapter.notifyItemRemoved(position)
-                            requireContext().showToast("Room deleted successfully.")
+                    deleteRoom(room.name){
+                        try {
+                            if(it)
+                            {
+                                viewModel.roomPojoList.removeAt(position)
+                                viewModel.roomAdapter.notifyItemRemoved(position)
+                                requireContext().showToast("Room deleted successfully.")
+                            }
+                            else{
+                                requireContext().showToast("Error occur while deleting room.")
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG,e.toString())
+                            throw e
                         }
-                        else{
-                            requireContext().showToast("Error occur while deleting room.")
-                        }
-                    } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
-                        throw e
                     }
+
+                } catch (e: Exception) {
+                    Log.e(TAG,e.toString())
+                    requireContext().showToast("Error occur while deleting room.")
                 }
+                dialog.dismiss()
+            },{
+                dialog.dismiss()
+            })
 
-            } catch (e: Exception) {
-                Log.e(TAG,e.toString())
-                requireContext().showToast("Error occur while deleting room.")
-            }
-        }
-
-        alertDialogBuilder.setNegativeButton("No") { dialog, which ->
-            // User clicked "No", do nothing or dismiss the dialog
-            dialog.dismiss()
-        }
-
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
     override fun onEditClick(position: Int) {
+        requireContext().showToast("!Implement Soon!")
     }
 
     fun deleteRoom(roomDocumentId:String, isDeleted:(Boolean) -> Unit)

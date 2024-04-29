@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityAdminBinding
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class AdminActivity : AppCompatActivity() {
@@ -91,6 +92,7 @@ class AdminActivity : AppCompatActivity() {
             // Set a navigation item selected listener for the navigation view
             adminNV.setNavigationItemSelectedListener { menuItem ->
                 // Handle different menu item clicks
+                var isMenuSelect = false
                 when (menuItem.itemId) {
                     R.id.nav_academic -> {
                         try {
@@ -99,11 +101,13 @@ class AdminActivity : AppCompatActivity() {
                                 // Clear the back stack up to academicFragment and navigate to the academic fragment
                                 navController.popBackStack(R.id.academicFragment, false)
                                 navController.navigate(R.id.academicFragment)
+                                isMenuSelect = true
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
                             Log.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
+                            isMenuSelect = false
                         }
                     }
                     R.id.nav_timetable -> {
@@ -113,12 +117,15 @@ class AdminActivity : AppCompatActivity() {
                                 // Clear the back stack up to academicFragment and navigate to the timetable fragment
                                 navController.popBackStack(R.id.academicFragment, false)
                                 navController.navigate(R.id.timetableFragment)
+                                isMenuSelect = true
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
                             Log.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
+                            isMenuSelect = false
                         }
+
                     }
                     R.id.nav_faculty -> {
                         try {
@@ -127,6 +134,7 @@ class AdminActivity : AppCompatActivity() {
                                 // Clear the back stack up to academicFragment and navigate to the faculty fragment
                                 navController.popBackStack(R.id.academicFragment, false)
                                 navController.navigate(R.id.facultyFragment)
+                                isMenuSelect = true
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
@@ -141,6 +149,7 @@ class AdminActivity : AppCompatActivity() {
                                 // Clear the back stack up to academicFragment and navigate to the room fragment
                                 navController.popBackStack(R.id.academicFragment, false)
                                 navController.navigate(R.id.roomsFragment)
+                                isMenuSelect = true
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
@@ -155,6 +164,7 @@ class AdminActivity : AppCompatActivity() {
                                 // Clear the back stack up to academicFragment and navigate to the subject fragment
                                 navController.popBackStack(R.id.academicFragment, false)
                                 navController.navigate(R.id.subjectsFragment)
+                                isMenuSelect = true
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
@@ -162,11 +172,18 @@ class AdminActivity : AppCompatActivity() {
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                         }
                     }
+                    R.id.nav_aboutUs -> {
+                        this@AdminActivity.showToast("!Implement Soon!")
+                    }
+                    R.id.nav_sign_out ->{
+                        this@AdminActivity.showToast("!Implement Soon!")
+                    }
+
                 }
                 // Toggle the drawer menu after handling the click event
                 toggleDrawerMenu()
                 // Indicate that the event has been handled successfully
-                true
+                isMenuSelect
             }
 
         }

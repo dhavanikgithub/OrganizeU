@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.utils.Constants.Companion.DATE_FORMAT_STRING
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat24H
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -43,8 +44,22 @@ class UtilFunction {
 
         fun Context.showToast(message: String)
         {
-            Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+            MainScope().launch(Dispatchers.Main)
+            {
+                Toast.makeText(this@showToast,message,Toast.LENGTH_SHORT).show()
+            }
         }
+
+        fun String.containsOnlyAllowedCharacters(): Boolean {
+            val regex = Regex("[^a-zA-Z0-9-_]") // Regular expression to match any character except letters, digits, '-', and '_'
+            return !regex.containsMatchIn(this)
+        }
+
+        fun String.isValidSubjectCode(): Boolean {
+            val regex = Regex("^[a-zA-Z0-9_-]{5,15}$") // Regular expression to match subject code with length 5 to 15, containing only letters, digits, hyphens, and underscores
+            return regex.matches(this)
+        }
+
 
         fun Context.unexpectedErrorMessagePrint(e:Exception)
         {
