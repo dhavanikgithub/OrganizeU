@@ -19,10 +19,7 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.OrganizeU"
         android:usesCleartextTraffic="true">
-        <receiver
-            android:name=".broadcast_receiver.NotificationReceiver"
-            android:enabled="true"
-            android:exported="true" />
+
         <receiver
             android:name=".broadcast_receiver.LessonReminderReceiver"
             android:enabled="true"

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.databinding.DataBindingUtil
 import com.ashiqurrahman.rangedtimepickerdialog.library.TimeRangePickerDialog
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment
@@ -89,7 +90,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
         val view = inflater.inflate(R.layout.add_lesson_dialog_layout, null)
 
         // Bind the layout to the view binding class
-        binding = AddLessonDialogLayoutBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
 
         // Set the lessonAddListener if the parentFragment implements AddDocumentListener
         lessonAddListener = parentFragment as? AddDocumentListener

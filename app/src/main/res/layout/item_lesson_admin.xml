@@ -1,174 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:elevation="20dp"
-    app:cardCornerRadius="10dp"
-    android:layout_marginBottom="10dp"
-    android:backgroundTint="@color/colorPrimaryContainer">
-    <LinearLayout
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="timetablePojo"
+            type="com.dk.organizeu.pojo.TimetablePojo" />
+        <variable
+            name="listener"
+            type="com.dk.organizeu.listener.OnItemClickListener" />
+        <variable
+            name="position"
+            type="Integer" />
+        <variable
+            name="timeConverter"
+            type="com.dk.organizeu.utils.TimeConverter" />
+    </data>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1"
-       >
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight=".2">
+        android:layout_height="wrap_content"
+        android:elevation="20dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginBottom="10dp"
+        android:onClickListener="@{() -> listener.onClick(position)}"
+        android:backgroundTint="@color/colorPrimaryContainer">
 
-            <TextView
-                android:id="@+id/txtStartTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                tools:text="@string/textStartTime"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="0dp"
-                android:background="@color/colorPrimary"
-                app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtStartTime"
-                />
-
-            <TextView
-                android:id="@+id/txtEndTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                tools:text="@string/textEndTime"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_weight=".7"
-            >
-            <TextView
-                android:id="@+id/txtLessonNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                tools:text="@string/textLessonNumber"
-                android:textSize="@dimen/_10sdp"
-                />
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight=".2">
+
+                <TextView
+                    android:id="@+id/txtStartTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@{timeConverter.Companion.convert24HourTo12Hour(timetablePojo.startTime)}"
+                    tools:text="@string/textStartTime"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="0dp"
+                    android:background="@color/colorPrimary"
+                    app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtStartTime" />
+
+                <TextView
+                    android:id="@+id/txtEndTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@{timeConverter.Companion.convert24HourTo12Hour(timetablePojo.endTime)}"
+                    tools:text="@string/textEndTime"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="100"
-                android:paddingVertical="5dp">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_weight=".7">
+
                 <TextView
-                    android:id="@+id/txtLessonSubjectName"
-                    android:layout_width="0dp"
+                    android:id="@+id/txtLessonNumber"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    tools:text="@string/textSubjectName"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_weight="50"
-                    android:textColor="@color/colorPrimary"/>
-                <TextView
-                    android:id="@+id/txtLessonClassName"
-                    android:layout_width="0dp"
+                    android:textColor="@color/colorPrimary"
+                    android:text='@{"Lesson: "+Integer.toString(timetablePojo.lessonNumber)}'
+                    tools:text="@string/textLessonNumber"
+                    android:textSize="@dimen/_10sdp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    tools:text="@string/textClassName"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_weight="50"
-                    android:textColor="@color/colorPrimary"/>
+                    android:orientation="horizontal"
+                    android:weightSum="100"
+                    android:paddingVertical="5dp">
+
+                    <TextView
+                        android:id="@+id/txtLessonSubjectName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="@{timetablePojo.subjectName}"
+                        tools:text="@string/textSubjectName"
+                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="50"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/txtLessonClassName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="@{timetablePojo.className+' '+timetablePojo.location}"
+                        tools:text="@string/textClassName"
+                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="50"
+                        android:textColor="@color/colorPrimary" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:id="@+id/txtLessonFacultyName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{timetablePojo.facultyName}"
+                        tools:text="@string/textFacultyName"
+                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="50"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/txtLessonDuration"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{timetablePojo.duration}"
+                        tools:text="@string/textDuration"
+                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="25"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/txtLessonType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{timetablePojo.type}"
+                        tools:text="@string/textType"
+                        android:layout_weight="25"
+                        android:gravity="end"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/colorPrimary" />
+                </LinearLayout>
 
             </LinearLayout>
 
-
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="100">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".1"
+                android:weightSum="1"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txtLessonFacultyName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/textFacultyName"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_weight="50"
-                    android:textColor="@color/colorPrimary"/>
+                <LinearLayout
+                    android:id="@+id/btnEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:onClickListener="@{() -> listener.onEditClick(position)}"
+                    android:background="@color/colorTertiaryContainer"
+                    android:gravity="center">
 
-                <TextView
-                    android:id="@+id/txtLessonDuration"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/textDuration"
-                    android:textSize="@dimen/_10sdp"
-                    android:layout_weight="25"
-                    android:textColor="@color/colorPrimary"/>
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@color/colorTertiary" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtLessonType"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/textType"
-                    android:layout_weight="25"
-                    android:gravity="end"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorPrimary"/>
+                <LinearLayout
+                    android:id="@+id/btnDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight=".5"
+                    android:onClickListener="@{() -> listener.onDeleteClick(position)}"
+                    android:background="@color/colorSecondaryContainer"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:src="@drawable/icon_delete"
+                        app:tint="@color/colorSecondary" />
+                </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight=".1"
-            android:weightSum="1"
-            android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/btnEdit"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".5"
-                android:background="@color/colorTertiaryContainer"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_16sdp"
-                    android:src="@drawable/ic_edit"
-                    app:tint="@color/colorTertiary"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/btnDelete"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".5"
-                android:background="@color/colorSecondaryContainer"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="@dimen/_16sdp"
-                    android:layout_height="@dimen/_16sdp"
-                    android:src="@drawable/icon_delete"
-                    app:tint="@color/colorSecondary"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

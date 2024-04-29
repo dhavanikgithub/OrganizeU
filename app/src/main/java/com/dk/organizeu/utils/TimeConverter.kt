@@ -41,5 +41,6 @@ class TimeConverter {
             val date = timeFormat24H.parse(this)
             return timeFormat12H.format(date)
         }
+
     }
 }

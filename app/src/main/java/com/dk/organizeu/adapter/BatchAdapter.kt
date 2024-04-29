@@ -4,14 +4,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
+import com.dk.organizeu.databinding.ItemAddBatchBinding
 import com.dk.organizeu.listener.OnItemClickListener
 
 class BatchAdapter(private val academicBatchList: ArrayList<String>,private val listener: OnItemClickListener) :
     RecyclerView.Adapter<BatchAdapter.AcademicViewHolder>() {
+
+        private lateinit var binding: ItemAddBatchBinding
 
     companion object{
         const val TAG = "OrganizeU-BatchAdapter"
@@ -20,22 +22,16 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>,private val 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_add_batch, parent, false)
-        return AcademicViewHolder(view)
+        binding = DataBindingUtil.bind(view)!!
+        return AcademicViewHolder(binding.root)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
             val currentItem = academicBatchList[position]
-            holder.batchNameTxt.text = "Batch: ${currentItem}"
-            holder.itemView.setOnClickListener {
-                listener.onClick(position)
-            }
-            holder.btnDelete.setOnClickListener {
-                listener.onDeleteClick(position)
-            }
-            holder.btnEdit.setOnClickListener {
-                listener.onEditClick(position)
-            }
+            binding.batch = currentItem
+            binding.position = position
+            binding.listener = listener
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -47,10 +43,6 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>,private val 
     }
 
 
-    class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val batchNameTxt: TextView = itemView.findViewById(R.id.txtBatchName)
-        val btnEdit: LinearLayout = itemView.findViewById(R.id.btnEdit)
-        val btnDelete: LinearLayout = itemView.findViewById(R.id.btnDelete)
-    }
+    class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 }

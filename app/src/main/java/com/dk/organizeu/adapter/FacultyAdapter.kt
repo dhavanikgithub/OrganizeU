@@ -4,14 +4,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
+import com.dk.organizeu.databinding.ItemFacultyBinding
 import com.dk.organizeu.listener.OnItemClickListener
 
 class FacultyAdapter(private val facultyList: ArrayList<String>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<FacultyAdapter.AcademicViewHolder>() {
+
+        private lateinit var binding: ItemFacultyBinding
 
     companion object{
         const val TAG = "OrganizeU-FacultyAdapter"
@@ -20,22 +22,16 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_faculty, parent, false)
-        return AcademicViewHolder(view)
+        binding = DataBindingUtil.bind(view)!!
+        return AcademicViewHolder(binding.root)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
             val currentItem = facultyList[position]
-            holder.facultyNameTxt.text = currentItem
-            holder.itemView.setOnClickListener {
-                listener.onClick(position)
-            }
-            holder.btnDelete.setOnClickListener {
-                listener.onDeleteClick(position)
-            }
-            holder.btnEdit.setOnClickListener {
-                listener.onEditClick(position)
-            }
+            binding.facultyName = currentItem
+            binding.listener = listener
+            binding.position = position
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -46,10 +42,6 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
     }
 
 
-    class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val facultyNameTxt: TextView = itemView.findViewById(R.id.txtFacultyName)
-        val btnEdit: LinearLayout = itemView.findViewById(R.id.btnEdit)
-        val btnDelete: LinearLayout = itemView.findViewById(R.id.btnDelete)
-    }
+    class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 }

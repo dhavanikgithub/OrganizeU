@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddAcademicDialogLayoutBinding
 import com.dk.organizeu.firebase.key_mapping.AcademicCollection
@@ -33,7 +34,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
-        binding = AddAcademicDialogLayoutBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         var builder:AlertDialog.Builder? = null
         academicAddListener = parentFragment as? AddDocumentListener
         // Create object of AlertDialog box

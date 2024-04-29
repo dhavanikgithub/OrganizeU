@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.dialog.AddRoomDialog
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
 import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.databinding.FragmentRoomsBinding
@@ -48,11 +47,11 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_rooms, container, false)
-        binding = FragmentRoomsBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[RoomsViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         db= FirebaseFirestore.getInstance()
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

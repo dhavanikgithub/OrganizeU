@@ -4,13 +4,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
+import com.dk.organizeu.databinding.ItemLessonAdminBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.TimetablePojo
-import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 
 
 class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,private val listener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -19,6 +18,8 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,pr
     companion object{
         const val TAG = "OrganizeU-LessonAdapter"
     }
+
+    private var binding: ItemLessonAdminBinding? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         try {
             return when (viewType) {
@@ -28,7 +29,8 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,pr
                 }
                 else -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.item_lesson_admin, parent, false)
-                    ItemViewHolder(view)
+                    binding = DataBindingUtil.bind(view)!!
+                    ItemViewHolder(binding!!.root)
                 }
             }
         } catch (e: Exception) {
@@ -41,18 +43,13 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,pr
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         try {
-            /*val item = timetableItems[position]
-            holder.bind(item)*/
-            if (holder is ItemViewHolder) {
-                holder.bind(timetablePojos[position])
-                holder.itemView.setOnClickListener { listener.onClick(position) }
-                holder.btnEdit.setOnClickListener {
-                    listener.onEditClick(position)
+            val item = timetablePojos[position]
 
-                }
-                holder.btnDelete.setOnClickListener {
-                    listener.onDeleteClick(position)
-                }
+            if(binding!=null)
+            {
+                binding!!.timetablePojo = item
+                binding!!.position = position
+                binding!!.listener = listener
             }
 
         } catch (e: Exception) {
@@ -76,26 +73,6 @@ class LessonAdapterAdmin(private val timetablePojos: ArrayList<TimetablePojo>,pr
             VIEW_TYPE_ITEM
         }
     }
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val btnEdit = itemView.findViewById<LinearLayout>(R.id.btnEdit)
-        val btnDelete = itemView.findViewById<LinearLayout>(R.id.btnDelete)
-        fun bind(item: TimetablePojo) {
-            try {
-                itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
-                itemView.findViewById<TextView>(R.id.txtLessonSubjectName).text = item.subjectName
-                itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime.convert24HourTo12Hour()
-                itemView.findViewById<TextView>(R.id.txtEndTime).text = item.endTime.convert24HourTo12Hour()
-                itemView.findViewById<TextView>(R.id.txtLessonDuration).text = item.duration
-                itemView.findViewById<TextView>(R.id.txtLessonType).text = item.type
-                itemView.findViewById<TextView>(R.id.txtLessonFacultyName).text = item.facultyName
-                itemView.findViewById<TextView>(R.id.txtLessonNumber).text = "Lesson: ${item.lessonNumber}"
-
-
-
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-            }
-        }
-    }
+    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

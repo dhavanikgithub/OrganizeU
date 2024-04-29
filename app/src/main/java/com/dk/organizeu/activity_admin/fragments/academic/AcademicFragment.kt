@@ -1,15 +1,11 @@
 package com.dk.organizeu.activity_admin.fragments.academic
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -30,7 +26,6 @@ import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
-import com.google.android.material.button.MaterialButton
 import com.google.firebase.firestore.DocumentChange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -53,9 +48,9 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_academic, container, false)
-        binding = FragmentAcademicBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[AcademicViewModel::class.java]
-        return view
+        return binding.root
     }
 
     override fun onResume() {

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.utils.Constants.Companion.DATE_FORMAT_STRING
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat24H
-import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -114,12 +113,8 @@ class UtilFunction {
                     // Convert milliseconds to minutes
                     val durationInMinutes = durationInMillis / (1000 * 60)
 
-                    // Calculate hours and minutes from the total minutes
-                    val hours = durationInMinutes / 60
-                    val minutes = durationInMinutes % 60
-
                     // Return the formatted duration string
-                    return String.format("%02d:%02d", hours, minutes)
+                    return formatDuration(durationInMinutes)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -128,6 +123,18 @@ class UtilFunction {
             // Return an empty string if there's any error
             return ""
         }
+
+        private fun formatDuration(durationInMinutes: Long): String {
+            if (durationInMinutes < 60) {
+                return "${durationInMinutes}m"
+            }
+
+            val hours = durationInMinutes / 60
+            val minutes = durationInMinutes % 60
+
+            return "${hours}h ${minutes}m"
+        }
+
 
     }
 }

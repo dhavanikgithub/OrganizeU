@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="7dp"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="5dp">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="roomPojo"
+            type="com.dk.organizeu.pojo.RoomPojo" />
+        <variable
+            name="listener"
+            type="com.dk.organizeu.listener.OnItemClickListener" />
+        <variable
+            name="position"
+            type="Integer" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="7dp"
+        android:onClickListener="@{() -> listener.onClick(position)}"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,43 +36,52 @@
                 android:orientation="vertical"
                 android:padding="10dp"
                 android:layout_weight=".9">
+
                 <TextView
                     android:id="@+id/txtRoomName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text='@{"Name: "+roomPojo.name}'
                     tools:text="Name/Number: 102"
                     android:textSize="@dimen/_12sdp"
                     android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="5dp"
                     android:weightSum="1">
+
                     <TextView
                         android:id="@+id/txtRoomLocation"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:text='@{"Location: "+roomPojo.location}'
                         tools:text="Location: 1NB"
                         android:textColor="@color/colorPrimary"
-                        android:layout_weight=".5"/>
+                        android:layout_weight=".5" />
+
                     <TextView
                         android:id="@+id/txtRoomType"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="end"
+                        android:text='@{"Type: "+roomPojo.type}'
                         tools:text="Type: Class"
                         android:textColor="@color/colorPrimary"
-                        android:layout_weight=".5"/>
+                        android:layout_weight=".5" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight=".1"
                 android:weightSum="1"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/btnEdit"
                     android:layout_width="match_parent"
@@ -64,31 +89,35 @@
                     android:layout_weight=".5"
                     android:background="@color/colorPrimaryContainer"
                     android:gravity="center"
+                    android:onClickListener="@{() -> listener.onEditClick(position)}"
                     tools:ignore="NestedWeights">
+
                     <ImageView
                         android:layout_width="@dimen/_16sdp"
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/colorPrimary"
-                        android:contentDescription="@string/item_edit_button_content_description"
-                        />
+                        android:contentDescription="@string/item_edit_button_content_description" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/btnDelete"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight=".5"
                     android:background="@color/colorSecondaryContainer"
+                    android:onClickListener="@{() -> listener.onDeleteClick(position)}"
                     android:gravity="center">
+
                     <ImageView
                         android:layout_width="@dimen/_16sdp"
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/icon_delete"
                         app:tint="@color/colorSecondary"
-                        android:contentDescription="@string/item_delete_button_content_description"
-                        />
+                        android:contentDescription="@string/item_delete_button_content_description" />
                 </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

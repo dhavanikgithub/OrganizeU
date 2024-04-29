@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.dialog.AddLessonDialog
-import com.dk.organizeu.activity_admin.fragments.rooms.RoomsFragment
 import com.dk.organizeu.adapter.LessonAdapterAdmin
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.enum_class.Weekday
@@ -60,11 +59,11 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_add_lesson, container, false)
-        binding = FragmentAddLessonBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[AddLessonViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         db = FirebaseFirestore.getInstance()
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -40,10 +41,10 @@ class TimetableFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_timetable, container, false)
-        binding = FragmentTimetableBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[TimetableViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        return view
+        return binding.root
     }
 
     override fun onResume() {

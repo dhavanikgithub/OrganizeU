@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddSubjectDialogLayoutBinding
 import com.dk.organizeu.firebase.key_mapping.SubjectCollection
@@ -36,7 +37,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
         // Inflate the layout for adding a new subject
         val view = inflater.inflate(R.layout.add_subject_dialog_layout, null)
         // Bind the layout to the view binding class
-        binding = AddSubjectDialogLayoutBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         // Initialize Firestore database instance
         db = FirebaseFirestore.getInstance()
         var builder: AlertDialog.Builder?=null

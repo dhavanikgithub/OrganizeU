@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.activity_admin.fragments.academic.AcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.adapter.SemAdapter
@@ -61,12 +60,12 @@ class AddSemFragment : Fragment(), OnItemClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = inflater.inflate(R.layout.fragment_add_sem, container, false)
-        binding = FragmentAddSemBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[AddSemViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        return view
+        return binding.root
     }
 
     override fun onResume() {

@@ -4,9 +4,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
+import com.dk.organizeu.databinding.ItemLessonStudentBinding
 import com.dk.organizeu.pojo.TimetablePojo
 
 
@@ -16,6 +17,8 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
     companion object{
         const val TAG = "OrganizeU-LessonAdapter"
     }
+
+    private var binding:ItemLessonStudentBinding? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         try {
             return when (viewType) {
@@ -25,7 +28,8 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
                 }
                 else -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.item_lesson_student, parent, false)
-                    ItemViewHolder(view)
+                    binding = DataBindingUtil.bind(view)!!
+                    ItemViewHolder(binding!!.root)
                 }
             }
         } catch (e: Exception) {
@@ -38,10 +42,11 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         try {
-            /*val item = timetableItems[position]
-            holder.bind(item)*/
-            if (holder is ItemViewHolder) {
-                holder.bind(timetablePojos[position])
+            val item = timetablePojos[position]
+            if(binding!=null)
+            {
+                binding!!.timetablePojo = item
+
             }
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
@@ -55,7 +60,6 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
         }
     }
 
-    /*override fun getItemCount(): Int = timetableItems.size*/
     override fun getItemViewType(position: Int): Int {
         return if (timetablePojos.isEmpty()) {
             VIEW_TYPE_EMPTY
@@ -63,21 +67,6 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
             VIEW_TYPE_ITEM
         }
     }
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: TimetablePojo) {
-            try {
-                itemView.findViewById<TextView>(R.id.txtLessonClassName).text = "${item.className} ${item.location}"
-                itemView.findViewById<TextView>(R.id.txtLessonSubjectName).text = item.subjectName
-                itemView.findViewById<TextView>(R.id.txtStartTime).text = item.startTime
-                itemView.findViewById<TextView>(R.id.txtEndTime).text = item.endTime
-                itemView.findViewById<TextView>(R.id.txtLessonDuration).text = item.duration
-                itemView.findViewById<TextView>(R.id.txtLessonType).text = item.type
-                itemView.findViewById<TextView>(R.id.txtLessonFacultyName).text = item.facultyName
-                itemView.findViewById<TextView>(R.id.txtLessonNumber).text = "Lesson: ${item.lessonNumber}"
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-            }
-        }
-    }
+    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

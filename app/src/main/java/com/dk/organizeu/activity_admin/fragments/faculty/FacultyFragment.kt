@@ -5,13 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch.AddBatchFragment
 import com.dk.organizeu.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
 import com.dk.organizeu.firebase.key_mapping.FacultyCollection
@@ -43,11 +41,11 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         savedInstanceState: Bundle?
     ): View {
         val view  = inflater.inflate(R.layout.fragment_faculty, container, false)
-        binding = FragmentFacultyBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[FacultyViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

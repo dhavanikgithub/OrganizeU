@@ -1,119 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/frameLayout6"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity_admin.fragments.timetable.TimetableFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlAcademicYear"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout6"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="Select Academic Year"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".activity_admin.fragments.timetable.TimetableFragment">
 
-        <AutoCompleteTextView
-            android:id="@+id/actAcademicYear"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlAcademicYear"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:drawableStart="@drawable/ic_academic"
-            android:drawableTint="@color/colorPrimary"
-            android:drawablePadding="10dp"
-            tools:text="2023-2024"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Select Academic Year"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlAcademicType"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="Select Academic Type"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tlAcademicYear">
+            <AutoCompleteTextView
+                android:id="@+id/actAcademicYear"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="none"
+                android:drawableStart="@drawable/ic_academic"
+                android:drawableTint="@color/colorPrimary"
+                android:drawablePadding="10dp"
+                tools:text="2023-2024" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/actAcademicType"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlAcademicType"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:drawableStart="@drawable/ic_academic_type"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/colorPrimary"
-            tools:text="ODD"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Select Academic Type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tlAcademicYear">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tlAcademicSem"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="Select Semester"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tlAcademicType">
+            <AutoCompleteTextView
+                android:id="@+id/actAcademicType"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="none"
+                android:drawableStart="@drawable/ic_academic_type"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/colorPrimary"
+                tools:text="ODD" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/actAcademicSem"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tlAcademicSem"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:drawableStart="@drawable/ic_semester"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/colorPrimary"
-            tools:text="5"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Select Semester"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tlAcademicType">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/classTIL"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="Select Class"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tlAcademicSem">
+            <AutoCompleteTextView
+                android:id="@+id/actAcademicSem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="none"
+                android:drawableStart="@drawable/ic_semester"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/colorPrimary"
+                tools:text="5" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/classACTV"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/classTIL"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="none"
-            android:drawableStart="@drawable/ic_class"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/colorPrimary"
-            tools:text="CEIT-A"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Select Class"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tlAcademicSem">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnGoToTimetable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go To Timetable"
-        android:textAllCaps="false"
-        android:drawableEnd="@drawable/ic_navigate"
-        android:drawableTint="@color/colorPrimaryContainer"
-        app:layout_constraintTop_toBottomOf="@id/classTIL"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"/>
+            <AutoCompleteTextView
+                android:id="@+id/classACTV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="none"
+                android:drawableStart="@drawable/ic_class"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/colorPrimary"
+                tools:text="CEIT-A" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoToTimetable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go To Timetable"
+            android:textAllCaps="false"
+            android:drawableEnd="@drawable/ic_navigate"
+            android:drawableTint="@color/colorPrimaryContainer"
+            app:layout_constraintTop_toBottomOf="@id/classTIL"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,11 +52,11 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        binding = FragmentHomeBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         lessonMuteManagement = LessonMuteManagement()
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,7 +88,7 @@ class HomeFragment : Fragment() {
 
                         // Define academic, semester, and class IDs
                         val academicDocumentId = "2024-2025_EVEN"
-                        val semesterDocumentId = "2"
+                        val semesterDocumentId = "4"
                         val classDocumentId = "CEIT-A"
 
                         // Load timetable data based on academic, semester, and class IDs

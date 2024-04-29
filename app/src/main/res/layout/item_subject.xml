@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="7dp"
-    android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="5dp">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="subjectPojo"
+            type="com.dk.organizeu.pojo.SubjectPojo" />
+        <variable
+            name="listener"
+            type="com.dk.organizeu.listener.OnItemClickListener" />
+        <variable
+            name="position"
+            type="Integer" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="7dp"
+        android:onClickListener="@{() -> listener.onClick(position)}"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -19,71 +35,84 @@
                 android:orientation="vertical"
                 android:padding="10dp"
                 android:layout_weight=".9">
+
                 <TextView
                     android:id="@+id/txtSubjectName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text='@{"Name: "+subjectPojo.name}'
                     tools:text="Name: Mobile Application"
                     android:textSize="@dimen/_12sdp"
                     android:textColor="@color/colorPrimary"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="5dp"
                     android:weightSum="1">
+
                     <TextView
                         android:id="@+id/txtSubjectCode"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:text='@{"Code: "+subjectPojo.code}'
                         tools:text="Code: 2CEIT401"
                         android:textColor="@color/colorPrimary"
-                        android:layout_weight=".5"/>
+                        android:layout_weight=".5" />
+
                     <TextView
                         android:id="@+id/txtSubjectType"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:text='@{"Type: "+subjectPojo.type}'
                         tools:text="Type: Theory \ Theory + Practical"
                         android:textColor="@color/colorPrimary"
-                        android:layout_weight=".5"/>
+                        android:layout_weight=".5" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight=".1"
                 android:weightSum="1"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/btnEdit"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight=".5"
+                    android:onClickListener="@{() -> listener.onEditClick(position)}"
                     android:background="@color/colorPrimaryContainer"
                     android:gravity="center">
+
                     <ImageView
                         android:layout_width="@dimen/_16sdp"
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/ic_edit"
-                        app:tint="@color/colorPrimary"
-                        />
+                        app:tint="@color/colorPrimary" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/btnDelete"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight=".5"
+                    android:onClickListener="@{() -> listener.onDeleteClick(position)}"
                     android:background="@color/colorSecondaryContainer"
                     android:gravity="center">
+
                     <ImageView
                         android:layout_width="@dimen/_16sdp"
                         android:layout_height="@dimen/_16sdp"
                         android:src="@drawable/icon_delete"
-                        app:tint="@color/colorSecondary"
-                        />
+                        app:tint="@color/colorSecondary" />
                 </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

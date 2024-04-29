@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddRoomDialogLayoutBinding
 import com.dk.organizeu.firebase.key_mapping.RoomCollection
@@ -33,7 +34,7 @@ class AddRoomDialog : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = LayoutInflater.from(requireContext())
         val view = inflater.inflate(R.layout.add_room_dialog_layout, null)
-        binding = AddRoomDialogLayoutBinding.bind(view)
+        binding = DataBindingUtil.bind(view)!!
         var builder:AlertDialog.Builder? = null
 
         try {

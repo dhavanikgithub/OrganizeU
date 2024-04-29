@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dk.organizeu.R
@@ -35,11 +36,11 @@ class AddAcademicFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(com.dk.organizeu.R.layout.fragment_add_academic, container, false)
-        binding = FragmentAddAcademicBinding.bind(view)
+        val view = inflater.inflate(R.layout.fragment_add_academic, container, false)
+        binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[AddAcademicViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
-        return view
+        return binding.root
     }
 
     override fun onResume() {
