@@ -32,7 +32,9 @@
 
         <item name="android:statusBarColor">@color/colorPrimary</item>
 
+
     </style>
+
 
     <style name="ChipStyle" parent="ShapeAppearanceOverlay.Material3.Chip">
         <item name="android:checkable">true</item>

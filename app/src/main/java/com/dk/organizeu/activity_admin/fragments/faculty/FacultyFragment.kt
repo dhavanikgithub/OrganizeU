@@ -3,8 +3,12 @@ package com.dk.organizeu.activity_admin.fragments.faculty
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +44,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
         val view  = inflater.inflate(R.layout.fragment_faculty, container, false)
         binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[FacultyViewModel::class.java]
@@ -132,7 +137,33 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                     }
                 }
 
+
+
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.options_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_select_all -> {
+                return true
+            }
+            R.id.action_inverse_select -> {
+                return true
+            }
+            R.id.action_unselect_all -> {
+                return true
+            }
+            R.id.action_delete_selection -> {
+                Toast.makeText(requireContext(), "Clicked Delete selection", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 

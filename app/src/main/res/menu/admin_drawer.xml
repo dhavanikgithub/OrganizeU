@@ -36,6 +36,10 @@
                 android:id="@+id/nav_sign_out"
                 android:title="Sign out"
                 android:icon="@drawable/ic_signout"/>
+            <item
+                android:id="@+id/nav_settings"
+                android:title="Settings"
+                android:icon="@drawable/ic_settings"/>
         </menu>
     </item>
 </menu>
