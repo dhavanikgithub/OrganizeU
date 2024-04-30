@@ -15,6 +15,7 @@ import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
 import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.databinding.FragmentRoomsBinding
 import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.EditDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomObj
@@ -31,7 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
+class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, EditDocumentListener {
 
     companion object {
         fun newInstance() = RoomsFragment()
@@ -85,8 +86,8 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                 btnAddRoom.setOnClickListener {
                     try {
                         // Create an instance of the AddRoomDialog
-                        val dialogFragment = AddRoomDialog()
-
+                        val dialogFragment = AddRoomDialog(null)
+                        dialogFragment.isCancelable=false
                         // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
@@ -260,7 +261,19 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        try {
+            // Create an instance of the AddRoomDialog
+            val dialogFragment = AddRoomDialog(viewModel.roomPojoList[position])
+            dialogFragment.isCancelable=false
+            // Show the dialog using childFragmentManager
+            dialogFragment.show(childFragmentManager, "customDialog")
+        } catch (e: Exception) {
+            // If any exception occurs, log the error message
+            Log.e(TAG, e.message.toString())
+
+            // Print an unexpected error message using a custom function
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
     }
 
     fun deleteRoom(roomDocumentId:String, isDeleted:(Boolean) -> Unit)
@@ -279,6 +292,30 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
             }
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    override fun onEdited(
+        oldDocumentId: String,
+        newDocumentId: String,
+        documentData: HashMap<String, String>
+    ) {
+        try {
+            val index = viewModel.roomPojoList.indexOfFirst {
+                it.name == oldDocumentId
+            }
+
+            viewModel.roomPojoList.removeAt(index)
+            viewModel.roomPojoList.add(index,roomDocumentToRoomObj(newDocumentId,documentData))
+            MainScope().launch(Dispatchers.Main)
+            {
+                viewModel.roomAdapter.notifyDataSetChanged()
+                requireContext().showToast("Room Data Updated")
+            }
+        }
+        catch (e: Exception)
+        {
+            requireContext().showToast("Room Data Update Failed")
         }
     }
 }

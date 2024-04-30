@@ -4,6 +4,10 @@ interface AddDocumentListener {
     fun onAdded(documentId: String,documentData: HashMap<String,String>)
 }
 
+interface EditDocumentListener {
+    fun onEdited(oldDocumentId:String,newDocumentId: String,documentData: HashMap<String,String>)
+}
+
 
 interface OnItemClickListener {
     fun onClick(position: Int)

@@ -89,6 +89,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     initRecyclerView() // Initializes the recycler view.
                     btnAddAcademic.setOnClickListener { // Sets up a click listener for the "Add Academic" button.
                         val dialogFragment = AddAcademicDialog()
+                        dialogFragment.isCancelable=false
                         dialogFragment.show(childFragmentManager, "customDialog")
                     }
 
@@ -148,9 +149,12 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                                             {
                                                 DocumentChange.Type.ADDED -> {
                                                     // Add the new academic item
-                                                    if(academicList.add(academicPojo))
+                                                    if(!academicList.contains(academicPojo))
                                                     {
-                                                        academicAdapter.notifyItemInserted(academicList.size)
+                                                        if(academicList.add(academicPojo))
+                                                        {
+                                                            academicAdapter.notifyItemInserted(academicList.size)
+                                                        }
                                                     }
                                                 }
                                                 DocumentChange.Type.MODIFIED -> {
@@ -166,15 +170,20 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                                                     // Remove the deleted academic item
                                                     if(academicList.contains(academicPojo))
                                                     {
-                                                        if(academicList.remove(academicPojo))
-                                                        {
-                                                            academicAdapter.notifyDataSetChanged()
+                                                        val index = academicList.indexOfFirst {
+                                                            it.academic == academicPojo.academic && it.sem == academicPojo.sem
                                                         }
+                                                        academicList.removeAt(index)
+                                                        academicAdapter.notifyItemRemoved(index)
                                                     }
                                                 }
                                             }
 
                                         }
+                                    }
+                                    else{
+                                        academicList.clear()
+                                        academicAdapter.notifyDataSetChanged()
                                     }
                                     // Hide progress bar after data loading
                                     hideProgressBar(rvAcademic,progressBar)

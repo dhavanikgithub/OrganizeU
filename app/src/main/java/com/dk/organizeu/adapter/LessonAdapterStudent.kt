@@ -42,7 +42,7 @@ class LessonAdapterStudent(private val timetablePojos: ArrayList<TimetablePojo>)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         try {
-            val item = timetablePojos[position]
+            val item = timetablePojos[holder.adapterPosition]
             if(binding!=null)
             {
                 binding!!.timetablePojo = item

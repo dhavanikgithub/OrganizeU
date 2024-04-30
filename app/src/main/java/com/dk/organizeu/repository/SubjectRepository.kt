@@ -8,6 +8,9 @@ import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class SubjectRepository {
@@ -159,6 +162,45 @@ class SubjectRepository {
                 Log.e(TAG,e.message.toString())
                 throw e
             }
+        }
+
+        fun updateSubjectDocument(oldDocumentId: String, newDocumentId: String, inputData:HashMap<String,String>, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = subjectDocumentRef(oldDocumentId)
+            if(oldDocumentId==newDocumentId)
+            {
+                oldDocRef.update(inputData as Map<String, Any>).addOnSuccessListener {
+                    isRenamed(true)
+                }.addOnFailureListener {
+                    isRenamed(false)
+                }
+            }
+            else{
+                val newDocRef = subjectDocumentRef(newDocumentId)
+
+                oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
+                    val data = oldDocSnapshotTask.data
+                    newDocRef.set(data!!).addOnSuccessListener {
+                        try {
+                            newDocRef.update(inputData as Map<String, Any>).addOnSuccessListener {
+                                MainScope().launch(Dispatchers.IO)
+                                {
+                                    deleteSubjectDocument(oldDocumentId)
+                                    isRenamed(true)
+                                }
+                            }.addOnFailureListener {
+                                isRenamed(false)
+                            }
+                        } catch (e: Exception) {
+                            isRenamed(false)
+                        }
+                    }.addOnFailureListener {
+                        isRenamed(false)
+                    }
+                }.addOnFailureListener {
+                    isRenamed(false)
+                }
+            }
+
         }
     }
 }

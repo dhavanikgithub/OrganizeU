@@ -42,6 +42,25 @@ class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, privat
         return subjectPojoList.size
     }
 
+    fun itemDelete(position: Int)
+    {
+        val itemChangedCount = subjectPojoList.size - position
+        notifyItemRemoved(position)
+        subjectPojoList.removeAt(position)
+        notifyItemRangeChanged(position, itemChangedCount)
+    }
+
+    fun itemInsert(subjectPojo: SubjectPojo)
+    {
+        subjectPojoList.add(subjectPojo)
+        notifyItemInserted(itemCount)
+    }
+
+    fun itemModify(position: Int)
+    {
+        notifyItemChanged(position)
+    }
+
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 }

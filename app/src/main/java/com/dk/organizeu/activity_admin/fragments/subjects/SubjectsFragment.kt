@@ -15,6 +15,7 @@ import com.dk.organizeu.activity_admin.fragments.rooms.RoomsFragment
 import com.dk.organizeu.adapter.SubjectAdapter
 import com.dk.organizeu.databinding.FragmentSubjectsBinding
 import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.EditDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -30,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
+class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener, EditDocumentListener {
 
     companion object {
         fun newInstance() = SubjectsFragment()
@@ -76,8 +77,9 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
                 btnAddSubject.setOnClickListener {
                     // Create an instance of the AddSubjectDialog
-                    val dialogFragment = AddSubjectDialog()
+                    val dialogFragment = AddSubjectDialog(null)
                     try {
+                        dialogFragment.isCancelable=false
                         // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
@@ -169,11 +171,8 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     // Convert document data to a Subject object
                     val subjectItem = SubjectRepository.subjectDocumentToSubjectObj(documentId, documentData)
 
-                    // Add the new subject to the list
-                    subjectPojoList.add(subjectItem)
-
                     // Notify the adapter of the newly inserted item
-                    subjectAdapter.notifyItemInserted(subjectAdapter.itemCount)
+                    subjectAdapter.itemInsert(subjectItem)
                     requireContext().showToast("Subject Added Successfully")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
@@ -220,8 +219,7 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                         try {
                             if(it)
                             {
-                                viewModel.subjectPojoList.removeAt(position)
-                                viewModel.subjectAdapter.notifyItemRemoved(position)
+                                viewModel.subjectAdapter.itemDelete(position)
                                 requireContext().showToast("Subject deleted successfully.")
                             }
                             else{
@@ -246,7 +244,17 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        try {
+            // Create an instance of the AddSubjectDialog
+            val dialogFragment = AddSubjectDialog(viewModel.subjectPojoList[position])
+            dialogFragment.isCancelable=false
+            // Show the dialog using childFragmentManager
+            dialogFragment.show(childFragmentManager, "customDialog")
+        } catch (e: Exception) {
+            // Log and handle any exceptions that occur while showing the dialog
+            Log.e(TAG, e.message.toString())
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
     }
 
     fun deleteSubject(subjectDocumentId:String, isDeleted:(Boolean) -> Unit)
@@ -265,6 +273,27 @@ class SubjectsFragment : Fragment(), AddDocumentListener, OnItemClickListener {
             }
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    override fun onEdited(
+        oldDocumentId: String,
+        newDocumentId: String,
+        documentData: HashMap<String, String>
+    ) {
+        try {
+            val subjectPojo = SubjectRepository.subjectDocumentToSubjectObj(newDocumentId,documentData)
+            val index = viewModel.subjectPojoList.indexOfFirst {
+                it.name == oldDocumentId
+            }
+            viewModel.subjectPojoList[index]=subjectPojo
+
+            MainScope().launch(Dispatchers.Main) {
+                binding.rvSubjects.adapter!!.notifyDataSetChanged()
+                requireContext().showToast("Subject Update Successfully")
+            }
+        } catch (e: Exception) {
+            requireContext().showToast("Subject Update Failed")
         }
     }
 }

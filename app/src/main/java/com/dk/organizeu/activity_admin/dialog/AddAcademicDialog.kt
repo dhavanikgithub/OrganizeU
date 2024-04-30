@@ -45,11 +45,25 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
             try {
                 // Prepare academic year list for Initialize academic year drop down
                 val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+
                 val academicYears = mutableListOf<String>()
-                // Prepare academic year list from now to up to 5 year before
-                for (year in currentYear..currentYear + 5) {
-                    academicYears.add("$year-${year + 1}")
+
+                // Prepare academic year list from now to up to 2 year before
+                if(currentMonth<=5)
+                {
+                    for (year in currentYear..currentYear + 1) {
+                        academicYears.add("$year-${year + 1}")
+                    }
+                    academicYears.add(0,"${currentYear-1}-$currentYear")
                 }
+                else{
+                    for (year in currentYear..currentYear + 2) {
+                        academicYears.add("$year-${year + 1}")
+                    }
+                }
+
+
 
                 // Initialize the Academic year drop down
                 val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)

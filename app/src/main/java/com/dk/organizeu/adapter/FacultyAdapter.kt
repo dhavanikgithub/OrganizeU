@@ -26,12 +26,13 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
         return AcademicViewHolder(binding.root)
     }
 
+
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = facultyList[position]
+            val currentItem = facultyList[holder.adapterPosition]
             binding.facultyName = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -39,6 +40,33 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
 
     override fun getItemCount(): Int {
         return facultyList.size
+    }
+
+    fun itemDelete(position: Int)
+    {
+        val itemChangedCount = facultyList.size - position
+        notifyItemRemoved(position)
+        facultyList.removeAt(position)
+        notifyItemRangeChanged(position, itemChangedCount)
+    }
+
+    fun itemInsert(facultyName:String)
+    {
+        facultyList.add(facultyName)
+        notifyItemInserted(itemCount)
+    }
+
+    fun itemModify(oldFacultyName:String, facultyName: String)
+    {
+        val index = facultyList.indexOfFirst {
+            it==oldFacultyName
+        }
+        if(index<0)
+        {
+            return
+        }
+        facultyList[index] = facultyName
+        notifyItemRangeChanged(index, facultyList.size)
     }
 
 

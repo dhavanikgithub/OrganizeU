@@ -55,6 +55,7 @@
                     android:layout_weight=".5"
                     android:onClickListener="@{() -> listener.onEditClick(position)}"
                     android:background="@color/colorPrimaryContainer"
+                    android:visibility="invisible"
                     android:gravity="center">
 
                     <ImageView

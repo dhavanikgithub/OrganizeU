@@ -30,6 +30,7 @@ import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -320,7 +321,13 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                             academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
                             semesterDocumentId = academicSemSelectedItem
                             classDocumentId = academicClassSelectedItem
-                            batchDocumentId = etAcademicBatch.text.toString()
+                            batchDocumentId = etAcademicBatch.text.toString().trim().replace(Regex("\\s+")," ")
+                            if(!batchDocumentId!!.containsOnlyAllowedCharacters())
+                            {
+                                requireContext().showToast("Batch name only contain alphabets, number and - or  _ ")
+                                return@setOnClickListener
+                            }
+
                             // Check if the required document IDs are not null and the batch document ID is not "null"
                             if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!="null")
                             {

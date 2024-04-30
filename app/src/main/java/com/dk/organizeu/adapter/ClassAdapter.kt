@@ -27,10 +27,10 @@ class ClassAdapter(private val academicClassList: ArrayList<String>,private val 
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicClassList[position]
+            val currentItem = academicClassList[holder.adapterPosition]
             binding.className = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_admin.dialog.EditClassDialog
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment
@@ -22,6 +23,7 @@ import com.dk.organizeu.adapter.ClassAdapter
 import com.dk.organizeu.databinding.FragmentAddClassBinding
 import com.dk.organizeu.enum_class.AcademicType
 import com.dk.organizeu.firebase.key_mapping.ClassCollection
+import com.dk.organizeu.listener.EditDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
@@ -30,6 +32,7 @@ import com.dk.organizeu.repository.ClassRepository.Companion.isClassDocumentExis
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -40,7 +43,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddClassFragment : Fragment(), OnItemClickListener {
+class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
 
     companion object {
         var viewModel2: AddAcademicViewModel?=null
@@ -294,7 +297,13 @@ class AddClassFragment : Fragment(), OnItemClickListener {
                             // Construct the document IDs
                             academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
                             semesterDocumentId = academicSemSelectedItem
-                            classDocumentId = etAcademicClass.text.toString()
+                            classDocumentId = etAcademicClass.text.toString().trim().replace(Regex("\\s+")," ")
+
+                            if(!classDocumentId!!.containsOnlyAllowedCharacters())
+                            {
+                                requireContext().showToast("Class name only contain alphabets, number and - or  _ ")
+                                return@setOnClickListener
+                            }
 
                             // Check if the class document already exists
                             isClassDocumentExists(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!){
@@ -704,7 +713,26 @@ class AddClassFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        try {
+            // Construct the academic document ID using selected year and type
+            val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
+            // Get the selected semester document ID
+            val semesterDocumentId = viewModel.academicSemSelectedItem
+            // Get the class document ID at the specified position from the class list
+            val classDocumentId = viewModel.academicClassList[position]
+
+            // Create an instance of the AddRoomDialog
+            val dialogFragment = EditClassDialog(academicDocumentId,semesterDocumentId!!,classDocumentId)
+            dialogFragment.isCancelable=false
+            // Show the dialog using childFragmentManager
+            dialogFragment.show(childFragmentManager, "customDialog")
+        } catch (e: Exception) {
+            // If any exception occurs, log the error message
+            Log.e(TAG, e.message.toString())
+
+            // Print an unexpected error message using a custom function
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
     }
 
 
@@ -742,6 +770,27 @@ class AddClassFragment : Fragment(), OnItemClickListener {
 
             // Re-throw the exception to propagate it further if needed
             throw e
+        }
+    }
+
+    override fun onEdited(
+        oldDocumentId: String,
+        newDocumentId: String,
+        documentData: HashMap<String, String>
+    ) {
+        try {
+            val index = viewModel.academicClassList.indexOfFirst {
+                it == oldDocumentId
+            }
+            viewModel.academicClassList.removeAt(index)
+            viewModel.academicClassList.add(newDocumentId)
+            MainScope().launch(Dispatchers.Main)
+            {
+                viewModel.academicClassAdapter.notifyDataSetChanged()
+                requireContext().showToast("Class Name Updated")
+            }
+        } catch (e: Exception) {
+            requireContext().showToast("Class Name Update Failed")
         }
     }
 

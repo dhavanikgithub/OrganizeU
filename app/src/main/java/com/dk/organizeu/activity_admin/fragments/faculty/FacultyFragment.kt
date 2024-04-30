@@ -3,20 +3,19 @@ package com.dk.organizeu.activity_admin.fragments.faculty
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_admin.dialog.AddFacultyDialog
+import com.dk.organizeu.activity_admin.fragments.subjects.SubjectsFragment
 import com.dk.organizeu.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
-import com.dk.organizeu.firebase.key_mapping.FacultyCollection
+import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.EditDocumentListener
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
@@ -30,7 +29,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListener {
+class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListener,
+    AddDocumentListener, EditDocumentListener {
 
     companion object {
         fun newInstance() = FacultyFragment()
@@ -84,88 +84,23 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                 }
 
                 btnAddFaculty.setOnClickListener {
+                    // Create an instance of the AddFacultyDialog
+                    val dialogFragment = AddFacultyDialog(null)
                     try {
-                        // Extract the faculty name from the EditText
-                        val txtFacultyName = etFacultyName.text.toString().trim()
-                        // Clear any previous errors
-                        tlFacultyName.error = null
-
-                        // Validate faculty name that only contain upper, lower and `_`, `-` with minimum 2 to 20 length
-                        if (txtFacultyName != "" && txtFacultyName.matches("^[a-zA-Z_-]{2,20}$".toRegex())) {
-                            // If the name is valid, create a HashMap with the faculty name
-                            val inputHashMap = hashMapOf(FacultyCollection.FACULTY_NAME.displayName to txtFacultyName)
-                            // Insert the new faculty document into the database
-                            FacultyRepository.isFacultyDocumentExists(txtFacultyName){
-                                if(it)
-                                {
-                                    requireContext().showToast("Faculty Exists")
-                                    return@isFacultyDocumentExists
-                                }
-                                FacultyRepository.insertFacultyDocument(txtFacultyName, inputHashMap, {
-                                    try {
-                                        // If insertion is successful
-                                        facultyList.add(txtFacultyName)
-                                        facultyAdapter.notifyItemInserted(facultyAdapter.itemCount)
-                                        etFacultyName.setText("")
-                                        requireContext().showToast("Faculty Added")
-                                    } catch (e: Exception) {
-                                        // Log any unexpected exceptions that occur
-                                        Log.e(TAG, e.message.toString())
-                                        // Display an unexpected error message to the user
-                                        requireContext().unexpectedErrorMessagePrint(e)
-                                        throw e
-                                    }
-                                }, {
-                                    // Log any unexpected exceptions that occur
-                                    Log.e(TAG, it.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(it)
-                                    throw it
-                                })
-                            }
-
-                        } else {
-                            // If the faculty name is invalid, show an error message
-                            tlFacultyName.error = "Faculty name only allows alphabets, -, _, with a length of 2-20 characters"
-                            requireContext().showToast("Invalid Faculty Name")
-                        }
+                        // Show the dialog using childFragmentManager
+                        dialogFragment.isCancelable=false
+                        dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
-                        // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
-                        // Display an unexpected error message to the user
+                        // Log and handle any exceptions that occur while showing the dialog
+                        Log.e(SubjectsFragment.TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
 
-
-
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.options_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_select_all -> {
-                return true
-            }
-            R.id.action_inverse_select -> {
-                return true
-            }
-            R.id.action_unselect_all -> {
-                return true
-            }
-            R.id.action_delete_selection -> {
-                Toast.makeText(requireContext(), "Clicked Delete selection", Toast.LENGTH_SHORT).show()
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
 
 
     /**
@@ -234,6 +169,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
     }
 
     override fun onClick(position: Int) {
+
     }
 
     override fun onDeleteClick(position: Int) {
@@ -252,8 +188,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                         try {
                             if(it)
                             {
-                                viewModel.facultyList.removeAt(position)
-                                viewModel.facultyAdapter.notifyItemRemoved(position)
+                                viewModel.facultyAdapter.itemDelete(position)
                                 requireContext().showToast("Faculty deleted successfully.")
                             }
                             else{
@@ -278,7 +213,17 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        try {
+            // Create an instance of the AddFacultyDialog
+            val dialogFragment = AddFacultyDialog(viewModel.facultyList[position])
+            // Show the dialog using childFragmentManager
+            dialogFragment.isCancelable=false
+            dialogFragment.show(childFragmentManager, "customDialog")
+        } catch (e: Exception) {
+            // Log and handle any exceptions that occur while showing the dialog
+            Log.e(SubjectsFragment.TAG, e.message.toString())
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
     }
 
     fun deleteFaculty(facultyDocumentId: String, isDeleted:(Boolean) -> Unit)
@@ -301,4 +246,34 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
             throw e
         }
     }
+
+    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
+        try {
+            viewModel.facultyAdapter.itemInsert(documentId)
+            requireContext().showToast("Faculty Added")
+        } catch (e: Exception) {
+            Log.e(TAG,e.toString())
+            requireContext().showToast("Operation failed to add faculty")
+        }
+    }
+
+    override fun onEdited(
+        oldDocumentId: String,
+        newDocumentId: String,
+        documentData: HashMap<String,String>
+    ) {
+        try {
+
+            MainScope().launch(Dispatchers.Main)
+            {
+                viewModel.facultyAdapter.itemModify(oldDocumentId,newDocumentId)
+                requireContext().showToast("Faculty Update Successfully")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG,e.toString())
+            requireContext().showToast("Operation failed to Edit faculty")
+        }
+    }
+
+
 }

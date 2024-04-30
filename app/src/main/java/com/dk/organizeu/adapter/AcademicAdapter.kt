@@ -11,7 +11,7 @@ import com.dk.organizeu.databinding.ItemAcademicBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.AcademicPojo
 
-class AcademicAdapter(private val academicList: List<AcademicPojo>, private val listener: OnItemClickListener) :
+class AcademicAdapter(private val academicList: ArrayList<AcademicPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<AcademicAdapter.AcademicViewHolder>() {
     private lateinit var binding: ItemAcademicBinding
     companion object{
@@ -27,10 +27,10 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicList[position]
+            val currentItem = academicList[holder.adapterPosition]
             binding.academicPojo = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -40,6 +40,26 @@ class AcademicAdapter(private val academicList: List<AcademicPojo>, private val 
         return academicList.size
     }
 
+    fun itemRemove(position: Int)
+    {
+        val itemChangedCount = academicList.size - position
+        notifyItemRemoved(position)
+        academicList.removeAt(position)
+        notifyItemRangeChanged(position, itemChangedCount)
+    }
+
+    fun itemInsert(position: Int,academicPojo: AcademicPojo)
+    {
+        academicList.add(academicPojo)
+        notifyItemInserted(position)
+    }
+
+    fun itemModify(position: Int,academicPojo: AcademicPojo)
+    {
+        academicList.removeAt(position)
+        academicList.add(position,academicPojo)
+        notifyItemChanged(position)
+    }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

@@ -123,7 +123,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     try {
                         // Create an instance of the AddLessonDialog
                         val dialogFragment = AddLessonDialog(this@AddLessonFragment)
-
+                        dialogFragment.isCancelable=false
                         // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {

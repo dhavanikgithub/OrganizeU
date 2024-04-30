@@ -10,15 +10,19 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddRoomDialogLayoutBinding
+import com.dk.organizeu.enum_class.RoomType
 import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
-class AddRoomDialog : AppCompatDialogFragment() {
+class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
     private var roomAddListener: AddDocumentListener? = null
+    private var roomEditListener: EditDocumentListener? = null
     lateinit var binding: AddRoomDialogLayoutBinding
 
     companion object{
@@ -40,11 +44,27 @@ class AddRoomDialog : AppCompatDialogFragment() {
         try {
             // Set the roomAddListener if the parentFragment implements AddDocumentListener
             roomAddListener = parentFragment as? AddDocumentListener
-
+            roomEditListener = parentFragment as? EditDocumentListener
+            var title = "Add Room"
+            if(roomPojo!=null)
+            {
+                binding.etRoomName.setText(roomPojo.name)
+                binding.etRoomLocation.setText(roomPojo.location)
+                if(roomPojo.type.equals(RoomType.LAB))
+                {
+                    binding.chipLab.isChecked=true
+                }
+                else{
+                    binding.chipClass.isChecked=true
+                }
+                binding.btnAdd.text = "Edit"
+                binding.btnAdd.setIconResource(R.drawable.ic_edit)
+                title = "Edit Room"
+            }
             // Initialize an AlertDialog.Builder with the context of the current fragment
             builder = AlertDialog.Builder(requireContext())
             .setView(view) // Set the custom view for the dialog to the inflated view
-            .setTitle("Add Room") // Set the title of the dialog
+            .setTitle(title) // Set the title of the dialog
 
             binding.apply {
                 binding.btnClose.setOnClickListener {
@@ -53,17 +73,58 @@ class AddRoomDialog : AppCompatDialogFragment() {
 
                 btnAdd.setOnClickListener {
                     try {
-                        val roomName = etRoomName.text.toString().trim()
-                        val roomLocation = etRoomLocation.text.toString().trim()
+                        val roomName = etRoomName.text.toString().trim().replace(Regex("\\s+")," ")
+                        val roomLocation = etRoomLocation.text.toString().trim().replace(Regex("\\s+")," ")
                         // Check if roomName, roomLocation, and roomType are not empty and at least one type (lab or class) is selected
                         if(roomName!="" && roomLocation!="" && (chipLab.isChecked || chipClass.isChecked))
                         {
-
                             val roomData = hashMapOf(
                                 RoomCollection.LOCATION.displayName to roomLocation,
                                 RoomCollection.TYPE.displayName to if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
                             )
+                            if(!roomName.containsOnlyAllowedCharacters())
+                            {
+                                tlRoomName.error = "Room name only contain alphabets, number and - or  _"
+                                return@setOnClickListener
+                            }
+                            tlRoomName.error = null
+                            if(!roomLocation.containsOnlyAllowedCharacters())
+                            {
+                                tlRoomLocation.error = "Room location only contain alphabets, number and - or  _"
+                                return@setOnClickListener
+                            }
+                            tlRoomLocation.error = null
+                            if(roomPojo!=null)
+                            {
+                                RoomRepository.isRoomDocumentExists(roomPojo.name) { exists ->
+                                    try {
+                                        // If the room document already exists, dismiss the dialog and return
+                                        if(!exists)
+                                        {
+                                            requireContext().showToast("Room is not exists")
+                                            return@isRoomDocumentExists
+                                        }
 
+                                       RoomRepository.updateRoomDocument(roomPojo.name,roomName,roomData)
+                                       {
+                                           if(it)
+                                           {
+                                               roomEditListener!!.onEdited(roomPojo.name,roomName,roomData)
+                                               dismiss()
+                                           }
+                                           else{
+                                               requireContext().showToast("Room Data Update Failed")
+                                           }
+                                       }
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG,e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                    }
+                                }
+                                return@setOnClickListener
+                            }
                             // Check if the room document already exists
                             RoomRepository.isRoomDocumentExists(roomName) { exists ->
                                 try {
@@ -73,18 +134,6 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                         requireContext().showToast("Room is exists")
                                         return@isRoomDocumentExists
                                     }
-                                    if(!roomName.containsOnlyAllowedCharacters())
-                                    {
-                                        tlRoomName.error = "Room name only contain alphabets, number and - or  _"
-                                        return@isRoomDocumentExists
-                                    }
-                                    tlRoomName.error = null
-                                    if(!roomLocation.containsOnlyAllowedCharacters())
-                                    {
-                                        tlRoomLocation.error = "Room location only contain alphabets, number and - or  _"
-                                        return@isRoomDocumentExists
-                                    }
-                                    tlRoomLocation.error = null
                                     // If the room document does not exist, add it to the database
                                     addNewRoom(roomName,roomData)
                                 } catch (e: Exception) {
@@ -94,7 +143,6 @@ class AddRoomDialog : AppCompatDialogFragment() {
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
-
                         }
                         else{
                             requireContext().showToast("All fields are required")

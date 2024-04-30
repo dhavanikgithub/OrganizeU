@@ -6,6 +6,9 @@ import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FacultyRepository {
@@ -103,6 +106,30 @@ class FacultyRepository {
             } catch (e: Exception) {
                 Log.e(ClassRepository.TAG,e.message.toString())
                 throw e
+            }
+        }
+
+        fun updateFacultyDocument(oldDocumentId: String, newDocumentId: String, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = facultyDocumentRef(oldDocumentId)
+            val newDocRef = facultyDocumentRef(newDocumentId)
+
+            oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
+                val data = oldDocSnapshotTask.data
+                newDocRef.set(data!!).addOnSuccessListener {
+                    MainScope().launch(Dispatchers.IO)
+                    {
+                        try {
+                            deleteFacultyDocument(oldDocumentId)
+                            isRenamed(true)
+                        } catch (e: Exception) {
+                            isRenamed(false)
+                        }
+                    }
+                }.addOnFailureListener {
+                    isRenamed(false)
+                }
+            }.addOnFailureListener {
+                isRenamed(false)
             }
         }
     }

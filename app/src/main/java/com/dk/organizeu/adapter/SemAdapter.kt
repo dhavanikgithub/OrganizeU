@@ -27,10 +27,10 @@ class SemAdapter(private val academicSemList: ArrayList<String>,private val list
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicSemList[position]
+            val currentItem = academicSemList[holder.adapterPosition]
             binding.semesterNumber = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }

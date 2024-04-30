@@ -30,10 +30,10 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = roomPojoList[position]
+            val currentItem = roomPojoList[holder.adapterPosition]
             binding.roomPojo = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }

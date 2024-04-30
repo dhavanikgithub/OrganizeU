@@ -28,9 +28,9 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>,private val 
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicBatchList[position]
+            val currentItem = academicBatchList[holder.adapterPosition]
             binding.batch = currentItem
-            binding.position = position
+            binding.position = holder.adapterPosition
             binding.listener = listener
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())

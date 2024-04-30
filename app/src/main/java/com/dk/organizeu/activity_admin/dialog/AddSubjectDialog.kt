@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddSubjectDialogLayoutBinding
+import com.dk.organizeu.enum_class.SubjectType
 import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
@@ -20,9 +23,10 @@ import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
-class AddSubjectDialog() : AppCompatDialogFragment() {
+class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
     private var subjectAddListener: AddDocumentListener? = null
+    private var subjectEditListener: EditDocumentListener? =null
 
     private lateinit var binding: AddSubjectDialogLayoutBinding
     companion object{
@@ -44,11 +48,32 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
         try {
             // Set the subjectAddListener if the parentFragment implements AddDocumentListener
             subjectAddListener = parentFragment as? AddDocumentListener
-
+            subjectEditListener = parentFragment as? EditDocumentListener
+            var title = "Add Subject"
+            if(subjectPojo!=null)
+            {
+                binding.etSubjectName.setText(subjectPojo.name)
+                binding.etSubjectCode.setText(subjectPojo.code)
+                if(subjectPojo.type == SubjectType.PRACTICAL.name)
+                {
+                    binding.chipPractical.isChecked = true
+                }
+                else if(subjectPojo.type == SubjectType.THEORY.name)
+                {
+                    binding.chipTheory.isChecked = true
+                }
+                else{
+                    binding.chipPractical.isChecked = true
+                    binding.chipTheory.isChecked = true
+                }
+                binding.btnAdd.text = "Edit"
+                binding.btnAdd.setIconResource(R.drawable.ic_edit)
+                title = "Edit Subject"
+            }
             // Create an AlertDialog.Builder instance with the provided context, view, and title
             builder = AlertDialog.Builder(requireContext())
                 .setView(view)
-                .setTitle("Add Subject")
+                .setTitle(title)
 
             binding.apply {
                 btnClose.setOnClickListener {
@@ -57,8 +82,11 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                 }
                 btnAdd.setOnClickListener {
                     try {
+                        // get subject name from input field
+                        val subjectDocumentId = etSubjectName.text.toString().trim().replace(Regex("\\s+")," ")
+                        val subjectCode = etSubjectCode.text.toString().trim()
                         // Check if subject name, subject code, and at least one type (practical or theory) is selected
-                        if(etSubjectName.text.toString().trim()!="" && etSubjectCode.text.toString().trim()!="" && (chipPractical.isChecked || chipTheory.isChecked))
+                        if(subjectDocumentId!="" && subjectCode!="" && (chipPractical.isChecked || chipTheory.isChecked))
                         {
                             // Determine the subject type based on chip selection whether
                             // subject type is practical only , theory only or both practical and theory
@@ -70,16 +98,52 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                                 chipTheory.text.toString()
                             }
 
-                            // get subject name from input field
-                            val subjectDocumentId = etSubjectName.text.toString().trim()
-                            val subjectCode = etSubjectCode.text.toString().trim()
-
                             // hashmap dataset of subject
                             val subjectData = hashMapOf(
                                 SubjectCollection.CODE.displayName to subjectCode,
                                 SubjectCollection.TYPE.displayName to subjectType
                             )
+                            if(!subjectDocumentId.containsOnlyAllowedCharacters())
+                            {
+                                tlSubjectName.error = "Subject name only contain alphabets, number and - or  _ "
+                                return@setOnClickListener
+                            }
+                            tlSubjectName.error = null
+                            if(!subjectCode.isValidSubjectCode())
+                            {
+                                tlSubjectCode.error = "Subject code only contain alphabets, number and - or  _  with length 5 to 15"
+                                return@setOnClickListener
+                            }
+                            tlSubjectCode.error = null
 
+                            if(subjectPojo!=null)
+                            {
+                                // Check if the subject document already exists
+                                isSubjectDocumentExists(subjectPojo.name, subjectPojo.code) { exists ->
+                                    try {
+                                        if(!exists)
+                                        {
+                                            requireContext().showToast("Subject is not exists")
+                                            return@isSubjectDocumentExists
+                                        }
+
+                                        SubjectRepository.updateSubjectDocument(subjectPojo.name,subjectDocumentId,subjectData){
+                                            if(it)
+                                            {
+                                                subjectEditListener!!.onEdited(subjectPojo.name,subjectDocumentId,subjectData)
+                                                dismiss()
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG,e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        throw e
+                                    }
+                                }
+                                return@setOnClickListener
+                            }
                             // Check if the subject document already exists
                             isSubjectDocumentExists(subjectDocumentId, subjectCode) { exists ->
                                 try {
@@ -88,18 +152,7 @@ class AddSubjectDialog() : AppCompatDialogFragment() {
                                         requireContext().showToast("Subject is exists")
                                         return@isSubjectDocumentExists
                                     }
-                                    if(!subjectDocumentId.containsOnlyAllowedCharacters())
-                                    {
-                                        tlSubjectName.error = "Subject name only contain alphabets, number and - or  _ "
-                                        return@isSubjectDocumentExists
-                                    }
-                                    tlSubjectName.error = null
-                                    if(!subjectCode.isValidSubjectCode())
-                                    {
-                                        tlSubjectCode.error = "Subject code only contain alphabets, number and - or  _  with length 5 to 15"
-                                        return@isSubjectDocumentExists
-                                    }
-                                    tlSubjectCode.error = null
+
                                     // Add new subject if the subject document does not exist
                                     addNewSubject(subjectDocumentId,subjectData)
                                 } catch (e: Exception) {

@@ -100,7 +100,7 @@ class AdminActivity : AppCompatActivity() {
                             // Check if the academic fragment is not already selected
                             if (!isDrawerMenuSelect(R.id.nav_academic)) {
                                 // Clear the back stack up to academicFragment and navigate to the academic fragment
-                                navController.popBackStack(R.id.academicFragment, false)
+                                navController.popBackStack(R.id.academicFragment, true)
                                 navController.navigate(R.id.academicFragment)
                                 isMenuSelect = true
                             }

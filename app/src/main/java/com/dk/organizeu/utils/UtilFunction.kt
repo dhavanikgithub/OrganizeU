@@ -50,7 +50,7 @@ class UtilFunction {
         }
 
         fun String.containsOnlyAllowedCharacters(): Boolean {
-            val regex = Regex("[^a-zA-Z0-9-_]") // Regular expression to match any character except letters, digits, '-', and '_'
+            val regex = Regex("[^a-zA-Z0-9-_\\s]") // Regular expression to match any character except letters, digits, '-', and '_'
             return !regex.containsMatchIn(this)
         }
 

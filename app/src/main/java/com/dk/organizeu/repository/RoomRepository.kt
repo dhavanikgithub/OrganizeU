@@ -8,6 +8,9 @@ import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RoomRepository {
@@ -142,6 +145,34 @@ class RoomRepository {
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
+            }
+        }
+
+        fun updateRoomDocument(oldDocumentId: String, newDocumentId: String, roomData:HashMap<String,String>, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = roomDocumentRef(oldDocumentId)
+            val newDocRef = roomDocumentRef(newDocumentId)
+
+            oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
+                val data = oldDocSnapshotTask.data
+                newDocRef.set(data!!).addOnSuccessListener {
+                    try {
+                        newDocRef.update(roomData as Map<String, Any>).addOnSuccessListener {
+                            MainScope().launch(Dispatchers.IO)
+                            {
+                                deleteRoomDocument(oldDocumentId)
+                                isRenamed(true)
+                            }
+                        }.addOnFailureListener {
+                            isRenamed(false)
+                        }
+                    } catch (e: Exception) {
+                        isRenamed(false)
+                    }
+                }.addOnFailureListener {
+                    isRenamed(false)
+                }
+            }.addOnFailureListener {
+                isRenamed(false)
             }
         }
     }
