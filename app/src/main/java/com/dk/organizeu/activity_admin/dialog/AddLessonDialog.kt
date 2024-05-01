@@ -17,14 +17,29 @@ import com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonF
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
 import com.dk.organizeu.enum_class.RoomType
 import com.dk.organizeu.enum_class.Weekday
-import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.FacultyPojo.Companion.toFacultyPojo
+import com.dk.organizeu.pojo.LessonPojo
+import com.dk.organizeu.pojo.RoomPojo
+import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
+import com.dk.organizeu.pojo.SubjectPojo
+import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
+import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
+import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.BatchRepository
+import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.getRoomDocumentsByField
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.SubjectRepository
+import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.TimeConverter.Companion.convert12HourTo24Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.convertTo12HourFormat
 import com.dk.organizeu.utils.UtilFunction
@@ -247,13 +262,30 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     MainScope().launch(Dispatchers.IO) {
                         AddLessonFragment.apply {
                             try {
-                                // Get the IDs of the selected subject and room
-                                val subjectDocumentId = selectedSubject!!
-                                val roomDocumentId = selectedRoom!!
+                                val allSubjectDocuments = SubjectRepository.getAllSubjectDocuments()
+                                var subjectData:SubjectPojo?=null
+                                for(doc in allSubjectDocuments)
+                                {
+                                    val subjectPojo = doc.toSubjectPojo()
+                                    if(subjectPojo.name == selectedSubject!!)
+                                    {
+                                        subjectData = subjectPojo
+                                        break
+                                    }
+                                }
 
-                                // Retrieve data objects for the selected subject and room from repositories
-                                val subjectData = SubjectRepository.subjectDocumentToSubjectObj(SubjectRepository.getSubjectDocumentById(subjectDocumentId)!!)
-                                val roomData = RoomRepository.roomDocumentToRoomObj(RoomRepository.getRoomDocumentById(roomDocumentId)!!)
+                                val allRoomDocuments = RoomRepository.getAllRoomDocument()
+                                var roomData:RoomPojo?  = null
+                                for(doc in allRoomDocuments)
+                                {
+                                    val roomPojo = doc.toRoomPojo()
+                                    if(roomPojo.name == selectedRoom!!)
+                                    {
+                                        roomData = roomPojo
+                                        break
+                                    }
+                                }
+
 
                                 // Split the selected lesson time into start and end times
                                 // input example 10:00 AM - 11:00 AM
@@ -264,57 +296,94 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                 // Generate unique request codes for muting, unmuting, and notifications
                                 val muteRequestCode = System.currentTimeMillis().toInt()
                                 delay(100)
-                                val unmuteRequestCode = System.currentTimeMillis().toInt()
+                                val unMuteRequestCode = System.currentTimeMillis().toInt()
                                 delay(100)
                                 val notificationCode = System.currentTimeMillis().toInt()
 
-                                // Create a data set containing information about the lesson
-                                val dataSet = hashMapOf(
-                                    WeekdayCollection.CLASS_NAME.displayName to className,
-                                    WeekdayCollection.SUBJECT_NAME.displayName to selectedSubject!!,
-                                    WeekdayCollection.SUBJECT_CODE.displayName to subjectData.code,
-                                    WeekdayCollection.LOCATION.displayName to "$selectedRoom - ${roomData.location}",
-                                    WeekdayCollection.START_TIME.displayName to selectedLessonTime[0].convert12HourTo24Hour(),
-                                    WeekdayCollection.END_TIME.displayName to selectedLessonTime[1].convert12HourTo24Hour(),
-                                    WeekdayCollection.FACULTY_NAME.displayName to selectedFaculty!!,
-                                    WeekdayCollection.TYPE.displayName to selectedLessonType!!,
-                                    WeekdayCollection.BATCH.displayName to selectedBatch.toString(),
-                                    WeekdayCollection.DURATION.displayName to UtilFunction.calculateLessonDuration(
-                                        selectedLessonTime[0],
-                                        selectedLessonTime[1]
-                                    ),
-                                    WeekdayCollection.MUTE_REQUEST_CODE.displayName to muteRequestCode.toString(),
-                                    WeekdayCollection.UNMUTE_REQUEST_CODE.displayName to unmuteRequestCode.toString(),
-                                    WeekdayCollection.NOTIFICATION_CODE.displayName to notificationCode.toString()
+                                val newLessonPojo = LessonPojo(
+                                    className = className,
+                                    subjectName = selectedSubject!!,
+                                    subjectCode = subjectData!!.code,
+                                    location = "$selectedRoom - ${roomData!!.location}",
+                                    startTime = selectedLessonTime[0].convert12HourTo24Hour(),
+                                    endTime = selectedLessonTime[1].convert12HourTo24Hour(),
+                                    facultyName = selectedFaculty!!,
+                                    type = selectedLessonType!!,
+                                    batch = selectedBatch.toString(),
+                                    duration = UtilFunction.calculateLessonDuration(selectedLessonTime[0], selectedLessonTime[1]),
+                                    muteRequestCode = muteRequestCode,
+                                    unMuteRequestCode = unMuteRequestCode,
+                                    notificationCode = notificationCode
                                 )
 
-                                // Get the IDs for the academic year, semester, class, and timetable
-                                val academicDocumentId = "${academicYear}_${academicType}"
-                                val semesterDocumentId = semesterNumber
-                                val classDocumentId = className
-                                val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab)
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicId:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(academicType==academicPojo.type && academicYear==academicPojo.year)
+                                    {
+                                        academicId = academicPojo.id
+                                        break
+                                    }
+                                }
+                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allsemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == semesterNumber!!)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
+
+                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                                var classId:String? = null
+                                for(doc in allClassDocuments)
+                                {
+                                    val classPojo = doc.toClassPojo()
+                                    if(classPojo.name == className!!)
+                                    {
+                                        classId = classPojo.id
+                                        break
+                                    }
+                                }
+
+                                val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
+                                var timetableData:TimetablePojo? = null
+                                for(doc in allTimetableDocuments)
+                                {
+                                    val timetablePojo = doc.toTimetablePojo()
+                                    if(timetablePojo.name == Weekday.getWeekdayNameByNumber(selectedTab))
+                                    {
+                                        timetableData = timetablePojo
+                                        break
+                                    }
+                                }
+                                if(timetableData==null)
+                                {
+                                    timetableData = TimetablePojo(name = Weekday.getWeekdayNameByNumber(selectedTab))
+                                    TimeTableRepository.insertTimeTableDocument(academicId,semId,classId,timetableData)
+                                }
 
 
                                 // Check if there's a conflict with existing lesson documents
                                 LessonRepository.isLessonDocumentConflict(
-                                    academicDocumentId,
-                                    semesterDocumentId,
-                                    classDocumentId,
-                                    timetableDocumentId,
+                                    academicId,
+                                    semId,
+                                    classId,
+                                    timetableData.id,
                                     selectedLessonTime[0],
                                     selectedLessonTime[1],
                                     selectedFaculty!!,
-                                    "$selectedRoom - ${roomData.location}"
+                                    newLessonPojo.location
                                 ) {
                                     try {
                                         if (!it) {
                                             // If there's no conflict, insert the lesson document
-                                            LessonRepository.insertLessonDocument(
-                                                academicDocumentId,
-                                                semesterDocumentId,
-                                                classDocumentId,
-                                                timetableDocumentId,
-                                                dataSet,
+                                            LessonRepository.insertLessonDocument(academicId, semId, classId, timetableData, newLessonPojo,
                                                 {
                                                     // Invoke the onAddLesson listener callback
                                                     listener.onAddLesson()
@@ -388,30 +457,28 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     try {
                         // Clear the subject list to start fresh
                         subjectList.clear()
-                        if(academicYear!=null && academicType!=null && semesterNumber!=null && className!=null){
 
-                            // Retrieve all subject documents from the repository
-                            val documents = SubjectRepository.getAllSubjectDocuments()
+                        // Retrieve all subject documents from the repository
+                        val documents = SubjectRepository.getAllSubjectDocuments()
 
-                            // Iterate through the documents and add them to the subject list
-                            for(document in documents)
-                            {
-                                subjectList.add(document.id)
-                            }
-                            // Update the UI on the main thread
-                            withContext(Dispatchers.Main)
-                            {
-                                try {
-                                    // Create an ArrayAdapter for the subject drop-down
-                                    subjectAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,subjectList)
-                                    // Set the adapter
-                                    actSubject.setAdapter(subjectAdapter)
-                                } catch (e: Exception) {
-                                    // Log any exceptions that occur
-                                    Log.e(TAG,e.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(e)
-                                }
+                        // Iterate through the documents and add them to the subject list
+                        for(document in documents)
+                        {
+                            subjectList.add(document.toSemesterPojo().name)
+                        }
+                        // Update the UI on the main thread
+                        withContext(Dispatchers.Main)
+                        {
+                            try {
+                                // Create an ArrayAdapter for the subject drop-down
+                                subjectAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,subjectList)
+                                // Set the adapter
+                                actSubject.setAdapter(subjectAdapter)
+                            } catch (e: Exception) {
+                                // Log any exceptions that occur
+                                Log.e(TAG,e.message.toString())
+                                // Display an unexpected error message to the user
+                                requireContext().unexpectedErrorMessagePrint(e)
                             }
                         }
                     } catch (e: Exception) {
@@ -442,7 +509,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     // Iterate through the documents and add them to the faculty list
                     for(document in documents)
                     {
-                        facultyList.add(document.id)
+                        facultyList.add(document.toFacultyPojo().name)
                     }
                     // Update the UI on the main thread
                     withContext(Dispatchers.Main)
@@ -482,21 +549,52 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     // Clear the batch list to start fresh
                     batchList.clear()
                     AddLessonFragment.apply {
-                        // Retrieve academic, semester, and class document IDs and make local variable of that
-                        val academicDocumentId = "${academicYear}_$academicType"
-                        val semesterDocumentId = semesterNumber
-                        val classDocumentId = className
+
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicType==academicPojo.type && academicYear==academicPojo.year)
+                            {
+                                academicId = academicPojo.id
+                                break
+                            }
+                        }
+                        val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                        var semId:String? = null
+                        for(doc in allsemesterDocuments)
+                        {
+                            val semesterPojo = doc.toSemesterPojo()
+                            if(semesterPojo.name == semesterNumber!!)
+                            {
+                                semId = semesterPojo.id
+                                break
+                            }
+                        }
+
+                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                        var classId:String? = null
+                        for(doc in allClassDocuments)
+                        {
+                            val classPojo = doc.toClassPojo()
+                            if(classPojo.name == className!!)
+                            {
+                                classId = classPojo.id
+                                break
+                            }
+                        }
 
 
-                        if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null)
+                        if(classId!=null)
                         {
                             // Retrieve all batch documents from the repository
-                            val documents = BatchRepository.getAllBatchDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
+                            val documents = BatchRepository.getAllBatchDocuments(academicId, semId, classId)
 
                             // Iterate through the documents and add them to the batch list
                             for (document in documents)
                             {
-                                batchList.add(document.id)
+                                batchList.add(document.toBatchPojo().name)
                             }
                         }
                         // Update the UI on the main thread
@@ -545,7 +643,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     // Iterate through the room documents and add them to the room list
                     for(document in documents)
                     {
-                        roomList.add(document.id)
+                        roomList.add(document.toRoomPojo().name)
                     }
                     withContext(Dispatchers.Main)
                     {

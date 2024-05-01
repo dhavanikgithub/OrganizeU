@@ -11,18 +11,18 @@ import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddRoomDialogLayoutBinding
 import com.dk.organizeu.enum_class.RoomType
-import com.dk.organizeu.firebase.key_mapping.RoomCollection
-import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.RoomDocumentListener
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
-class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
-    private var roomAddListener: AddDocumentListener? = null
-    private var roomEditListener: EditDocumentListener? = null
+class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialogFragment() {
+    private var roomDocumentListener: RoomDocumentListener? = null
     lateinit var binding: AddRoomDialogLayoutBinding
 
     companion object{
@@ -43,14 +43,13 @@ class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
 
         try {
             // Set the roomAddListener if the parentFragment implements AddDocumentListener
-            roomAddListener = parentFragment as? AddDocumentListener
-            roomEditListener = parentFragment as? EditDocumentListener
+            roomDocumentListener = parentFragment as? RoomDocumentListener
             var title = "Add Room"
             if(roomPojo!=null)
             {
                 binding.etRoomName.setText(roomPojo.name)
                 binding.etRoomLocation.setText(roomPojo.location)
-                if(roomPojo.type.equals(RoomType.LAB))
+                if(roomPojo.type.equals(RoomType.LAB.name))
                 {
                     binding.chipLab.isChecked=true
                 }
@@ -75,13 +74,10 @@ class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
                     try {
                         val roomName = etRoomName.text.toString().trim().replace(Regex("\\s+")," ")
                         val roomLocation = etRoomLocation.text.toString().trim().replace(Regex("\\s+")," ")
+                        val roomType = if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
                         // Check if roomName, roomLocation, and roomType are not empty and at least one type (lab or class) is selected
                         if(roomName!="" && roomLocation!="" && (chipLab.isChecked || chipClass.isChecked))
                         {
-                            val roomData = hashMapOf(
-                                RoomCollection.LOCATION.displayName to roomLocation,
-                                RoomCollection.TYPE.displayName to if(chipLab.isChecked) chipLab.text.toString() else chipClass.text.toString()
-                            )
                             if(!roomName.containsOnlyAllowedCharacters())
                             {
                                 tlRoomName.error = "Room name only contain alphabets, number and - or  _"
@@ -96,21 +92,28 @@ class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
                             tlRoomLocation.error = null
                             if(roomPojo!=null)
                             {
-                                RoomRepository.isRoomDocumentExists(roomPojo.name) { exists ->
+                                roomPojo.name = roomName
+                                roomPojo.location = roomLocation
+                                roomPojo.type = roomType
+                                RoomRepository.isRoomDocumentExistsById(roomPojo.id) { exists ->
                                     try {
                                         // If the room document already exists, dismiss the dialog and return
                                         if(!exists)
                                         {
                                             requireContext().showToast("Room is not exists")
-                                            return@isRoomDocumentExists
+                                            return@isRoomDocumentExistsById
                                         }
 
-                                       RoomRepository.updateRoomDocument(roomPojo.name,roomName,roomData)
+                                       RoomRepository.updateRoomDocument(roomPojo)
                                        {
                                            if(it)
                                            {
-                                               roomEditListener!!.onEdited(roomPojo.name,roomName,roomData)
-                                               dismiss()
+                                               MainScope().launch(Dispatchers.Main)
+                                               {
+                                                   roomDocumentListener!!.onEdited(roomPojo,position)
+                                                   dismiss()
+                                               }
+
                                            }
                                            else{
                                                requireContext().showToast("Room Data Update Failed")
@@ -125,17 +128,18 @@ class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
                                 }
                                 return@setOnClickListener
                             }
+                            val newRoomPojo = RoomPojo(name = roomName, location = roomLocation, type = roomType)
                             // Check if the room document already exists
-                            RoomRepository.isRoomDocumentExists(roomName) { exists ->
+                            RoomRepository.isRoomDocumentExistsByName(newRoomPojo.name) { exists ->
                                 try {
                                     // If the room document already exists, dismiss the dialog and return
                                     if(exists)
                                     {
                                         requireContext().showToast("Room is exists")
-                                        return@isRoomDocumentExists
+                                        return@isRoomDocumentExistsByName
                                     }
                                     // If the room document does not exist, add it to the database
-                                    addNewRoom(roomName,roomData)
+                                    addNewRoom(newRoomPojo)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
                                     Log.e(TAG,e.message.toString())
@@ -182,15 +186,15 @@ class AddRoomDialog(val roomPojo: RoomPojo?) : AppCompatDialogFragment() {
      * @param roomDocumentId The ID of the room document.
      * @param roomData A HashMap containing room data.
      */
-    private fun addNewRoom(roomDocumentId:String, roomData:HashMap<String,String>)
+    private fun addNewRoom(roomPojo: RoomPojo)
     {
         // Insert the room document into the database by using repository insert method
-        RoomRepository.insertRoomDocument(roomDocumentId,roomData,{
+        RoomRepository.insertRoomDocument(roomPojo,{
             // Success callback
             try {
-                Log.d("TAG", "Room document added successfully with ID: $roomDocumentId")
+                Log.d("TAG", "Room document added successfully with ID: ${roomPojo.id}")
                 // Notify the listener about the addition of the room document
-                roomAddListener?.onAdded(roomDocumentId,roomData)
+                roomDocumentListener?.onAdded(roomPojo)
 
                 dismiss() // Dismiss dialog
             } catch (e: Exception) {

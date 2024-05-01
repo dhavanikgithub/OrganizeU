@@ -2,6 +2,7 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
+import com.dk.organizeu.pojo.SemesterPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.academicDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -20,9 +21,9 @@ class SemesterRepository {
             }
         }
 
-        fun semesterDocumentRef(academicDocumentId: String, semesterDocumentId:String): DocumentReference {
+        fun semesterDocumentRef(academicDocumentId: String, id:String): DocumentReference {
             try {
-                return semesterCollectionRef(academicDocumentId).document(semesterDocumentId)
+                return semesterCollectionRef(academicDocumentId).document(id)
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -38,11 +39,11 @@ class SemesterRepository {
             }
         }
 
-        suspend fun deleteSemesterDocument(academicDocumentId: String,semesterDocumentId: String)
+        suspend fun deleteSemesterDocument(academicDocumentId: String, id: String)
         {
             try {
-                ClassRepository.deleteAllClassDocuments(academicDocumentId, semesterDocumentId)
-                semesterDocumentRef(academicDocumentId, semesterDocumentId).delete().await()
+                ClassRepository.deleteAllClassDocuments(academicDocumentId, id)
+                semesterDocumentRef(academicDocumentId, id).delete().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -63,15 +64,14 @@ class SemesterRepository {
 
         fun insertSemesterDocuments(
             academicDocumentId: String,
-            semesterDocumentId:String,
-            inputHashMap:HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            semesterPojo: SemesterPojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
         ){
             try{
-                semesterDocumentRef(academicDocumentId,semesterDocumentId).set(inputHashMap)
+                semesterDocumentRef(academicDocumentId,semesterPojo.id).set(semesterPojo)
                     .addOnSuccessListener {
-                        successCallback(inputHashMap)
+                        successCallback(true)
                     }
                     .addOnFailureListener {
                         failureCallback(it)
@@ -83,16 +83,35 @@ class SemesterRepository {
             }
         }
 
-        fun isSemesterDocumentExists(academicDocumentId: String,semesterDocumentId: String, callback: (Boolean) -> Unit) {
+        fun isSemesterDocumentExistsById(academicDocumentId: String, id: String, isExists: (Boolean) -> Unit) {
             try {
-                semesterDocumentRef(academicDocumentId, semesterDocumentId)
+                semesterDocumentRef(academicDocumentId, id)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
+                        isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
                         Log.w("TAG", "Error checking document existence", exception)
-                        callback(false) // Assume document doesn't exist if there's an error
+                        isExists(true) // Assume document doesn't exist if there's an error
+                    }
+            } catch (e: Exception) {
+                Log.e(ClassRepository.TAG,e.message.toString())
+                throw e
+            }
+        }
+
+
+        fun isSemesterDocumentExistsByName(academicDocumentId: String, name: String, isExists: (Boolean) -> Unit) {
+            try {
+                semesterCollectionRef(academicDocumentId)
+                    .whereEqualTo("name",name)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        isExists(!documentSnapshot.isEmpty)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
                 Log.e(ClassRepository.TAG,e.message.toString())

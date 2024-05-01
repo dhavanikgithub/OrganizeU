@@ -12,21 +12,18 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddSubjectDialogLayoutBinding
 import com.dk.organizeu.enum_class.SubjectType
 import com.dk.organizeu.firebase.key_mapping.SubjectCollection
-import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.SubjectDocumentListener
 import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.repository.SubjectRepository
-import com.dk.organizeu.repository.SubjectRepository.Companion.isSubjectDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.isValidSubjectCode
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
-class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment() {
+class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
-    private var subjectAddListener: AddDocumentListener? = null
-    private var subjectEditListener: EditDocumentListener? =null
+    private var subjectDocumentListener: SubjectDocumentListener? = null
 
     private lateinit var binding: AddSubjectDialogLayoutBinding
     companion object{
@@ -47,8 +44,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment(
         var builder: AlertDialog.Builder?=null
         try {
             // Set the subjectAddListener if the parentFragment implements AddDocumentListener
-            subjectAddListener = parentFragment as? AddDocumentListener
-            subjectEditListener = parentFragment as? EditDocumentListener
+            subjectDocumentListener = parentFragment as? SubjectDocumentListener
             var title = "Add Subject"
             if(subjectPojo!=null)
             {
@@ -119,21 +115,32 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment(
                             if(subjectPojo!=null)
                             {
                                 // Check if the subject document already exists
-                                isSubjectDocumentExists(subjectPojo.name, subjectPojo.code) { exists ->
+                                SubjectRepository.isSubjectDocumentExistsById(subjectPojo.id) { exists ->
                                     try {
                                         if(!exists)
                                         {
                                             requireContext().showToast("Subject is not exists")
-                                            return@isSubjectDocumentExists
+                                            return@isSubjectDocumentExistsById
                                         }
+                                        subjectPojo.name = subjectDocumentId
+                                        subjectPojo.code = subjectCode
+                                        subjectPojo.type = subjectType
 
-                                        SubjectRepository.updateSubjectDocument(subjectPojo.name,subjectDocumentId,subjectData){
+                                        SubjectRepository.isSubjectDocumentExistsByNameAndCode(subjectPojo){
                                             if(it)
                                             {
-                                                subjectEditListener!!.onEdited(subjectPojo.name,subjectDocumentId,subjectData)
-                                                dismiss()
+                                                requireContext().showToast("Subject name and code can't duplicate")
+                                                return@isSubjectDocumentExistsByNameAndCode
+                                            }
+                                            SubjectRepository.updateSubjectDocument(subjectPojo){isUpdated ->
+                                                if(isUpdated)
+                                                {
+                                                    subjectDocumentListener!!.onEdited(subjectPojo,position)
+                                                    dismiss()
+                                                }
                                             }
                                         }
+
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
                                         Log.e(TAG,e.message.toString())
@@ -144,17 +151,22 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment(
                                 }
                                 return@setOnClickListener
                             }
+                            val newSubjectPojo = SubjectPojo(
+                                name = subjectDocumentId,
+                                code = subjectCode,
+                                type = subjectType
+                            )
                             // Check if the subject document already exists
-                            isSubjectDocumentExists(subjectDocumentId, subjectCode) { exists ->
+                            SubjectRepository.isSubjectDocumentExistsByNameAndCode(newSubjectPojo) { exists ->
                                 try {
                                     if(exists)
                                     {
                                         requireContext().showToast("Subject is exists")
-                                        return@isSubjectDocumentExists
+                                        return@isSubjectDocumentExistsByNameAndCode
                                     }
 
                                     // Add new subject if the subject document does not exist
-                                    addNewSubject(subjectDocumentId,subjectData)
+                                    addNewSubject(newSubjectPojo)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
                                     Log.e(TAG,e.message.toString())
@@ -198,14 +210,14 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?) : AppCompatDialogFragment(
      * @param subjectDocumentId The ID of the subject document to be inserted.
      * @param subjectData The data of the subject document to be inserted.
      */
-    private fun addNewSubject(subjectDocumentId:String, subjectData:HashMap<String,String>)
+    private fun addNewSubject(subjectPojo: SubjectPojo)
     {
-        SubjectRepository.insertSubjectDocument(subjectDocumentId,subjectData,{
+        SubjectRepository.insertSubjectDocument(subjectPojo,{
             // Success Callback
             try {
-                Log.d("TAG", "Subject document added successfully with ID: $subjectDocumentId")
+                Log.d("TAG", "Subject document added successfully with ID: ${subjectPojo.id}")
                 // Notify the listener about the addition of the subject document
-                subjectAddListener?.onAdded(subjectDocumentId,subjectData)
+                subjectDocumentListener?.onAdded(subjectPojo)
                 // Dismiss the dialog after adding the subject document
                 dismiss()
             } catch (e: Exception) {

@@ -2,6 +2,7 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
+import com.dk.organizeu.pojo.AcademicPojo
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -42,32 +43,12 @@ class AcademicRepository {
             }
         }
 
-        fun insertAcademicDocuments(
-            academicDocumentId: String,
-            inputHashMap:HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
-            failureCallback: (Exception) -> Unit
-        ){
-            try{
-                academicDocumentRef(academicDocumentId).set(inputHashMap)
-                    .addOnSuccessListener {
-                        successCallback(inputHashMap)
-                    }
-                    .addOnFailureListener {
-                        failureCallback(it)
-                    }
 
-            }
-            catch (e:java.lang.Exception)
-            {
-                failureCallback(e)
-            }
-        }
 
-        suspend fun isAcademicDocumentExists(academicDocumentId: String): Boolean {
+        suspend fun isAcademicDocumentExists(id: String): Boolean {
             try {
                 return suspendCoroutine { continuation ->
-                    academicDocumentRef(academicDocumentId).get()
+                    academicDocumentRef(id).get()
                         .addOnSuccessListener { documentSnapshot ->
                             continuation.resume(documentSnapshot.exists())
                         }
@@ -82,15 +63,36 @@ class AcademicRepository {
             }
         }
 
-        fun isAcademicDocumentExists(academicDocumentId: String, callback: (Boolean) -> Unit) {
+        fun insertAcademicDocuments(
+            academicPojo: AcademicPojo,
+            successCallback: (Boolean) -> Unit,
+            failureCallback: (Exception) -> Unit
+        ){
+            try{
+                academicDocumentRef(academicPojo.id).set(academicPojo)
+                    .addOnSuccessListener {
+                        successCallback(true)
+                    }
+                    .addOnFailureListener {
+                        failureCallback(it)
+                    }
+
+            }
+            catch (e:java.lang.Exception)
+            {
+                failureCallback(e)
+            }
+        }
+
+        fun isAcademicDocumentExistsById(id: String, isExists: (Boolean) -> Unit) {
             try {
-                academicDocumentRef(academicDocumentId).get()
+                academicDocumentRef(id).get()
                     .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
+                        isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
                         Log.w("TAG", "Error checking academic document existence", exception)
-                        callback(false)
+                        isExists(false)
                     }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
@@ -98,10 +100,41 @@ class AcademicRepository {
             }
         }
 
-        suspend fun deleteAcademicDocument(academicDocumentId: String){
+        fun isAcademicDocumentExistsByYearAndType(academicPojo: AcademicPojo, isExists: (Boolean) -> Unit) {
             try {
-                SemesterRepository.deleteAllSemesterDocuments(academicDocumentId)
-                academicDocumentRef(academicDocumentId).delete().await()
+                academicCollectionRef()
+                    .whereEqualTo("year",academicPojo.year)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        if(documentSnapshot.isEmpty)
+                        {
+                            academicCollectionRef()
+                                .whereEqualTo("type",academicPojo)
+                                .get()
+                                .addOnSuccessListener {
+                                    isExists(!it.isEmpty)
+                                }.addOnFailureListener {
+                                    isExists(true)
+                                }
+                        }
+                        else{
+                            isExists(true)
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking academic document existence", exception)
+                        isExists(false)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteAcademicDocument(id: String){
+            try {
+                SemesterRepository.deleteAllSemesterDocuments(id)
+                academicDocumentRef(id).delete().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e

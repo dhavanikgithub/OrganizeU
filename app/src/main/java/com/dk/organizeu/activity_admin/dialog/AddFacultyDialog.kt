@@ -11,18 +11,16 @@ import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
 import com.dk.organizeu.databinding.AddFacultyDialogLayoutBinding
-import com.dk.organizeu.firebase.key_mapping.FacultyCollection
-import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.FacultyDocumentListener
+import com.dk.organizeu.pojo.FacultyPojo
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
-class AddFacultyDialog(val facultyName:String?) : AppCompatDialogFragment() {
+class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
-    private var facultyAddListener: AddDocumentListener? = null
-    private var facultyEditListener: EditDocumentListener? = null
+    private var facultyDocumentListener: FacultyDocumentListener? = null
 
     private lateinit var binding: AddFacultyDialogLayoutBinding
     companion object{
@@ -43,14 +41,13 @@ class AddFacultyDialog(val facultyName:String?) : AppCompatDialogFragment() {
         var builder: AlertDialog.Builder?=null
         try {
             // Set the facultyAddListener if the parentFragment implements AddDocumentListener
-            facultyAddListener = parentFragment as? AddDocumentListener
-            facultyEditListener = parentFragment as? EditDocumentListener
+            facultyDocumentListener = parentFragment as? FacultyDocumentListener
             var title = "Add Faculty"
-            if(facultyName!=null)
+            if(facultyPojo!=null)
             {
                 binding.btnAdd.text = "Edit"
                 binding.btnAdd.setIconResource(R.drawable.ic_edit)
-                binding.etFacultyName.setText(facultyName)
+                binding.etFacultyName.setText(facultyPojo.name)
                 title = "Edit Faculty"
             }
             // Create an AlertDialog.Builder instance with the provided context, view, and title
@@ -67,49 +64,45 @@ class AddFacultyDialog(val facultyName:String?) : AppCompatDialogFragment() {
                 btnAdd.setOnClickListener {
                     try {
                         // get faculty name from input field
-                        val facultyDocumentId = etFacultyName.text.toString().trim().replace(Regex("\\s+")," ")
+                        val facultyName = etFacultyName.text.toString().trim().replace(Regex("\\s+")," ")
 
-                        if(!facultyDocumentId.matches("^[\\sa-zA-Z_-]{2,20}$".toRegex()))
+                        if(!facultyName.matches("^[\\sa-zA-Z_-]{2,20}$".toRegex()))
                         {
                             tlFacultyName.error = "Faculty name only allows alphabets, -, _, with a length of 2-20 characters"
                             return@setOnClickListener
                         }
 
-                        // hashmap dataset of faculty
-                        val facultyData = hashMapOf(
-                            FacultyCollection.FACULTY_NAME.displayName to facultyDocumentId
-                        )
-
                         tlFacultyName.error = null
-                        if(facultyName!=null){
-                            FacultyRepository.isFacultyDocumentExists(facultyName) { exists ->
+                        if(facultyPojo!=null){
+                            FacultyRepository.isFacultyDocumentExistsById(facultyPojo.id) { exists ->
                                 if(!exists)
                                 {
                                     requireContext().showToast("Faculty is not exist")
-                                    return@isFacultyDocumentExists
+                                    return@isFacultyDocumentExistsById
                                 }
-
-                                FacultyRepository.updateFacultyDocument(facultyName,facultyDocumentId) {
+                                facultyPojo.name = facultyName
+                                FacultyRepository.updateFacultyDocument(facultyPojo) {
                                     if(it)
                                     {
-                                        facultyEditListener!!.onEdited(facultyName,facultyDocumentId,facultyData)
+                                        facultyDocumentListener!!.onEdited(facultyPojo)
                                         dismiss()
                                     }
                                 }
                             }
                             return@setOnClickListener
                         }
+                        val newFacultyPojo = FacultyPojo(name = facultyName)
 
                         // Check if the faculty document already exists
-                        FacultyRepository.isFacultyDocumentExists(facultyDocumentId) { exists ->
+                        FacultyRepository.isFacultyDocumentExistsByName(newFacultyPojo.name) { exists ->
                             try {
                                 if(exists)
                                 {
                                     requireContext().showToast("Faculty is exists")
-                                    return@isFacultyDocumentExists
+                                    return@isFacultyDocumentExistsByName
                                 }
                                 // Add new faculty if the faculty document does not exist
-                                addNewFaculty(facultyDocumentId,facultyData)
+                                addNewFaculty(newFacultyPojo)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
                                 Log.e(TAG,e.message.toString())
@@ -145,11 +138,11 @@ class AddFacultyDialog(val facultyName:String?) : AppCompatDialogFragment() {
         }
     }
 
-    private fun addNewFaculty(facultyDocumentId: String, inputHashMap:HashMap<String,String>) {
-        FacultyRepository.insertFacultyDocument(facultyDocumentId, inputHashMap, {
+    private fun addNewFaculty(facultyPojo: FacultyPojo) {
+        FacultyRepository.insertFacultyDocument(facultyPojo, {
             try {
                 // If insertion is successful
-                facultyAddListener!!.onAdded(facultyDocumentId,inputHashMap)
+                facultyDocumentListener!!.onAdded(facultyPojo)
                 dismiss()
             } catch (e: Exception) {
                 // Log any unexpected exceptions that occur

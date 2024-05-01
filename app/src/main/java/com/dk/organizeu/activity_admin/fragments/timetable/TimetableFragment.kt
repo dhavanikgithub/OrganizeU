@@ -14,8 +14,10 @@ import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.FragmentTimetableBinding
 import com.dk.organizeu.enum_class.AcademicType
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository
-import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -337,9 +339,9 @@ class TimetableFragment : Fragment() {
 
                             // Extract and add unique academic years from the documents to the list
                             for (document in documents) {
-                                val academicItem = document.id.split('_')
-                                if (!academicYearList.contains(academicItem[0])) {
-                                    academicYearList.add(academicItem[0])
+                                val academicPojo = document.toAcademicPojo()
+                                if (!academicYearList.contains(academicPojo.year)) {
+                                    academicYearList.add(academicPojo.year)
                                 }
                             }
 
@@ -387,15 +389,26 @@ class TimetableFragment : Fragment() {
                     // Launch a coroutine to fetch academic type data in the background
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            // Check if even academic type exists for the selected academic year
-                            val evenExists = isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.EVEN.name}")
-                            if (evenExists) {
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicIdEVEN:String? = null
+                            var academicIdODD:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(AcademicType.EVEN.name==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
+                                {
+                                    academicIdEVEN = academicPojo.id
+                                }
+                                else if(AcademicType.ODD.name==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
+                                {
+                                    academicIdODD = academicPojo.id
+                                }
+                            }
+                            if (academicIdEVEN!=null) {
                                 academicTypeList.add(AcademicType.EVEN.name)
                             }
 
-                            // Check if odd academic type exists for the selected academic year
-                            val oddExists = isAcademicDocumentExists("${selectedAcademicYearItem!!}_${AcademicType.ODD.name}")
-                            if (oddExists) {
+                            if (academicIdODD!=null) {
                                 academicTypeList.add(AcademicType.ODD.name)
                             }
 
@@ -435,22 +448,30 @@ class TimetableFragment : Fragment() {
                 try {
                     // Disable the semester dropdown menu initially
                     tlAcademicSem.isEnabled = false
-
-                    // Clear the existing semester list
-                    semesterList.clear()
-
-                    // Construct the academic document ID based on the selected academic year and type
-                    val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
-
                     // Launch a coroutine to fetch semester data in the background
                     MainScope().launch(Dispatchers.IO) {
                         try {
+                            // Clear the existing semester list
+                            semesterList.clear()
+
+
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicId:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(selectedAcademicTypeItem==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
+                                {
+                                    academicId = academicPojo.id
+                                    break
+                                }
+                            }
                             // Retrieve semester documents from the repository
-                            val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
+                            val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
 
                             // Add semesters from the documents to the list
                             for (document in documents) {
-                                semesterList.add(document.id)
+                                semesterList.add(document.toSemesterPojo().name)
                             }
 
                             // Update the UI on the main thread
@@ -492,49 +513,63 @@ class TimetableFragment : Fragment() {
                 try {
                     // Disable the class dropdown menu initially
                     classTIL.isEnabled = false
+                    // Launch a coroutine to fetch class data in the background
+                    MainScope().launch(Dispatchers.IO) {
+                        try {
+                            // Clear the existing class list
+                            classList.clear()
 
-                    // Clear the existing class list
-                    classList.clear()
 
-                    // Construct the academic document ID based on the selected academic year and type
-                    val academicDocumentId = "${selectedAcademicYearItem}_${selectedAcademicTypeItem}"
-
-                    // Get the selected semester document ID
-                    val semesterDocumentId = selectedSemesterItem
-
-                    // Check if semesterDocumentId is not null
-                    if (semesterDocumentId != null) {
-                        // Launch a coroutine to fetch class data in the background
-                        MainScope().launch(Dispatchers.IO) {
-                            try {
-                                // Retrieve class documents from the repository
-                                val documents = ClassRepository.getAllClassDocuments(academicDocumentId, semesterDocumentId)
-
-                                // Add classes from the documents to the list
-                                for (document in documents) {
-                                    classList.add(document.id)
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicId:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(selectedAcademicTypeItem==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
+                                {
+                                    academicId = academicPojo.id
+                                    break
                                 }
-
-                                // Update the UI on the main thread
-                                withContext(Dispatchers.Main) {
-                                    try {
-                                        // Set up the adapter for the class dropdown menu
-                                        classAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, classList)
-                                        classACTV.setAdapter(classAdapter)
-
-                                        // Enable the class dropdown menu
-                                        classTIL.isEnabled = true
-                                    } catch (e: Exception) {
-                                        // Log and handle any exceptions that occur during UI update
-                                        Log.e(TAG, e.message.toString())
-                                        requireContext().unexpectedErrorMessagePrint(e)
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                // Log and handle any exceptions that occur during data retrieval
-                                Log.e(TAG, e.message.toString())
-                                requireContext().unexpectedErrorMessagePrint(e)
                             }
+                            val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                            var semId:String? = null
+                            for(doc in allsemesterDocuments)
+                            {
+                                val semesterPojo = doc.toSemesterPojo()
+                                if(semesterPojo.name == selectedSemesterItem!!)
+                                {
+                                    semId = semesterPojo.id
+                                    break
+                                }
+                            }
+
+                            // Retrieve class documents from the repository
+                            val documents = ClassRepository.getAllClassDocuments(academicId, semId!!)
+
+                            // Add classes from the documents to the list
+                            for (document in documents) {
+                                classList.add(document.toClassPojo().name)
+                            }
+
+                            // Update the UI on the main thread
+                            withContext(Dispatchers.Main) {
+                                try {
+                                    // Set up the adapter for the class dropdown menu
+                                    classAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, classList)
+                                    classACTV.setAdapter(classAdapter)
+
+                                    // Enable the class dropdown menu
+                                    classTIL.isEnabled = true
+                                } catch (e: Exception) {
+                                    // Log and handle any exceptions that occur during UI update
+                                    Log.e(TAG, e.message.toString())
+                                    requireContext().unexpectedErrorMessagePrint(e)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            // Log and handle any exceptions that occur during data retrieval
+                            Log.e(TAG, e.message.toString())
+                            requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {

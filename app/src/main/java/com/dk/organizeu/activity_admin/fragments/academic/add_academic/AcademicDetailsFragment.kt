@@ -14,31 +14,31 @@ import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_batch
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_class.AddClassFragment
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment
 import com.dk.organizeu.adapter.AcademicDetailsTabAdapter
-import com.dk.organizeu.databinding.FragmentAddAcademicBinding
+import com.dk.organizeu.databinding.FragmentAcademicDetailsBinding
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 
-class AddAcademicFragment : Fragment() {
+class AcademicDetailsFragment : Fragment() {
 
     companion object {
-        fun newInstance() = AddAcademicFragment()
+        fun newInstance() = AcademicDetailsFragment()
         var academicYear:String?=null
         var academicType:String?=null
         const val TAG = "OrganizeU-AddAcademicFragment"
     }
 
-    private lateinit var viewModel: AddAcademicViewModel
+    private lateinit var viewModel: AcademicDetailsViewModel
 
-    private lateinit var binding: FragmentAddAcademicBinding
+    private lateinit var binding: FragmentAcademicDetailsBinding
     private lateinit var progressDialog: CustomProgressDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_add_academic, container, false)
+        val view = inflater.inflate(R.layout.fragment_academic_details, container, false)
         binding = DataBindingUtil.bind(view)!!
-        viewModel = ViewModelProvider(this)[AddAcademicViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AcademicDetailsViewModel::class.java]
         progressDialog = CustomProgressDialog(requireContext())
         return binding.root
     }
@@ -70,8 +70,8 @@ class AddAcademicFragment : Fragment() {
                     academicYear = arguments.getString("academic_year",null)
                     academicType = arguments.getString("academic_type",null)
                     // Set the retrieved academic year and type for use in the fragment
-                    AddAcademicFragment.academicYear=academicYear
-                    AddAcademicFragment.academicType=academicType
+                    AcademicDetailsFragment.academicYear=academicYear
+                    AcademicDetailsFragment.academicType=academicType
                     // Load the tab and view pager based on the retrieved data
                     loadTab()
                     loadTabFragment()

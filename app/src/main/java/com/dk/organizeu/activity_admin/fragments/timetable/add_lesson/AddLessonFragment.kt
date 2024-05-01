@@ -14,10 +14,17 @@ import com.dk.organizeu.activity_admin.dialog.AddLessonDialog
 import com.dk.organizeu.adapter.LessonAdapterAdmin
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.enum_class.Weekday
-import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
+import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.LessonRepository
-import com.dk.organizeu.repository.LessonRepository.Companion.lessonDocumentToLessonObj
+import com.dk.organizeu.repository.SemesterRepository
+import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction
@@ -250,29 +257,69 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
             viewModel.apply {
                 try {
                     MainScope().launch(Dispatchers.IO) {
-                        try {
+
                             // Clear existing timetable data
                             timetableData.clear()
 
-                            // Construct document IDs for fetching lessons
-                            val academicDocumentId = "${academicYear}_${academicType}"
-                            val semesterDocumentId = semesterNumber
-                            val classDocumentId = className
-                            val timetableDocumentId = Weekday.getWeekdayNameByNumber(weekDay)
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicId:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(academicType==academicPojo.type && academicYear==academicPojo.year)
+                                    {
+                                        academicId = academicPojo.id
+                                        break
+                                    }
+                                }
+                                val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allSemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == semesterNumber)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
 
-                            // Retrieve lesson documents from the repository
-                            val documents = LessonRepository.getAllLessonDocuments(
-                                academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId,
-                                WeekdayCollection.START_TIME.displayName
-                            )
+                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                                var classId:String? = null
+                                for(doc in allClassDocuments)
+                                {
+                                    val classPojo = doc.toClassPojo()
+                                    if(classPojo.name == className)
+                                    {
+                                        classId = classPojo.id
+                                        break
+                                    }
+                                }
 
-                            var counter = 1
-                            // Convert lesson documents to Lesson objects and add them to timetableData
-                            for (document in documents) {
-                                val lessonItem = lessonDocumentToLessonObj(document, counter)
-                                counter++
-                                timetableData.add(lessonItem)
-                            }
+                                val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
+                                var timetableId:String? = null
+                                for(doc in allTimetableDocuments)
+                                {
+                                    val timetablePojo = doc.toTimetablePojo()
+                                    if(timetablePojo.name == Weekday.getWeekdayNameByNumber(weekDay))
+                                    {
+                                        timetableId = timetablePojo.id
+                                        break
+                                    }
+                                }
+
+                                // Retrieve lesson documents from the repository
+                                val documents = LessonRepository.getAllLessonDocuments(
+                                    academicId, semId, classId, timetableId!!,
+                                    "startTime"
+                                )
+
+                                // Convert lesson documents to Lesson objects and add them to timetableData
+                                for (document in documents) {
+                                    val lessonItem = document.toLessonPojo()
+                                    timetableData.add(lessonItem)
+                                }
+
 
                             withContext(Dispatchers.Main) {
                                 try {
@@ -287,13 +334,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                                     throw e
                                 }
                             }
-                        } catch (e: Exception) {
-                            // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
-                            // Display an unexpected error message to the user
-                            requireContext().unexpectedErrorMessagePrint(e)
-                            throw e
-                        }
+
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
@@ -344,35 +385,80 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
             .setCancelable(false)
             .setMessage("Are you sure you want to delete the Lesson and its data?")
             .show({
-                // Call the Cloud Function to initiate delete operation
-                try {
-                    // Get the room document ID at the specified position from the lesson list
-                    val academicDocumentId = "${academicYear}_${academicType}"
-                    val semesterDocumentId = semesterNumber
-                    val classDocumentId = className
-                    val timetableDocumentId = Weekday.getWeekdayNameByNumber(selectedTab)
-                    val lesson = viewModel.timetableData[position]
-                    deleteLesson(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lesson.id){
-                        try {
-                            if(it)
+                MainScope().launch(Dispatchers.Main) {
+                    // Call the Cloud Function to initiate delete operation
+                    try {
+                        // Get the room document ID at the specified position from the lesson list
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicType==academicPojo.type && academicYear==academicPojo.year)
                             {
-                                viewModel.timetableData.removeAt(position)
-                                viewModel.lessonAdapter.notifyItemRemoved(position)
-                                requireContext().showToast("Lesson deleted successfully.")
+                                academicId = academicPojo.id
+                                break
                             }
-                            else{
-                                requireContext().showToast("Error occur while deleting lesson.")
-                            }
-                        } catch (e: Exception) {
-                            throw e
                         }
-                    }
+                        val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                        var semId:String? = null
+                        for(doc in allSemesterDocuments)
+                        {
+                            val semesterPojo = doc.toSemesterPojo()
+                            if(semesterPojo.name == semesterNumber)
+                            {
+                                semId = semesterPojo.id
+                                break
+                            }
+                        }
 
-                } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
-                    requireContext().showToast("Error occur while deleting lesson.")
+                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                        var classId:String? = null
+                        for(doc in allClassDocuments)
+                        {
+                            val classPojo = doc.toClassPojo()
+                            if(classPojo.name == className)
+                            {
+                                classId = classPojo.id
+                                break
+                            }
+                        }
+
+                        val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
+                        var timetableId:String? = null
+                        for(doc in allTimetableDocuments)
+                        {
+                            val timetablePojo = doc.toTimetablePojo()
+                            if(timetablePojo.name == Weekday.getWeekdayNameByNumber(selectedTab))
+                            {
+                                timetableId = timetablePojo.id
+                                break
+                            }
+                        }
+                        val lesson = viewModel.timetableData[position]
+                        deleteLesson(academicId,semId,classId,timetableId!!,lesson.id){
+                            try {
+                                if(it)
+                                {
+                                    viewModel.timetableData.removeAt(position)
+                                    viewModel.lessonAdapter.notifyItemRemoved(position)
+                                    viewModel.lessonAdapter.notifyItemRangeChanged(position,viewModel.lessonAdapter.itemCount-position)
+                                    requireContext().showToast("Lesson deleted successfully.")
+                                }
+                                else{
+                                    requireContext().showToast("Error occur while deleting lesson.")
+                                }
+                            } catch (e: Exception) {
+                                throw e
+                            }
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e(TAG,e.toString())
+                        requireContext().showToast("Error occur while deleting lesson.")
+                    }
+                    dialog.dismiss()
                 }
-                dialog.dismiss()
             },{
                 dialog.dismiss()
             })
@@ -388,15 +474,15 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
         semesterDocumentId:String,
         classDocumentId:String,
         timetableDocumentId:String,
-        lessonDocumentId:String,
+        id:String,
         isDeleted:(Boolean) -> Unit
     ){
         try {
             MainScope().launch(Dispatchers.IO)
             {
                 try {
-                    LessonRepository.deleteLessonDocument(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId)
-                    LessonRepository.isLessonDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lessonDocumentId){
+                    LessonRepository.deleteLessonDocument(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, id)
+                    LessonRepository.isLessonDocumentExistsById(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,id){
                         isDeleted(!it)
                     }
                 } catch (e: Exception) {

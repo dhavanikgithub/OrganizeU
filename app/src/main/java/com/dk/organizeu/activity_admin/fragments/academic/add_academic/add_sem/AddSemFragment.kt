@@ -13,17 +13,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
-import com.dk.organizeu.adapter.SemAdapter
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsViewModel
+import com.dk.organizeu.adapter.SemesterAdapter
 import com.dk.organizeu.databinding.FragmentAddSemBinding
 import com.dk.organizeu.enum_class.AcademicType
-import com.dk.organizeu.firebase.key_mapping.SemesterCollection
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.SemesterPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository
-import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
-import com.dk.organizeu.repository.SemesterRepository.Companion.isSemesterDocumentExists
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction
@@ -40,8 +40,8 @@ import kotlinx.coroutines.withContext
 class AddSemFragment : Fragment(), OnItemClickListener {
 
     companion object {
-        var viewModel2:AddAcademicViewModel?=null
-        fun newInstance(viewModel2:AddAcademicViewModel):AddSemFragment{
+        var viewModel2:AcademicDetailsViewModel?=null
+        fun newInstance(viewModel2:AcademicDetailsViewModel):AddSemFragment{
             AddSemFragment.viewModel2=viewModel2
             return AddSemFragment()
         }
@@ -53,8 +53,6 @@ class AddSemFragment : Fragment(), OnItemClickListener {
     private lateinit var binding: FragmentAddSemBinding
     private lateinit var academicSemLayoutManager: LinearLayoutManager
     private lateinit var progressDialog: CustomProgressDialog
-    var academicDocumentId:String? = null
-    var semesterDocumentId:String? = null
 
 
     override fun onCreateView(
@@ -81,14 +79,14 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     btnAddSem.isEnabled = false
 
                     // Check if academic type and year are available from the AddAcademicFragment
-                    if (AddAcademicFragment.academicType != null && AddAcademicFragment.academicYear != null) {
+                    if (AcademicDetailsFragment.academicType != null && AcademicDetailsFragment.academicYear != null) {
                         // If academic year is not set, set it from AddAcademicFragment
                         if (academicYearSelectedItem == null) {
-                            academicYearSelectedItem = AddAcademicFragment.academicYear
+                            academicYearSelectedItem = AcademicDetailsFragment.academicYear
                         }
                         // If academic type is not set, set it from AddAcademicFragment
                         if (academicTypeSelectedItem == null) {
-                            academicTypeSelectedItem = AddAcademicFragment.academicType
+                            academicTypeSelectedItem = AcademicDetailsFragment.academicType
                         }
                         // Set the selected academic year and type in the corresponding dropdown fields
                         actAcademicYear.setText(academicYearSelectedItem)
@@ -148,22 +146,34 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         clearAcademicSemACTV()
                         // Clear the academic semester list and notify the adapter
                         academicSemList.clear()
-                        academicSemAdapter.notifyDataSetChanged()
+                        academicSemesterAdapter.notifyDataSetChanged()
 
 
                         val job = lifecycleScope.launch(Dispatchers.Main) {
                             try {
-                                // Check if academic documents for both even and odd semesters exist for the selected academic year
-                                val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
-                                val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicIdEVEN:String? = null
+                                var academicIdODD:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                    {
+                                        academicIdEVEN = academicPojo.id
+                                    }
+                                    else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                    {
+                                        academicIdODD = academicPojo.id
+                                    }
+                                }
 
                                 // If even semester document exists, add "EVEN" to the academicTypeItemList
-                                if (evenExists) {
+                                if (academicIdEVEN != null) {
                                     academicTypeItemList.add(AcademicType.EVEN.name)
                                 }
 
                                 // If odd semester document exists, add "ODD" to the academicTypeItemList
-                                if (oddExists) {
+                                if (academicIdODD !=null) {
                                     academicTypeItemList.add(AcademicType.ODD.name)
                                 }
 
@@ -202,26 +212,33 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         // Clear the selected academic semester and related lists
                         clearAcademicSemACTV()
                         academicSemList.clear()
-                        academicSemAdapter.notifyDataSetChanged()
+                        academicSemesterAdapter.notifyDataSetChanged()
                         // Start a progress dialog to indicate loading
                         progressDialog.start("Loading Semester...")
                         MainScope().launch(Dispatchers.IO) {
                             try {
-                                // Construct the academic document ID using the selected year and type
-                                academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                                if (academicDocumentId != null) {
-                                    // Retrieve all semester documents related to the academic document ID
-                                    val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
-                                    // Add the retrieved semester documents to the academicSemList
-                                    for (document in documents) {
-                                        academicSemList.add(document.id)
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicId:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                    {
+                                        academicId = academicPojo.id
+                                        break
                                     }
+                                }
+                                // Retrieve all semester documents related to the academic document ID
+                                val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                // Add the retrieved semester documents to the academicSemList
+                                for (document in documents) {
+                                    academicSemList.add(document.toSemesterPojo())
                                 }
 
                                 withContext(Dispatchers.Main) {
                                     try {
                                         // Notify the adapter of data changes in the academic semester dropdown list
-                                        academicSemAdapter.notifyDataSetChanged()
+                                        academicSemesterAdapter.notifyDataSetChanged()
                                         // Load the academic semesters into the academic semester dropdown list
                                         loadAcademicSemACTV()
                                         // Enable the academic semester dropdown
@@ -274,42 +291,42 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         {
                             MainScope().launch(Dispatchers.IO){
                                 try {
-                                    // Construct academic and semester document IDs
-                                    academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                                    semesterDocumentId = academicSemSelectedItem
-
-                                    // Check if document IDs are not null
-                                    if(academicDocumentId!=null && semesterDocumentId!=null)
+                                    val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                    var academicId:String? = null
+                                    for(document in allAcademicDocument)
                                     {
-                                        // Construct inputHashMap with semester data
-                                        val inputHashMap = hashMapOf(
-                                            SemesterCollection.SEMESTER.displayName to academicSemSelectedItem!!
-                                        )
-                                        // Insert semester documents into the database
-                                        SemesterRepository.insertSemesterDocuments(academicDocumentId!!,semesterDocumentId!!, inputHashMap,{
-                                            try {
-                                                // Add semester to the list and notify adapter of the change
-                                                academicSemList.add(academicSemSelectedItem!!)
-                                                academicSemAdapter.notifyItemInserted(academicSemAdapter.itemCount)
-                                                // Clear and reload the Academic Semester dropdown
-                                                clearAcademicSemACTV()
-                                                loadAcademicSemACTV()
-                                                requireContext().showToast("Sem Added")
-                                            } catch (e: Exception) {
-                                                // Log any unexpected exceptions that occur
-                                                Log.e(TAG, e.message.toString())
-                                                // Display an unexpected error message to the user
-                                                requireContext().unexpectedErrorMessagePrint(e)
-                                                throw e
-                                            }
-                                        },{
-                                            // Log any unexpected exceptions that occur
-                                            Log.e(TAG,it.message.toString())
-                                            // Display an unexpected error message to the user
-                                            requireContext().unexpectedErrorMessagePrint(it)
-                                            throw it
-                                        })
+                                        val academicPojo = document.toAcademicPojo()
+                                        if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                        {
+                                            academicId = academicPojo.id
+                                            break
+                                        }
                                     }
+                                    val newSemesterPojo = SemesterPojo(name = academicSemSelectedItem!!)
+
+                                    SemesterRepository.insertSemesterDocuments(academicId!!,newSemesterPojo,{
+                                        try {
+                                            // Add semester to the list and notify adapter of the change
+                                            academicSemList.add(newSemesterPojo)
+                                            academicSemesterAdapter.notifyItemInserted(academicSemesterAdapter.itemCount)
+                                            // Clear and reload the Academic Semester dropdown
+                                            clearAcademicSemACTV()
+                                            loadAcademicSemACTV()
+                                            requireContext().showToast("Sem Added")
+                                        } catch (e: Exception) {
+                                            // Log any unexpected exceptions that occur
+                                            Log.e(TAG, e.message.toString())
+                                            // Display an unexpected error message to the user
+                                            requireContext().unexpectedErrorMessagePrint(e)
+                                            throw e
+                                        }
+                                    },{
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG,it.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(it)
+                                        throw it
+                                    })
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
                                     Log.e(TAG, e.message.toString())
@@ -348,26 +365,31 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     {
                         try {
                             academicSemList.clear()
-                            // Construct academic document ID
-                            academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                            // Check if academic document ID is not null
-                            if(academicDocumentId!=null)
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicId:String? = null
+                            for(document in allAcademicDocument)
                             {
-                                // Fetch all semester documents for the academic document ID
-                                val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
-                                // Add semester documents to the list
-                                for (document in documents) {
-                                    academicSemList.add(document.id)
+                                val academicPojo = document.toAcademicPojo()
+                                if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicId = academicPojo.id
+                                    break
                                 }
+                            }
+                            // Fetch all semester documents for the academic document ID
+                            val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                            // Add semester documents to the list
+                            for (document in documents) {
+                                academicSemList.add(document.toSemesterPojo())
                             }
                             withContext(Dispatchers.Main){
                                 try {
                                     // Initialize the semester adapter and layout manager
-                                    academicSemAdapter = SemAdapter(academicSemList,this@AddSemFragment)
+                                    academicSemesterAdapter = SemesterAdapter(academicSemList,this@AddSemFragment)
                                     academicSemLayoutManager = LinearLayoutManager(requireContext())
                                     // Set adapter and layout manager to Semester RecyclerView
                                     rvSemester.layoutManager = academicSemLayoutManager
-                                    rvSemester.adapter = academicSemAdapter
+                                    rvSemester.adapter = academicSemesterAdapter
                                     // Load data into the Academic Semester dropdown
                                     loadAcademicSemACTV()
                                     delay(500)
@@ -477,10 +499,10 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                             val documents = AcademicRepository.getAllAcademicDocuments()
                             // Extract unique academic years from the document IDs
                             for (document in documents) {
-                                val academicItem = document.id.split('_')
-                                if(!academicYearItemList.contains(academicItem[0]))
+                                val academicPojo = document.toAcademicPojo()
+                                if(!academicYearItemList.contains(academicPojo.year))
                                 {
-                                    academicYearItemList.add(academicItem[0])
+                                    academicYearItemList.add(academicPojo.year)
                                 }
                             }
                             withContext(Dispatchers.Main)
@@ -535,15 +557,27 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     academicTypeItemList.clear()
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            // Check for the existence of academic documents for even semester
-                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
-                            if (evenExists) {
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicIdEVEN:String? = null
+                            var academicIdODD:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdEVEN = academicPojo.id
+                                }
+                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdODD = academicPojo.id
+                                }
+                            }
+
+                            if (academicIdEVEN!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
 
-                            // Check for the existence of academic documents for odd semester
-                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
-                            if (oddExists) {
+                            if (academicIdODD != null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
 
@@ -601,7 +635,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     }
                     // Remove any existing semesters from the list to prevent duplication
                     for (item in academicSemList) {
-                        academicSemItemList.remove(item.toInt())
+                        academicSemItemList.remove(item.name.toInt())
                     }
                     // Set the adapter for the Academic Semester Dropdown
                     academicSemItemAdapter = ArrayAdapter(
@@ -634,33 +668,52 @@ class AddSemFragment : Fragment(), OnItemClickListener {
             .show({
                 // Call the Cloud Function to initiate delete operation
                 try {
-                    // Get the semester at the specified position from the semester list
-                    val semester = viewModel.academicSemList[position]
-                    // Construct the academic document ID using selected year and type
-                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                    // Call the deleteSemester function with the academic document ID, semester, and a callback
-                    deleteSemester(academicDocumentId,semester){
-                        try {
-                            // Check if the deletion was successful
-                            if(it)
+                    MainScope().launch(Dispatchers.IO)
+                    {
+                        // Get the semester at the specified position from the semester list
+                        val semester = viewModel.academicSemList[position]
+
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(viewModel.academicTypeSelectedItem==academicPojo.type && viewModel.academicYearSelectedItem==academicPojo.year)
                             {
-                                // If successful, remove the semester from the semester list and notify the adapter
-                                viewModel.academicSemList.removeAt(position)
-                                viewModel.academicSemAdapter.notifyItemRemoved(position)
-                                // Reload the Academic Semester dropdown
-                                loadAcademicSemACTV()
-                                // Show a toast message indicating successful deletion
-                                requireContext().showToast("Semester deleted successfully.")
+                                academicId = academicPojo.id
+                                break
                             }
-                            else{
-                                // If deletion was not successful, show a toast message indicating the error
-                                requireContext().showToast("Error occur while deleting semester.")
+                        }
+
+                        // Call the deleteSemester function with the academic document ID, semester, and a callback
+                        deleteSemester(academicId!!,semester.id){
+                            MainScope().launch(Dispatchers.Main)
+                            {
+                                try {
+                                    // Check if the deletion was successful
+                                    if(it)
+                                    {
+                                        // If successful, remove the semester from the semester list and notify the adapter
+                                        viewModel.academicSemList.removeAt(position)
+                                        viewModel.academicSemesterAdapter.notifyItemRemoved(position)
+                                        viewModel.academicSemesterAdapter.notifyItemRangeChanged(position,viewModel.academicSemesterAdapter.itemCount-position)
+                                        // Reload the Academic Semester dropdown
+                                        loadAcademicSemACTV()
+                                        // Show a toast message indicating successful deletion
+                                        requireContext().showToast("Semester deleted successfully.")
+                                    }
+                                    else{
+                                        // If deletion was not successful, show a toast message indicating the error
+                                        requireContext().showToast("Error occur while deleting semester.")
+                                    }
+                                } catch (e: Exception) {
+                                    // Log any exceptions that occur during deletion
+                                    Log.e(TAG,e.toString())
+                                }
                             }
-                        } catch (e: Exception) {
-                            // Log any exceptions that occur during deletion
-                            Log.e(TAG,e.toString())
                         }
                     }
+
                 } catch (e: Exception) {
                     // Log any exceptions that occur outside the deletion process
                     Log.e(TAG,e.toString())
@@ -691,7 +744,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     // Call the deleteSemesterDocument function from the repository to delete semester
                     SemesterRepository.deleteSemesterDocument(academicDocumentId,semesterDocumentId)
                     // Check if the semester document still exists after deletion
-                    isSemesterDocumentExists(academicDocumentId,semesterDocumentId){
+                    SemesterRepository.isSemesterDocumentExistsById(academicDocumentId,semesterDocumentId){
                         // Notify the caller whether the deletion was successful
                         isDeleted(!it)
                     }

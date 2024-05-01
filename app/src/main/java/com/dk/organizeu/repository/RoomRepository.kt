@@ -2,15 +2,12 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
-import com.dk.organizeu.firebase.key_mapping.RoomCollection
 import com.dk.organizeu.pojo.RoomPojo
+import com.dk.organizeu.pojo.RoomPojo.Companion.toMap
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RoomRepository {
@@ -65,15 +62,14 @@ class RoomRepository {
 
 
         fun insertRoomDocument(
-            roomDocumentId: String,
-            inputHashMap: HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            roomPojo: RoomPojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
         ){
             try{
-                roomDocumentRef(roomDocumentId).set(inputHashMap)
+                roomDocumentRef(roomPojo.id).set(roomPojo)
                     .addOnSuccessListener {
-                        successCallback(inputHashMap)
+                        successCallback(true)
                     }
                     .addOnFailureListener {
                         failureCallback(it)
@@ -86,35 +82,9 @@ class RoomRepository {
             }
         }
 
-        fun roomDocumentToRoomObj(document:DocumentSnapshot): RoomPojo {
+        fun isRoomDocumentExistsById(id:String, callback: (Boolean) -> Unit) {
             try {
-                return RoomPojo(
-                    document.id,
-                    document.get(RoomCollection.LOCATION.displayName).toString(),
-                    document.get(RoomCollection.TYPE.displayName).toString()
-                )
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
-
-        fun roomDocumentToRoomObj(roomDocumentId:String, document:HashMap<String,String>): RoomPojo {
-            try {
-                return RoomPojo(
-                    roomDocumentId,
-                    document[RoomCollection.LOCATION.displayName].toString(),
-                    document[RoomCollection.TYPE.displayName].toString()
-                )
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
-
-        fun isRoomDocumentExists(roomDocumentId: String, callback: (Boolean) -> Unit) {
-            try {
-                roomDocumentRef(roomDocumentId).get()
+                roomDocumentRef(id).get()
                      .addOnSuccessListener { documentSnapshot ->
                          callback(documentSnapshot.exists())
                      }
@@ -127,10 +97,25 @@ class RoomRepository {
                 throw e
             }
         }
-
-        suspend fun deleteRoomDocument(roomDocumentId: String){
+        fun isRoomDocumentExistsByName(name:String, isExists: (Boolean) -> Unit) {
             try {
-                roomDocumentRef(roomDocumentId).delete().await()
+                roomCollectionRef().whereEqualTo("name",name).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        isExists(!documentSnapshot.isEmpty)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        suspend fun deleteRoomDocument(id: String){
+            try {
+                roomDocumentRef(id).delete().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -148,30 +133,12 @@ class RoomRepository {
             }
         }
 
-        fun updateRoomDocument(oldDocumentId: String, newDocumentId: String, roomData:HashMap<String,String>, isRenamed:(Boolean)->Unit) {
-            val oldDocRef = roomDocumentRef(oldDocumentId)
-            val newDocRef = roomDocumentRef(newDocumentId)
-
-            oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
-                val data = oldDocSnapshotTask.data
-                newDocRef.set(data!!).addOnSuccessListener {
-                    try {
-                        newDocRef.update(roomData as Map<String, Any>).addOnSuccessListener {
-                            MainScope().launch(Dispatchers.IO)
-                            {
-                                deleteRoomDocument(oldDocumentId)
-                                isRenamed(true)
-                            }
-                        }.addOnFailureListener {
-                            isRenamed(false)
-                        }
-                    } catch (e: Exception) {
-                        isRenamed(false)
-                    }
-                }.addOnFailureListener {
-                    isRenamed(false)
-                }
-            }.addOnFailureListener {
+        fun updateRoomDocument(roomPojo: RoomPojo, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = roomDocumentRef(roomPojo.id)
+            oldDocRef.update(roomPojo.toMap()).addOnSuccessListener {
+                isRenamed(true)
+            }
+            .addOnFailureListener {
                 isRenamed(false)
             }
         }

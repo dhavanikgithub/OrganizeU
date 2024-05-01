@@ -2,13 +2,12 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.FACULTY_COLLECTION
+import com.dk.organizeu.pojo.FacultyPojo
+import com.dk.organizeu.pojo.FacultyPojo.Companion.toMap
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FacultyRepository {
@@ -51,15 +50,14 @@ class FacultyRepository {
         }
 
         fun insertFacultyDocument(
-            facultyDocumentId: String,
-            inputHashMap:HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            facultyPojo: FacultyPojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
         ){
             try{
-                facultyDocumentRef(facultyDocumentId).set(inputHashMap)
+                facultyDocumentRef(facultyPojo.id).set(facultyPojo)
                     .addOnSuccessListener {
-                        successCallback(inputHashMap)
+                        successCallback(true)
                     }
                     .addOnFailureListener {
                         failureCallback(it)
@@ -92,16 +90,16 @@ class FacultyRepository {
             }
         }
 
-        fun isFacultyDocumentExists(facultyDocumentId: String, callback: (Boolean) -> Unit) {
+        fun isFacultyDocumentExistsById(id: String, isExists: (Boolean) -> Unit) {
             try {
-                facultyDocumentRef(facultyDocumentId)
+                facultyDocumentRef(id)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
+                        isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
                         Log.w("TAG", "Error checking document existence", exception)
-                        callback(false) // Assume document doesn't exist if there's an error
+                        isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
                 Log.e(ClassRepository.TAG,e.message.toString())
@@ -109,25 +107,29 @@ class FacultyRepository {
             }
         }
 
-        fun updateFacultyDocument(oldDocumentId: String, newDocumentId: String, isRenamed:(Boolean)->Unit) {
-            val oldDocRef = facultyDocumentRef(oldDocumentId)
-            val newDocRef = facultyDocumentRef(newDocumentId)
-
-            oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
-                val data = oldDocSnapshotTask.data
-                newDocRef.set(data!!).addOnSuccessListener {
-                    MainScope().launch(Dispatchers.IO)
-                    {
-                        try {
-                            deleteFacultyDocument(oldDocumentId)
-                            isRenamed(true)
-                        } catch (e: Exception) {
-                            isRenamed(false)
-                        }
+        fun isFacultyDocumentExistsByName(name: String, isExists: (Boolean) -> Unit) {
+            try {
+                facultyCollectionRef()
+                    .whereEqualTo("name", name)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        isExists(!documentSnapshot.isEmpty)
                     }
-                }.addOnFailureListener {
-                    isRenamed(false)
-                }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true) // Assume document doesn't exist if there's an error
+                    }
+            } catch (e: Exception) {
+                Log.e(ClassRepository.TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun updateFacultyDocument(facultyPojo: FacultyPojo, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = facultyDocumentRef(facultyPojo.id)
+
+            oldDocRef.update(facultyPojo.toMap()).addOnSuccessListener {
+                isRenamed(true)
             }.addOnFailureListener {
                 isRenamed(false)
             }

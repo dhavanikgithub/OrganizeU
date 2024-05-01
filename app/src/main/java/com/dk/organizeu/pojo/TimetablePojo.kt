@@ -1,21 +1,23 @@
 package com.dk.organizeu.pojo
 
+import com.google.firebase.firestore.DocumentSnapshot
+import java.util.UUID
 
-data class TimetablePojo(
-    val id:String,
-    val className: String,
-    val subjectName: String,
-    val subjectCode: String,
-    val location: String,
-    val startTime: String,
-    val endTime: String,
-    val duration: String,
-    val type: String,
-    val facultyName: String,
-    val lessonNumber: Int,
-    val muteRequestCode: Int,
-    val unmuteRequestCode: Int,
-    val notificationCode: Int,
-    val color: String = "#735DA5",
-)
-
+data class TimetablePojo(val id:String=UUID.randomUUID().toString(),var name:String)
+{
+    companion object
+    {
+        fun DocumentSnapshot.toTimetablePojo(): TimetablePojo {
+            return TimetablePojo(
+                getString("id") ?: "",
+                getString("name") ?: ""
+            )
+        }
+        fun TimetablePojo.toMap(): Map<String, Any> {
+            return mapOf(
+                "id" to id,
+                "name" to name
+            )
+        }
+    }
+}

@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddClassBinding
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.ClassPojo
 
-class ClassAdapter(private val academicClassList: ArrayList<String>,private val listener: OnItemClickListener) :
+class ClassAdapter(private val classPojos: ArrayList<ClassPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<ClassAdapter.AcademicViewHolder>() {
         private lateinit var binding: ItemAddClassBinding
 
@@ -21,14 +22,14 @@ class ClassAdapter(private val academicClassList: ArrayList<String>,private val 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_add_class, parent, false)
-        binding = DataBindingUtil.bind(view)!!
-        return AcademicViewHolder(binding.root)
+        return AcademicViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicClassList[holder.adapterPosition]
-            binding.className = currentItem
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val currentItem = classPojos[holder.adapterPosition]
+            binding.classPojo = currentItem
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
@@ -37,7 +38,7 @@ class ClassAdapter(private val academicClassList: ArrayList<String>,private val 
     }
 
     override fun getItemCount(): Int {
-        return academicClassList.size
+        return classPojos.size
     }
 
 

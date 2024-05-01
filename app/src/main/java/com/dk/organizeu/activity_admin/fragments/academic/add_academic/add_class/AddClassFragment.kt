@@ -16,19 +16,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.activity_admin.dialog.EditClassDialog
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicViewModel
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsViewModel
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.AddSemFragment
 import com.dk.organizeu.adapter.ClassAdapter
 import com.dk.organizeu.databinding.FragmentAddClassBinding
 import com.dk.organizeu.enum_class.AcademicType
-import com.dk.organizeu.firebase.key_mapping.ClassCollection
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.ClassDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.ClassPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository
-import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.ClassRepository
-import com.dk.organizeu.repository.ClassRepository.Companion.isClassDocumentExists
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
@@ -43,11 +44,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
+class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener {
 
     companion object {
-        var viewModel2: AddAcademicViewModel?=null
-        fun newInstance(viewModel2: AddAcademicViewModel): AddClassFragment {
+        var viewModel2: AcademicDetailsViewModel?=null
+        fun newInstance(viewModel2: AcademicDetailsViewModel): AddClassFragment {
             AddClassFragment.viewModel2=viewModel2
             return AddClassFragment()
         }
@@ -58,8 +59,6 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
     private lateinit var viewModel: AddClassViewModel
     private lateinit var binding: FragmentAddClassBinding
     private lateinit var progressDialog: CustomProgressDialog
-    var academicDocumentId:String? = null
-    var semesterDocumentId:String? = null
     var classDocumentId:String? = null
 
     override fun onCreateView(
@@ -86,13 +85,13 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                     btnAddClass.isEnabled = false
 
                     // Check if academic type and year are provided from AddAcademicFragment
-                    if (AddAcademicFragment.academicType != null && AddAcademicFragment.academicYear != null) {
+                    if (AcademicDetailsFragment.academicType != null && AcademicDetailsFragment.academicYear != null) {
                         // Initialize the selected academic year and type if they are not already set
                         if (academicYearSelectedItem == null) {
-                            academicYearSelectedItem = AddAcademicFragment.academicYear
+                            academicYearSelectedItem = AcademicDetailsFragment.academicYear
                         }
                         if (academicTypeSelectedItem == null) {
-                            academicTypeSelectedItem = AddAcademicFragment.academicType
+                            academicTypeSelectedItem = AcademicDetailsFragment.academicType
                         }
 
                         // Set the selected academic year and type in their respective drop down
@@ -177,17 +176,30 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                         // Launch a coroutine to fetch academic types
                         val job = lifecycleScope.launch(Dispatchers.Main) {
                             try {
-                                // Check if the even semester exists for the selected academic year
-                                val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicIdEVEN:String? = null
+                                var academicIdODD:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                    {
+                                        academicIdEVEN = academicPojo.id
+                                    }
+                                    else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                    {
+                                        academicIdODD = academicPojo.id
+                                    }
+                                }
+
                                 // Add even semester to the list if it exists
-                                if (evenExists) {
+                                if (academicIdEVEN!=null) {
                                     academicTypeItemList.add(AcademicType.EVEN.name)
                                 }
 
-                                // Check if the odd semester exists for the selected academic year
-                                val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+
                                 // Add odd semester to the list if it exists
-                                if (oddExists) {
+                                if (academicIdODD!=null) {
                                     academicTypeItemList.add(AcademicType.ODD.name)
                                 }
 
@@ -294,62 +306,86 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                         // Check if all necessary fields are selected and not empty
                         if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && etAcademicClass.text!!.toString().isNotBlank() && etAcademicClass.text!!.toString().isNotEmpty())
                         {
-                            // Construct the document IDs
-                            academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
-                            semesterDocumentId = academicSemSelectedItem
-                            classDocumentId = etAcademicClass.text.toString().trim().replace(Regex("\\s+")," ")
 
-                            if(!classDocumentId!!.containsOnlyAllowedCharacters())
+                            MainScope().launch(Dispatchers.Main)
                             {
-                                requireContext().showToast("Class name only contain alphabets, number and - or  _ ")
-                                return@setOnClickListener
-                            }
-
-                            // Check if the class document already exists
-                            isClassDocumentExists(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!){
-                                try {
-                                    // If the class document doesn't exist, insert it
-                                    if(!it)
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicId:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
                                     {
-                                        MainScope().launch(Dispatchers.IO)
+                                        academicId = academicPojo.id
+                                        break
+                                    }
+                                }
+
+                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allsemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == academicSemSelectedItem!!)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
+                                classDocumentId = etAcademicClass.text.toString().trim().replace(Regex("\\s+")," ")
+
+                                if(!classDocumentId!!.containsOnlyAllowedCharacters())
+                                {
+                                    requireContext().showToast("Class name only contain alphabets, number and - or  _ ")
+                                    return@launch
+                                }
+
+                                // Check if the class document already exists
+                                ClassRepository.isClassDocumentExistsByName(academicId,semId!!,classDocumentId!!){
+                                    try {
+                                        // If the class document doesn't exist, insert it
+                                        if(!it)
                                         {
-                                            val inputHashMap = hashMapOf(
-                                                ClassCollection.CLASS.displayName to etAcademicClass.text.toString()
-                                            )
-                                            // Insert the class document into the database with the specified academic document ID, semester document ID, and class document ID,
-                                            // along with the class data provided in the inputHashMap.
-                                            ClassRepository.insertClassDocument(academicDocumentId!!,semesterDocumentId!!,classDocumentId!!,inputHashMap,{
-                                                // On success, update the UI by adding the class to the list, notify the adapter of the insertion, and clear the text field for class input.
-                                                try {
-                                                    academicClassList.add(etAcademicClass.text.toString())
-                                                    academicClassAdapter.notifyItemInserted(academicClassAdapter.itemCount)
-                                                    etAcademicClass.setText("")
-                                                    requireContext().showToast("Class Added")
-                                                } catch (e: Exception) {
+                                            MainScope().launch(Dispatchers.IO)
+                                            {
+
+                                                val newClassPojo = ClassPojo(name = classDocumentId!!)
+
+                                                // Insert the class document into the database with the specified academic document ID, semester document ID, and class document ID,
+                                                // along with the class data provided in the inputHashMap.
+                                                ClassRepository.insertClassDocument(academicId,semId,newClassPojo,{
+                                                    // On success, update the UI by adding the class to the list, notify the adapter of the insertion, and clear the text field for class input.
+                                                    try {
+                                                        academicClassList.add(newClassPojo)
+                                                        academicClassAdapter.notifyItemInserted(academicClassAdapter.itemCount)
+                                                        etAcademicClass.setText("")
+                                                        requireContext().showToast("Class Added")
+                                                    } catch (e: Exception) {
+                                                        // Log any unexpected exceptions that occur
+                                                        Log.e(TAG, e.message.toString())
+                                                        // Display an unexpected error message to the user
+                                                        requireContext().unexpectedErrorMessagePrint(e)
+                                                        throw e
+                                                    }
+                                                },{
                                                     // Log any unexpected exceptions that occur
-                                                    Log.e(TAG, e.message.toString())
+                                                    Log.e(TAG, it.message.toString())
                                                     // Display an unexpected error message to the user
-                                                    requireContext().unexpectedErrorMessagePrint(e)
-                                                    throw e
-                                                }
-                                            },{
-                                                // Log any unexpected exceptions that occur
-                                                Log.e(TAG, it.message.toString())
-                                                // Display an unexpected error message to the user
-                                                requireContext().unexpectedErrorMessagePrint(it)
-                                                throw it
-                                            })
+                                                    requireContext().unexpectedErrorMessagePrint(it)
+                                                    throw it
+                                                })
+                                            }
                                         }
+                                        else{
+                                            requireContext().showToast("Class is exists")
+                                        }
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG, e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        throw e
                                     }
-                                    else{
-                                        requireContext().showToast("Class is exists")
-                                    }
-                                } catch (e: Exception) {
-                                    // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(e)
-                                    throw e
                                 }
                             }
                         }
@@ -380,16 +416,61 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                         try {
                             // Clear the existing list of class documents
                             academicClassList.clear()
-                            // Generate document IDs based on selected parameters
-                            academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                            semesterDocumentId = academicSemSelectedItem
-                            // Fetch class documents from the repository if required document IDs not null
-                            if(academicDocumentId!="null" && semesterDocumentId!=null)
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicId:String? = null
+                            for(document in allAcademicDocument)
                             {
-                                val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!,semesterDocumentId!!)
-                                for (document in documents) {
-                                    academicClassList.add(document.id)
+                                val academicPojo = document.toAcademicPojo()
+                                if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicId = academicPojo.id
+                                    break
                                 }
+                            }
+                            if(academicSemSelectedItem==null)
+                            {
+                                withContext(Dispatchers.Main)
+                                {
+                                    try {
+                                        // Set up the Class RecyclerView adapter and layout manager
+                                        academicClassAdapter = ClassAdapter(academicClassList,this@AddClassFragment)
+                                        rvClass.layoutManager = LinearLayoutManager(requireContext())
+                                        rvClass.adapter = academicClassAdapter
+                                        delay(500)
+                                        // hiding the progress bar to ensure smooth UI transition
+                                        hideProgressBar(rvClass,progressBar)
+                                    } catch (e: Exception) {
+                                        // Log any unexpected exceptions that occur
+                                        Log.e(TAG, e.message.toString())
+                                        // Display an unexpected error message to the user
+                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        throw e
+                                    }
+                                }
+                                return@launch
+                            }
+                            try {
+                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allsemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == academicSemSelectedItem!!)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
+                                // Fetch class documents from the repository if required document IDs not null
+                                if(semId!=null)
+                                {
+                                    val documents = ClassRepository.getAllClassDocuments(academicId,semId)
+                                    for (document in documents) {
+                                        academicClassList.add(document.toClassPojo())
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
                             withContext(Dispatchers.Main)
                             {
@@ -503,11 +584,11 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                             val documents = AcademicRepository.getAllAcademicDocuments()
                             // Iterate through the documents to extract academic years
                             for (document in documents) {
-                                val academicItem = document.id.split('_')
+                                val academicPojo = document.toAcademicPojo()
                                 // Add unique academic years to the list
-                                if(!academicYearItemList.contains(academicItem[0]))
+                                if(!academicYearItemList.contains(academicPojo.year))
                                 {
-                                    academicYearItemList.add(academicItem[0])
+                                    academicYearItemList.add(academicPojo.year)
                                 }
                             }
                             withContext(Dispatchers.Main)
@@ -560,15 +641,26 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                     academicTypeItemList.clear()
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            // Check if documents exist for even semesters of the selected academic year
-                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
-                            if (evenExists) {
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicIdEVEN:String? = null
+                            var academicIdODD:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdEVEN = academicPojo.id
+                                }
+                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdODD = academicPojo.id
+                                }
+                            }
+                            if (academicIdEVEN!=null) {
                                 // Add "EVEN" to the list if documents exist
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
-                            // Check if documents exist for odd semesters of the selected academic year
-                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
-                            if (oddExists) {
+                            if (academicIdODD!=null) {
                                 // Add "ODD" to the list if documents exist
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
@@ -616,13 +708,22 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                         try {
                             // Clear the list of academic semesters
                             academicSemItemList.clear()
-                            // Construct the academic document ID based on the selected academic year and type
-                            val academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicId:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicId = academicPojo.id
+                                    break
+                                }
+                            }
                             // Retrieve semester documents from the repository
-                            val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
+                            val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
                             for (document in documents) {
                                 // Add each semester ID to the list
-                                academicSemItemList.add(document.id.toInt())
+                                academicSemItemList.add(document.toSemesterPojo().name.toInt())
                             }
                             withContext(Dispatchers.Main)
                             {
@@ -669,35 +770,62 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
             .show({
                 // Call the Cloud Function to initiate delete operation
                 try {
-                    // Construct the academic document ID using selected year and type
-                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                    // Get the selected semester document ID
-                    val semesterDocumentId = viewModel.academicSemSelectedItem
-                    // Get the class document ID at the specified position from the class list
-                    val classDocumentId = viewModel.academicClassList[position]
-
-                    // Call the deleteClass function with the academic document ID, semester document ID, class document ID, and a callback
-                    deleteClass(academicDocumentId,semesterDocumentId!!,classDocumentId){
-                        try {
-                            // Check if the deletion was successful
-                            if(it)
+                    MainScope().launch(Dispatchers.IO)
+                    {
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(viewModel.academicTypeSelectedItem==academicPojo.type && viewModel.academicYearSelectedItem==academicPojo.year)
                             {
-                                // If successful, remove the class from the class list and notify the adapter
-                                viewModel.academicClassList.removeAt(position)
-                                viewModel.academicClassAdapter.notifyItemRemoved(position)
-                                // Show a toast message indicating successful deletion
-                                requireContext().showToast("Class deleted successfully.")
+                                academicId = academicPojo.id
+                                break
                             }
-                            else{
-                                // If deletion was not successful, show a toast message indicating the error
-                                requireContext().showToast("Error occur while deleting class.")
-                            }
-                        } catch (e: Exception) {
-                            // Log any exceptions that occur during deletion
-                            Log.e(AddSemFragment.TAG, e.toString())
+                        }
 
-                            // Re-throw the exception to propagate it further if needed
-                            throw e
+                        val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                        var semId:String? = null
+                        for(doc in allsemesterDocuments)
+                        {
+                            val semesterPojo = doc.toSemesterPojo()
+                            if(semesterPojo.name == viewModel.academicSemSelectedItem!!)
+                            {
+                                semId = semesterPojo.id
+                                break
+                            }
+                        }
+                        // Get the class document ID at the specified position from the class list
+                        val classPojo = viewModel.academicClassList[position]
+
+                        // Call the deleteClass function with the academic document ID, semester document ID, class document ID, and a callback
+                        deleteClass(academicId,semId!!,classPojo.id){
+                            MainScope().launch(Dispatchers.Main)
+                            {
+                                try {
+                                    // Check if the deletion was successful
+                                    if(it)
+                                    {
+                                        // If successful, remove the class from the class list and notify the adapter
+                                        viewModel.academicClassList.removeAt(position)
+                                        viewModel.academicClassAdapter.notifyItemRemoved(position)
+                                        viewModel.academicClassAdapter.notifyItemRangeChanged(position,viewModel.academicClassAdapter.itemCount-position)
+                                        // Show a toast message indicating successful deletion
+                                        requireContext().showToast("Class deleted successfully.")
+                                    }
+                                    else{
+                                        // If deletion was not successful, show a toast message indicating the error
+                                        requireContext().showToast("Error occur while deleting class.")
+                                    }
+                                } catch (e: Exception) {
+                                    // Log any exceptions that occur during deletion
+                                    Log.e(AddSemFragment.TAG, e.toString())
+
+                                    // Re-throw the exception to propagate it further if needed
+                                    throw e
+                                }
+                            }
+
                         }
                     }
                 } catch (e: Exception) {
@@ -713,25 +841,38 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
     }
 
     override fun onEditClick(position: Int) {
-        try {
-            // Construct the academic document ID using selected year and type
-            val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-            // Get the selected semester document ID
-            val semesterDocumentId = viewModel.academicSemSelectedItem
-            // Get the class document ID at the specified position from the class list
-            val classDocumentId = viewModel.academicClassList[position]
+        MainScope().launch(Dispatchers.Main)
+        {
+            try {
+                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                var academicId:String? = null
+                for(document in allAcademicDocument)
+                {
+                    val academicPojo = document.toAcademicPojo()
+                    if(viewModel.academicTypeSelectedItem==academicPojo.type && viewModel.academicYearSelectedItem==academicPojo.year)
+                    {
+                        academicId = academicPojo.id
+                        break
+                    }
+                }
 
-            // Create an instance of the AddRoomDialog
-            val dialogFragment = EditClassDialog(academicDocumentId,semesterDocumentId!!,classDocumentId)
-            dialogFragment.isCancelable=false
-            // Show the dialog using childFragmentManager
-            dialogFragment.show(childFragmentManager, "customDialog")
-        } catch (e: Exception) {
-            // If any exception occurs, log the error message
-            Log.e(TAG, e.message.toString())
+                // Get the selected semester document ID
+                val semesterDocumentId = viewModel.academicSemSelectedItem
+                // Get the class document ID at the specified position from the class list
+                val classPojo = viewModel.academicClassList[position]
 
-            // Print an unexpected error message using a custom function
-            requireContext().unexpectedErrorMessagePrint(e)
+                // Create an instance of the AddRoomDialog
+                val dialogFragment = EditClassDialog(academicId!!,semesterDocumentId!!,classPojo)
+                dialogFragment.isCancelable=false
+                // Show the dialog using childFragmentManager
+                dialogFragment.show(childFragmentManager, "customDialog")
+            } catch (e: Exception) {
+                // If any exception occurs, log the error message
+                Log.e(TAG, e.message.toString())
+
+                // Print an unexpected error message using a custom function
+                requireContext().unexpectedErrorMessagePrint(e)
+            }
         }
     }
 
@@ -751,7 +892,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
                     // Call the deleteClassDocument function from the repository to delete class
                     ClassRepository.deleteClassDocument(academicDocumentId, semesterDocumentId, classDocumentId)
                     // Check if the class document still exists after deletion
-                    isClassDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId){
+                    ClassRepository.isClassDocumentExistsById(academicDocumentId,semesterDocumentId,classDocumentId){
                         // Notify the caller whether the deletion was successful
                         isDeleted(!it)
                     }
@@ -774,16 +915,15 @@ class AddClassFragment : Fragment(), OnItemClickListener, EditDocumentListener {
     }
 
     override fun onEdited(
-        oldDocumentId: String,
-        newDocumentId: String,
-        documentData: HashMap<String, String>
+        classPojo: ClassPojo,
+        position: Int
     ) {
         try {
             val index = viewModel.academicClassList.indexOfFirst {
-                it == oldDocumentId
+                it.id == classPojo.id
             }
             viewModel.academicClassList.removeAt(index)
-            viewModel.academicClassList.add(newDocumentId)
+            viewModel.academicClassList.add(classPojo)
             MainScope().launch(Dispatchers.Main)
             {
                 viewModel.academicClassAdapter.notifyDataSetChanged()

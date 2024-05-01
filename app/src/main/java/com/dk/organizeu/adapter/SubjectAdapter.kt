@@ -23,16 +23,16 @@ class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, privat
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_subject, parent, false)
-        binding = DataBindingUtil.bind(view)!!
         return AcademicViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = subjectPojoList[position]
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val currentItem = subjectPojoList[holder.adapterPosition]
             binding.subjectPojo = currentItem
             binding.listener = listener
-            binding.position = position
+            binding.position = holder.adapterPosition
         } catch (e: Exception) {
             Log.e(TAG,e.message.toString())
         }
@@ -42,24 +42,7 @@ class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, privat
         return subjectPojoList.size
     }
 
-    fun itemDelete(position: Int)
-    {
-        val itemChangedCount = subjectPojoList.size - position
-        notifyItemRemoved(position)
-        subjectPojoList.removeAt(position)
-        notifyItemRangeChanged(position, itemChangedCount)
-    }
 
-    fun itemInsert(subjectPojo: SubjectPojo)
-    {
-        subjectPojoList.add(subjectPojo)
-        notifyItemInserted(itemCount)
-    }
-
-    fun itemModify(position: Int)
-    {
-        notifyItemChanged(position)
-    }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

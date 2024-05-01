@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemFacultyBinding
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.FacultyPojo
 
-class FacultyAdapter(private val facultyList: ArrayList<String>, private val listener: OnItemClickListener) :
+class FacultyAdapter(private val facultyPojos: ArrayList<FacultyPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<FacultyAdapter.AcademicViewHolder>() {
 
         private lateinit var binding: ItemFacultyBinding
@@ -22,15 +23,15 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_faculty, parent, false)
-        binding = DataBindingUtil.bind(view)!!
-        return AcademicViewHolder(binding.root)
+        return AcademicViewHolder(view)
     }
 
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = facultyList[holder.adapterPosition]
-            binding.facultyName = currentItem
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val currentItem = facultyPojos[holder.adapterPosition]
+            binding.facultyPojo = currentItem
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
@@ -39,36 +40,34 @@ class FacultyAdapter(private val facultyList: ArrayList<String>, private val lis
     }
 
     override fun getItemCount(): Int {
-        return facultyList.size
+        return facultyPojos.size
     }
 
     fun itemDelete(position: Int)
     {
-        val itemChangedCount = facultyList.size - position
+        facultyPojos.removeAt(position)
         notifyItemRemoved(position)
-        facultyList.removeAt(position)
-        notifyItemRangeChanged(position, itemChangedCount)
+        notifyItemRangeChanged(position,itemCount-position)
     }
 
-    fun itemInsert(facultyName:String)
+    fun itemInsert(facultyPojo: FacultyPojo)
     {
-        facultyList.add(facultyName)
+        facultyPojos.add(facultyPojo)
         notifyItemInserted(itemCount)
     }
 
-    fun itemModify(oldFacultyName:String, facultyName: String)
+    fun itemModify(facultyPojo: FacultyPojo)
     {
-        val index = facultyList.indexOfFirst {
-            it==oldFacultyName
+        val index = facultyPojos.indexOfFirst {
+            it.id==facultyPojo.id
         }
         if(index<0)
         {
             return
         }
-        facultyList[index] = facultyName
-        notifyItemRangeChanged(index, facultyList.size)
+        facultyPojos[index] = facultyPojo
+        notifyItemChanged(index)
     }
-
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

@@ -14,8 +14,9 @@ import com.dk.organizeu.activity_admin.dialog.AddFacultyDialog
 import com.dk.organizeu.activity_admin.fragments.subjects.SubjectsFragment
 import com.dk.organizeu.adapter.FacultyAdapter
 import com.dk.organizeu.databinding.FragmentFacultyBinding
-import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.FacultyDocumentListener
+import com.dk.organizeu.pojo.FacultyPojo
+import com.dk.organizeu.pojo.FacultyPojo.Companion.toFacultyPojo
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
@@ -29,8 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListener,
-    AddDocumentListener, EditDocumentListener {
+class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListener, FacultyDocumentListener {
 
     companion object {
         fun newInstance() = FacultyFragment()
@@ -125,7 +125,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
 
                             // Add faculty names from the documents to the faculty list
                             for (document in documents) {
-                                facultyList.add(document.id)
+                                facultyList.add(document.toFacultyPojo())
                             }
 
                             withContext(Dispatchers.Main) {
@@ -182,9 +182,9 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                 // Call the Cloud Function to initiate delete operation
                 try {
                     // Get the faculty document ID at the specified position from the Faculty list
-                    val facultyDocumentId = viewModel.facultyList[position]
+                    val facultyPojo = viewModel.facultyList[position]
 
-                    deleteFaculty(facultyDocumentId){
+                    deleteFaculty(facultyPojo){
                         try {
                             if(it)
                             {
@@ -226,14 +226,14 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         }
     }
 
-    fun deleteFaculty(facultyDocumentId: String, isDeleted:(Boolean) -> Unit)
+    fun deleteFaculty(facultyPojo: FacultyPojo, isDeleted:(Boolean) -> Unit)
     {
         try {
             MainScope().launch(Dispatchers.IO)
             {
                 try {
-                    FacultyRepository.deleteFacultyDocument(facultyDocumentId)
-                    FacultyRepository.isFacultyDocumentExists(facultyDocumentId){
+                    FacultyRepository.deleteFacultyDocument(facultyPojo.id)
+                    FacultyRepository.isFacultyDocumentExistsById(facultyPojo.id){
                         isDeleted(!it)
                     }
                 } catch (e: Exception) {
@@ -247,9 +247,9 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         }
     }
 
-    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
+    override fun onAdded(facultyPojo: FacultyPojo) {
         try {
-            viewModel.facultyAdapter.itemInsert(documentId)
+            viewModel.facultyAdapter.itemInsert(facultyPojo)
             requireContext().showToast("Faculty Added")
         } catch (e: Exception) {
             Log.e(TAG,e.toString())
@@ -257,16 +257,12 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         }
     }
 
-    override fun onEdited(
-        oldDocumentId: String,
-        newDocumentId: String,
-        documentData: HashMap<String,String>
-    ) {
+    override fun onEdited(facultyPojo: FacultyPojo) {
         try {
 
             MainScope().launch(Dispatchers.Main)
             {
-                viewModel.facultyAdapter.itemModify(oldDocumentId,newDocumentId)
+                viewModel.facultyAdapter.itemModify(facultyPojo)
                 requireContext().showToast("Faculty Update Successfully")
             }
         } catch (e: Exception) {

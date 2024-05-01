@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="facultyName"
-            type="String" />
+            name="facultyPojo"
+            type="com.dk.organizeu.pojo.FacultyPojo" />
         <variable
             name="listener"
             type="com.dk.organizeu.listener.OnItemClickListener" />
@@ -40,7 +40,7 @@
                     android:id="@+id/txtFacultyName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{facultyName}"
+                    android:text="@{facultyPojo.name}"
                     tools:text="Faculty Name"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_12sdp" />

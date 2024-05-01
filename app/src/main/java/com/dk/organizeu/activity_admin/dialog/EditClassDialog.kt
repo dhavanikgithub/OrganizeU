@@ -10,15 +10,15 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.EditClassDialogLayoutBinding
-import com.dk.organizeu.firebase.key_mapping.ClassCollection
-import com.dk.organizeu.listener.EditDocumentListener
+import com.dk.organizeu.listener.ClassDocumentListener
+import com.dk.organizeu.pojo.ClassPojo
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
-class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: String, val oldClassDocumentId: String) : AppCompatDialogFragment() {
+class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: String, val oldClassPojo: ClassPojo) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
-    private var classEditListener: EditDocumentListener? = null
+    private var classDocumentListener: ClassDocumentListener? = null
 
     private lateinit var binding: EditClassDialogLayoutBinding
     companion object{
@@ -39,9 +39,9 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
         var builder: AlertDialog.Builder?=null
         try {
             // Set the classAddListener if the parentFragment implements EditDocumentListener
-            classEditListener = parentFragment as? EditDocumentListener
+            classDocumentListener = parentFragment as? ClassDocumentListener
             var title = "Edit Class"
-            binding.etClassName.setText(oldClassDocumentId)
+            binding.etClassName.setText(oldClassPojo.name)
             // Create an AlertDialog.Builder instance with the provided context, view, and title
             builder = AlertDialog.Builder(requireContext())
                 .setView(view)
@@ -64,10 +64,7 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
                             return@setOnClickListener
                         }
 
-                        // hashmap dataset of class
-                        val classData = hashMapOf(
-                            ClassCollection.CLASS.displayName to classDocumentId
-                        )
+
 
                         tlClassName.error = null
 

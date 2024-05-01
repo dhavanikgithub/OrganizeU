@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="className"
-            type="String" />
+            name="classPojo"
+            type="com.dk.organizeu.pojo.ClassPojo" />
         <variable
             name="listener"
             type="com.dk.organizeu.listener.OnItemClickListener" />
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".7"
                 android:padding="10dp"
-                android:text="@{className}"
+                android:text="@{classPojo.name}"
                 tools:text="Class: CEIT-A"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_12sdp" />

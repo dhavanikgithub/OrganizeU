@@ -6,7 +6,7 @@
     <data>
         <variable
             name="timetablePojo"
-            type="com.dk.organizeu.pojo.TimetablePojo" />
+            type="com.dk.organizeu.pojo.LessonPojo" />
         <variable
             name="listener"
             type="com.dk.organizeu.listener.OnItemClickListener" />
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimary"
-                    android:text='@{"Lesson: "+Integer.toString(timetablePojo.lessonNumber)}'
+                    android:visibility="invisible"
                     tools:text="@string/textLessonNumber"
                     android:textSize="@dimen/_10sdp" />
 

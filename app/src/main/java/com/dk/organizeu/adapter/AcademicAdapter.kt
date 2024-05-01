@@ -21,12 +21,12 @@ class AcademicAdapter(private val academicList: ArrayList<AcademicPojo>, private
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_academic, parent, false)
-        binding = DataBindingUtil.bind(view)!!
-        return AcademicViewHolder(binding.root)
+        return AcademicViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
+            binding = DataBindingUtil.bind(holder.itemView)!!
             val currentItem = academicList[holder.adapterPosition]
             binding.academicPojo = currentItem
             binding.listener = listener
@@ -38,27 +38,6 @@ class AcademicAdapter(private val academicList: ArrayList<AcademicPojo>, private
 
     override fun getItemCount(): Int {
         return academicList.size
-    }
-
-    fun itemRemove(position: Int)
-    {
-        val itemChangedCount = academicList.size - position
-        notifyItemRemoved(position)
-        academicList.removeAt(position)
-        notifyItemRangeChanged(position, itemChangedCount)
-    }
-
-    fun itemInsert(position: Int,academicPojo: AcademicPojo)
-    {
-        academicList.add(academicPojo)
-        notifyItemInserted(position)
-    }
-
-    fun itemModify(position: Int,academicPojo: AcademicPojo)
-    {
-        academicList.removeAt(position)
-        academicList.add(position,academicPojo)
-        notifyItemChanged(position)
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

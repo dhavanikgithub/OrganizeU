@@ -14,11 +14,11 @@ import com.dk.organizeu.activity_admin.dialog.AddRoomDialog
 import com.dk.organizeu.activity_admin.fragments.faculty.FacultyFragment
 import com.dk.organizeu.adapter.RoomAdapter
 import com.dk.organizeu.databinding.FragmentRoomsBinding
-import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.listener.EditDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.listener.RoomDocumentListener
+import com.dk.organizeu.pojo.RoomPojo
+import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
 import com.dk.organizeu.repository.RoomRepository
-import com.dk.organizeu.repository.RoomRepository.Companion.roomDocumentToRoomObj
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, EditDocumentListener {
+class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
 
     companion object {
         fun newInstance() = RoomsFragment()
@@ -86,7 +86,7 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
                 btnAddRoom.setOnClickListener {
                     try {
                         // Create an instance of the AddRoomDialog
-                        val dialogFragment = AddRoomDialog(null)
+                        val dialogFragment = AddRoomDialog(null,-1)
                         dialogFragment.isCancelable=false
                         // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
@@ -124,7 +124,7 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
 
                             // Convert room documents to Room objects and add them to the list
                             for (document in documents) {
-                                val roomItem = roomDocumentToRoomObj(document)
+                                val roomItem = document.toRoomPojo()
                                 roomPojoList.add(roomItem)
                             }
 
@@ -177,15 +177,13 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
      * @param documentId The ID of the newly added document.
      * @param documentData A HashMap containing the data of the newly added document.
      */
-    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
+    override fun onAdded(roomPojo: RoomPojo) {
         binding.apply {
             viewModel.apply {
                 try {
-                    // Convert document data to a Room object
-                    val roomItem = roomDocumentToRoomObj(documentId, documentData)
 
                     // Add the new room to the list
-                    roomPojoList.add(roomItem)
+                    roomPojoList.add(roomPojo)
 
                     // Notify the adapter of the newly inserted item
                     roomAdapter.notifyItemInserted(roomAdapter.itemCount)
@@ -232,12 +230,13 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
                     // Get the room document ID at the specified position from the Room list
                     val room = viewModel.roomPojoList[position]
 
-                    deleteRoom(room.name){
+                    deleteRoom(room.id){
                         try {
                             if(it)
                             {
                                 viewModel.roomPojoList.removeAt(position)
                                 viewModel.roomAdapter.notifyItemRemoved(position)
+                                viewModel.roomAdapter.notifyItemRangeChanged(position,viewModel.roomAdapter.itemCount-position)
                                 requireContext().showToast("Room deleted successfully.")
                             }
                             else{
@@ -263,7 +262,7 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
     override fun onEditClick(position: Int) {
         try {
             // Create an instance of the AddRoomDialog
-            val dialogFragment = AddRoomDialog(viewModel.roomPojoList[position])
+            val dialogFragment = AddRoomDialog(viewModel.roomPojoList[position],position)
             dialogFragment.isCancelable=false
             // Show the dialog using childFragmentManager
             dialogFragment.show(childFragmentManager, "customDialog")
@@ -276,14 +275,14 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
         }
     }
 
-    fun deleteRoom(roomDocumentId:String, isDeleted:(Boolean) -> Unit)
+    fun deleteRoom(id:String, isDeleted:(Boolean) -> Unit)
     {
         try {
             MainScope().launch(Dispatchers.IO)
             {
                 try {
-                    RoomRepository.deleteRoomDocument(roomDocumentId)
-                    RoomRepository.isRoomDocumentExists(roomDocumentId){
+                    RoomRepository.deleteRoomDocument(id)
+                    RoomRepository.isRoomDocumentExistsById(id){
                         isDeleted(!it)
                     }
                 } catch (e: Exception) {
@@ -296,22 +295,15 @@ class RoomsFragment : Fragment(), AddDocumentListener, OnItemClickListener, Edit
     }
 
     override fun onEdited(
-        oldDocumentId: String,
-        newDocumentId: String,
-        documentData: HashMap<String, String>
+        roomPojo: RoomPojo,
+        position: Int
     ) {
         try {
-            val index = viewModel.roomPojoList.indexOfFirst {
-                it.name == oldDocumentId
-            }
-
-            viewModel.roomPojoList.removeAt(index)
-            viewModel.roomPojoList.add(index,roomDocumentToRoomObj(newDocumentId,documentData))
-            MainScope().launch(Dispatchers.Main)
-            {
-                viewModel.roomAdapter.notifyDataSetChanged()
-                requireContext().showToast("Room Data Updated")
-            }
+            viewModel.roomPojoList[position].name = roomPojo.name
+            viewModel.roomPojoList[position].location = roomPojo.location
+            viewModel.roomPojoList[position].type = roomPojo.type
+            viewModel.roomAdapter.notifyItemChanged(position)
+            requireContext().showToast("Room Data Updated")
         }
         catch (e: Exception)
         {

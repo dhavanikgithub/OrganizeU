@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddBatchBinding
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.BatchPojo
 
-class BatchAdapter(private val academicBatchList: ArrayList<String>,private val listener: OnItemClickListener) :
+class BatchAdapter(private val batchPojos: ArrayList<BatchPojo>,private val listener: OnItemClickListener) :
     RecyclerView.Adapter<BatchAdapter.AcademicViewHolder>() {
 
         private lateinit var binding: ItemAddBatchBinding
@@ -22,14 +23,15 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>,private val 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_add_batch, parent, false)
-        binding = DataBindingUtil.bind(view)!!
-        return AcademicViewHolder(binding.root)
+
+        return AcademicViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicBatchList[holder.adapterPosition]
-            binding.batch = currentItem
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val currentItem = batchPojos[holder.adapterPosition]
+            binding.batchPojo = currentItem
             binding.position = holder.adapterPosition
             binding.listener = listener
         } catch (e: Exception) {
@@ -38,8 +40,7 @@ class BatchAdapter(private val academicBatchList: ArrayList<String>,private val 
     }
 
     override fun getItemCount(): Int {
-
-        return academicBatchList.size
+        return batchPojos.size
     }
 
 

@@ -11,20 +11,16 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.AddAcademicDialogLayoutBinding
-import com.dk.organizeu.firebase.key_mapping.AcademicCollection
-import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.AcademicDocumentListener
+import com.dk.organizeu.pojo.AcademicPojo
 import com.dk.organizeu.repository.AcademicRepository
-import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.dk.organizeu.utils.Validation.Companion.isItemSelected
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class AddAcademicDialog() : AppCompatDialogFragment() {
-    private var academicAddListener: AddDocumentListener? = null
+    private var academicDocumentListener: AcademicDocumentListener? = null
     private lateinit var binding: AddAcademicDialogLayoutBinding
     companion object{
         const val TAG = "OrganizeU-AddAcademicDialog"
@@ -36,7 +32,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
         val view = inflater.inflate(R.layout.add_academic_dialog_layout, null)
         binding = DataBindingUtil.bind(view)!!
         var builder:AlertDialog.Builder? = null
-        academicAddListener = parentFragment as? AddDocumentListener
+        academicDocumentListener = parentFragment as? AcademicDocumentListener
         // Create object of AlertDialog box
         builder = AlertDialog.Builder(requireContext())
             .setView(view)
@@ -62,9 +58,6 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         academicYears.add("$year-${year + 1}")
                     }
                 }
-
-
-
                 // Initialize the Academic year drop down
                 val academicYearsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, academicYears)
                 actAcademicYear.setAdapter(academicYearsAdapter)
@@ -95,54 +88,36 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         // execute next process for adding document in database if any one academic type is checked
                         if((chipEven.isChecked || chipOdd.isChecked))
                         {
-                            var academicDocumentId: String? = null
-                            var academicData: HashMap<String,String>? = null
-                            // Determine the academic type based on the checked state of chips
-                            // If the chipEven is checked, set the academic type to EVEN
-                            // If the chipOdd is checked, set the academic type to ODD
-                            val aType = if(chipEven.isChecked) chipEven.text.toString() else chipOdd .text.toString()
+                            val academicYear = actAcademicYear.text.toString()
+                            val academicType = if(chipEven.isChecked) chipEven.text.toString() else chipOdd .text.toString()
 
-                            academicDocumentId = "${actAcademicYear.text}_${aType}"
-
-                            academicData = hashMapOf(
-                                AcademicCollection.YEAR.displayName to actAcademicYear.text.toString(),
-                                AcademicCollection.TYPE.displayName to aType
+                            val newAcademicPojo = AcademicPojo(
+                                year = academicYear,
+                                type = academicType
                             )
 
-                            if (academicDocumentId != null) {
-                                // Check if academic document exists
-                                isAcademicDocumentExists(academicDocumentId) { exists ->
-                                    try {
-                                        if(exists) {
-                                            requireContext().showToast("Academic Already Exist")
-                                            return@isAcademicDocumentExists // Exit the callback function
-                                        }
-                                        if (academicData != null) { // If academic data is not null, insert it into the repository
-                                            MainScope().launch(Dispatchers.IO){
-                                                try {
-                                                    // Insert academic documents into the repository
-                                                    AcademicRepository.insertAcademicDocuments(
-                                                        academicDocumentId, // Academic document ID
-                                                        academicData, // Academic data to be inserted
-                                                        {
-                                                            // Success callback: When academic documents are successfully added
-                                                            academicAddListener?.onAdded(academicDocumentId, academicData) // Call the listener about document added
-                                                            dismiss() // Dismiss dialog after document added
-                                                        },
-                                                        {
-                                                            // Error callback: When an exception occurs during insertion
-                                                            throw it // Throw the caught exception for handling in the caller
-                                                        }
-                                                    )
-                                                } catch (e: Exception) {
-                                                    throw e // Throw the caught exception for handling in the caller
-                                                }
-                                            }
-                                        }
-
-                                    } catch (e: Exception) {
-                                        throw e // Throw the caught exception for handling in the caller
+                            // Check if academic document exists
+                            AcademicRepository.isAcademicDocumentExistsByYearAndType(newAcademicPojo) { exists ->
+                                try {
+                                    if(exists) {
+                                        requireContext().showToast("Academic Already Exist")
+                                        return@isAcademicDocumentExistsByYearAndType // Exit the callback function
                                     }
+                                    // Insert academic documents into the repository
+                                    AcademicRepository.insertAcademicDocuments(newAcademicPojo,
+                                        {
+                                            // Success callback: When academic documents are successfully added
+                                            academicDocumentListener?.onAdded(newAcademicPojo) // Call the listener about document added
+                                            dismiss() // Dismiss dialog after document added
+                                        },
+                                        {
+                                            // Error callback: When an exception occurs during insertion
+                                            throw it // Throw the caught exception for handling in the caller
+                                        }
+                                    )
+
+                                } catch (e: Exception) {
+                                    throw e // Throw the caught exception for handling in the caller
                                 }
                             }
 

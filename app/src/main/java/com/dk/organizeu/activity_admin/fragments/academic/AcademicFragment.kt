@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.activity_admin.dialog.AddAcademicDialog
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
 import com.dk.organizeu.adapter.AcademicAdapter
 import com.dk.organizeu.databinding.FragmentAcademicBinding
-import com.dk.organizeu.listener.AddDocumentListener
+import com.dk.organizeu.listener.AcademicDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.AcademicPojo
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
@@ -32,7 +33,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
+class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListener {
 
     companion object {
         fun newInstance() = AcademicFragment()
@@ -142,9 +143,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                                     // Process document changes
                                     if (value != null && !value.isEmpty) {
                                         for (change in value.documentChanges) {
-                                            val documentId = change.document.id
-                                            val academicItem = documentId.split('_')
-                                            val academicPojo = AcademicPojo("${academicItem[0]}", "${academicItem[1]}")
+                                            val academicPojo = change.document.toAcademicPojo()
                                             when(change.type)
                                             {
                                                 DocumentChange.Type.ADDED -> {
@@ -171,10 +170,11 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                                                     if(academicList.contains(academicPojo))
                                                     {
                                                         val index = academicList.indexOfFirst {
-                                                            it.academic == academicPojo.academic && it.sem == academicPojo.sem
+                                                            it.id == academicPojo.id
                                                         }
                                                         academicList.removeAt(index)
                                                         academicAdapter.notifyItemRemoved(index)
+                                                        academicAdapter.notifyItemRangeChanged(index,academicAdapter.itemCount-index)
                                                     }
                                                 }
                                             }
@@ -221,14 +221,14 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
      * @param documentId The ID of the added document.
      * @param documentData The data of the added document stored in a HashMap.
      */
-    override fun onAdded(documentId: String, documentData: HashMap<String, String>) {
+    override fun onAdded(academicPojo: AcademicPojo) {
         binding.apply {
             viewModel.apply {
                 try {
                     requireContext().showToast("Academic Added Successfully")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(AddAcademicFragment.TAG, e.message.toString())
+                    Log.e(AcademicDetailsFragment.TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -236,6 +236,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
             }
         }
     }
+
 
     /**
      * This function is a callback invoked when an item is clicked in the academic RecyclerView.
@@ -250,15 +251,15 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
                     // Creating a Bundle to pass data to the destination fragment
                     val bundle = Bundle().apply {
                         // Extracting academic year and type information from the clicked item
-                        putString("academic_year", "${academicList[position].academic}")
-                        putString("academic_type", "${academicList[position].sem}")
+                        putString("academic_year", academicList[position].year)
+                        putString("academic_type", academicList[position].type)
                     }
 
                     // Navigating to the addAcademicFragment with the provided data
                     findNavController().navigate(R.id.addAcademicFragment, bundle)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(AddAcademicFragment.TAG, e.message.toString())
+                    Log.e(AcademicDetailsFragment.TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -282,8 +283,7 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
             .show({
                 try {
                     val academic = viewModel.academicList[position]
-                    val academicDocumentId = "${academic.academic}_${academic.sem}"
-                    deleteAcademic(academicDocumentId)
+                    deleteAcademic(academic.id)
                 } catch (e: Exception) {
                     Log.e(TAG,e.toString())
                 }
@@ -324,24 +324,26 @@ class AcademicFragment : Fragment(), AddDocumentListener, OnItemClickListener {
 
     /**
      * Deletes the academic document and its data from Firestore.
-     * @param academicDocumentId The ID of the academic document to delete.
+     * @param id The ID of the academic document to delete.
      */
-    fun deleteAcademic(academicDocumentId:String)
+    fun deleteAcademic(id:String)
     {
         try {
             // Launch a coroutine in the IO dispatcher
             MainScope().launch(Dispatchers.IO){
                 try {
                     // Call the deleteAcademicDocument function from the repository to delete academic
-                    AcademicRepository.deleteAcademicDocument(academicDocumentId)
+                    AcademicRepository.deleteAcademicDocument(id)
                     withContext(Dispatchers.Main) {
                         // Check if the academic document still exists after deletion
-                        if (AcademicRepository.isAcademicDocumentExists(academicDocumentId)) {
-                            // Show a toast message if the document still exists (indicating deletion failure)
-                            requireContext().showToast("Error occur while deleting academic.")
-                        } else {
-                            // Show a toast message if the document was successfully deleted
-                            requireContext().showToast("Academic deleted successfully.")
+                        AcademicRepository.isAcademicDocumentExistsById(id){
+                            if (it) {
+                                // Show a toast message if the document still exists (indicating deletion failure)
+                                requireContext().showToast("Error occur while deleting academic.")
+                            } else {
+                                // Show a toast message if the document was successfully deleted
+                                requireContext().showToast("Academic deleted successfully.")
+                            }
                         }
                     }
                 } catch (e: Exception) {

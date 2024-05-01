@@ -15,17 +15,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment
+import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
 import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.dk.organizeu.enum_class.AcademicType
-import com.dk.organizeu.firebase.key_mapping.BatchCollection
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.pojo.BatchPojo
+import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository
-import com.dk.organizeu.repository.AcademicRepository.Companion.isAcademicDocumentExists
 import com.dk.organizeu.repository.BatchRepository
 import com.dk.organizeu.repository.BatchRepository.Companion.insertBatchDocument
-import com.dk.organizeu.repository.BatchRepository.Companion.isBatchDocumentExists
+import com.dk.organizeu.repository.BatchRepository.Companion.isBatchDocumentExistsById
+import com.dk.organizeu.repository.BatchRepository.Companion.isBatchDocumentExistsByName
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -52,9 +56,6 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
     private lateinit var viewModel: AddBatchViewModel
     private lateinit var binding: FragmentAddBatchBinding
     private lateinit var progressDialog: CustomProgressDialog
-    var academicDocumentId:String? = null
-    var semesterDocumentId:String? = null
-    var classDocumentId:String? = null
     var batchDocumentId:String? = null
 
     override fun onCreateView(
@@ -83,15 +84,15 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     btnAddBatch.isEnabled=false
 
                     // Set selected values if previously set in AddAcademicFragment
-                    if (AddAcademicFragment.academicType!=null && AddAcademicFragment.academicYear!=null)
+                    if (AcademicDetailsFragment.academicType!=null && AcademicDetailsFragment.academicYear!=null)
                     {
                         if(academicYearSelectedItem==null)
                         {
-                            academicYearSelectedItem = AddAcademicFragment.academicYear
+                            academicYearSelectedItem = AcademicDetailsFragment.academicYear
                         }
                         if(academicTypeSelectedItem==null)
                         {
-                            academicTypeSelectedItem = AddAcademicFragment.academicType
+                            academicTypeSelectedItem = AcademicDetailsFragment.academicType
                         }
                         // Set text for academic year and type DropDown
                         actAcademicYear.setText(academicYearSelectedItem)
@@ -182,15 +183,27 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
 
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            // Check if academic documents for even and odd semesters exist for the selected academic year
-                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
-                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicIdEVEN:String? = null
+                            var academicIdODD:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdEVEN = academicPojo.id
+                                }
+                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdODD = academicPojo.id
+                                }
+                            }
 
                             // Add existing academic types to the academic type dropdown
-                            if (evenExists) {
+                            if (academicIdEVEN!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
-                            if (oddExists) {
+                            if (academicIdODD!=null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
                             // Set up the adapter for the academic type drop down
@@ -318,38 +331,70 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     try {// Check if all required fields are not null and the batch EditText is not blank or empty
                         if(academicYearSelectedItem!=null && academicTypeSelectedItem!=null && academicSemSelectedItem!=null && academicClassSelectedItem!=null && etAcademicBatch.text!!.toString().isNotBlank() && etAcademicBatch.text!!.toString().isNotEmpty())
                         {
-                            academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
-                            semesterDocumentId = academicSemSelectedItem
-                            classDocumentId = academicClassSelectedItem
-                            batchDocumentId = etAcademicBatch.text.toString().trim().replace(Regex("\\s+")," ")
-                            if(!batchDocumentId!!.containsOnlyAllowedCharacters())
-                            {
-                                requireContext().showToast("Batch name only contain alphabets, number and - or  _ ")
-                                return@setOnClickListener
-                            }
 
-                            // Check if the required document IDs are not null and the batch document ID is not "null"
-                            if(academicDocumentId!=null && semesterDocumentId!=null && classDocumentId!=null && batchDocumentId!="null")
+                            MainScope().launch(Dispatchers.Main)
                             {
-                                // Check if the required document IDs are not null and the batch document ID is not "null"
-                                isBatchDocumentExists(academicDocumentId!!,
-                                    semesterDocumentId!!, classDocumentId!!, batchDocumentId!!
-                                ){
-                                    if(!it)
+                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                                var academicId:String? = null
+                                for(document in allAcademicDocument)
+                                {
+                                    val academicPojo = document.toAcademicPojo()
+                                    if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
                                     {
-                                        // If the batch document does not exist, insert it into the database
-                                        val job = MainScope().launch(Dispatchers.IO) {
-                                            try {
-                                                val inputHashMap = hashMapOf(
-                                                    BatchCollection.BATCH.displayName to etAcademicBatch.text.toString()
-                                                )
-                                                // Call the insertBatchDocument function to add a new batch document to the database
-                                                insertBatchDocument(academicDocumentId!!, semesterDocumentId!!, classDocumentId!!, batchDocumentId!!,inputHashMap,{
-                                                    // Success Callback
+                                        academicId = academicPojo.id
+                                        break
+                                    }
+                                }
+                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allsemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == academicSemSelectedItem!!)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
+
+                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                                var classId:String? = null
+                                for(doc in allClassDocuments)
+                                {
+                                    val classPojo = doc.toClassPojo()
+                                    if(classPojo.name == academicClassSelectedItem!!)
+                                    {
+                                        classId = classPojo.id
+                                        break
+                                    }
+                                }
+                                batchDocumentId = etAcademicBatch.text.toString().trim().replace(Regex("\\s+")," ")
+                                if(!batchDocumentId!!.containsOnlyAllowedCharacters())
+                                {
+                                    requireContext().showToast("Batch name only contain alphabets, number and - or  _ ")
+                                    return@launch
+                                }
+
+                                // Check if the required document IDs are not null and the batch document ID is not "null"
+                                if(classId!=null && batchDocumentId!="null")
+                                {
+                                    // Check if the required document IDs are not null and the batch document ID is not "null"
+                                    isBatchDocumentExistsByName(academicId,
+                                        semId, classId, batchDocumentId!!
+                                    ){
+                                        if(!it)
+                                        {
+                                            // If the batch document does not exist, insert it into the database
+                                            val job = MainScope().launch(Dispatchers.IO) {
+                                                try {
+                                                    val newBatchPojo = BatchPojo(name = batchDocumentId!!)
+                                                    // Call the insertBatchDocument function to add a new batch document to the database
+                                                    insertBatchDocument(academicId, semId, classId, newBatchPojo,{
+                                                        // Success Callback
                                                         try {
                                                             // Update UI and display a success message if the batch is added successfully
                                                             // Add the batch from the EditText to the list
-                                                            academicBatchList.add(etAcademicBatch.text.toString())
+                                                            academicBatchList.add(newBatchPojo)
                                                             // Notify the adapter that an item has been inserted at the last position in the list
                                                             academicBatchAdapter.notifyItemInserted(academicBatchAdapter.itemCount)
                                                             requireContext().showToast("Batch Added")
@@ -369,27 +414,28 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                                                         // Display an unexpected error message to the user
                                                         requireContext().unexpectedErrorMessagePrint(it)
                                                         throw it
-                                                })
-                                            } catch (e: Exception) {
-                                                // Log any unexpected exceptions that occur
-                                                Log.e(TAG, e.message.toString())
-                                                // Display an unexpected error message to the user
-                                                requireContext().unexpectedErrorMessagePrint(e)
-                                                throw e
+                                                    })
+                                                } catch (e: Exception) {
+                                                    // Log any unexpected exceptions that occur
+                                                    Log.e(TAG, e.message.toString())
+                                                    // Display an unexpected error message to the user
+                                                    requireContext().unexpectedErrorMessagePrint(e)
+                                                    throw e
+                                                }
+                                            }
+                                            runBlocking {
+                                                // wait for async task
+                                                job.join()
                                             }
                                         }
-                                        runBlocking {
-                                            // wait for async task
-                                            job.join()
+                                        else{
+                                            requireContext().showToast("Batch is exists")
                                         }
                                     }
-                                    else{
-                                        requireContext().showToast("Batch is exists")
-                                    }
                                 }
-                            }
-                            else{
-                                requireContext().showToast("Invalid Input")
+                                else{
+                                    requireContext().showToast("Invalid Input")
+                                }
                             }
 
                         }
@@ -424,17 +470,55 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                         // Clear the existing list of academic batches
                         academicBatchList.clear()
                         // Construct the academic document ID
-                        academicDocumentId = "${academicYearSelectedItem}_${academicTypeSelectedItem}"
-                        semesterDocumentId = academicSemSelectedItem
-                        classDocumentId = academicClassSelectedItem
-                        // Check if academic document ID, semester document ID, and class document ID are not null
-                        if(academicDocumentId!="null" && semesterDocumentId != null && classDocumentId!=null)
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
                         {
-                            // Retrieve batch documents from the BatchRepository
-                            val documents = BatchRepository.getAllBatchDocuments(academicDocumentId!!,semesterDocumentId!!, classDocumentId!!)
-                            // Add retrieved batch documents to the academicBatchList
-                            for (document in documents) {
-                                academicBatchList.add(document.id)
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                            {
+                                academicId = academicPojo.id
+                                break
+                            }
+                        }
+                        if(academicSemSelectedItem!=null && academicClassSelectedItem!=null)
+                        {
+                            try {
+                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                                var semId:String? = null
+                                for(doc in allsemesterDocuments)
+                                {
+                                    val semesterPojo = doc.toSemesterPojo()
+                                    if(semesterPojo.name == academicSemSelectedItem!!)
+                                    {
+                                        semId = semesterPojo.id
+                                        break
+                                    }
+                                }
+
+                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                                var classId:String? = null
+                                for(doc in allClassDocuments)
+                                {
+                                    val classPojo = doc.toClassPojo()
+                                    if(classPojo.name == academicClassSelectedItem!!)
+                                    {
+                                        classId = classPojo.id
+                                        break
+                                    }
+                                }
+                                // Check if academic document ID, semester document ID, and class document ID are not null
+                                if(classId!=null)
+                                {
+                                    // Retrieve batch documents from the BatchRepository
+                                    val documents = BatchRepository.getAllBatchDocuments(academicId,semId, classId)
+                                    // Add retrieved batch documents to the academicBatchList
+                                    for (document in documents) {
+                                        academicBatchList.add(document.toBatchPojo())
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
                         }
                         // Update UI on the main thread
@@ -450,6 +534,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                             // Hide progress bar after fetching batch documents
                             hideProgressBar(rvBatch, progressBar)
                         }
+
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
@@ -558,11 +643,11 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                         // Iterate through each document
                         for (document in documents) {
                             // Split the document ID to extract the academic year
-                            val academicItem = document.id.split('_')
+                            val academicPojo = document.toAcademicPojo()
                             // Add the academic year to the list if it's not already present
-                            if(!academicYearItemList.contains(academicItem[0]))
+                            if(!academicYearItemList.contains(academicPojo.year))
                             {
-                                academicYearItemList.add(academicItem[0])
+                                academicYearItemList.add(academicPojo.year)
                             }
                         }
                         withContext(Dispatchers.Main){
@@ -608,16 +693,27 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     // Use a coroutine to perform database operations asynchronously
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            // Check if an academic document for the even semester exists
-                            val evenExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.EVEN.name}")
+                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                            var academicIdEVEN:String? = null
+                            var academicIdODD:String? = null
+                            for(document in allAcademicDocument)
+                            {
+                                val academicPojo = document.toAcademicPojo()
+                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdEVEN = academicPojo.id
+                                }
+                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                                {
+                                    academicIdODD = academicPojo.id
+                                }
+                            }
                             // If the even semester document exists, add "EVEN" to the list of academic types
-                            if (evenExists) {
+                            if (academicIdEVEN!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
-                            // Check if an academic document for the odd semester exists
-                            val oddExists = isAcademicDocumentExists("${academicYearSelectedItem!!}_${AcademicType.ODD.name}")
                             // If the odd semester document exists, add "ODD" to the list of academic types
-                            if (oddExists) {
+                            if (academicIdODD!=null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
                             // Initialize the adapter with the list of academic types
@@ -661,16 +757,26 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     try {
                         // Clear the list of academic semesters
                         academicSemItemList.clear()
-                        // Construct the academic document ID using the selected academic year and type
-                        academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                            {
+                                academicId = academicPojo.id
+                                break
+                            }
+                        }
+
                         // Check if the academic document ID is not null
-                        if (academicDocumentId != "null") {
+                        if (academicId != null) {
                             // Retrieve all semester documents for the specified academic document ID
-                            val documents = SemesterRepository.getAllSemesterDocuments(academicDocumentId!!)
+                            val documents = SemesterRepository.getAllSemesterDocuments(academicId)
                             // Iterate through the retrieved documents
                             for (document in documents) {
                                 // Add the semester ID to the list of academic semesters
-                                academicSemItemList.add(document.id.toInt())
+                                academicSemItemList.add(document.toSemesterPojo().name.toInt())
                             }
                         }
                         withContext(Dispatchers.Main) {
@@ -711,19 +817,42 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     try {
                         // Clear the list of academic classes
                         academicClassItemList.clear()
-                        // Construct the academic document ID using the selected academic year and type
-                        academicDocumentId = "${academicYearSelectedItem}_$academicTypeSelectedItem"
-                        // Check if the academic document ID and semester document ID are not null
-                        semesterDocumentId = academicSemSelectedItem
-                        if (academicDocumentId != "null" && semesterDocumentId != null) {
-                            // Retrieve all class documents for the specified academic and semester document IDs
-                            val documents = ClassRepository.getAllClassDocuments(academicDocumentId!!, semesterDocumentId!!)
-                            // Iterate through the retrieved documents
-                            for (document in documents) {
-                                // Add the class ID to the list of academic classes
-                                academicClassItemList.add(document.id)
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
+                            {
+                                academicId = academicPojo.id
+                                break
                             }
                         }
+                        if(academicSemSelectedItem!=null)
+                        {
+                            val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                            var semId:String? = null
+                            for(doc in allsemesterDocuments)
+                            {
+                                val semesterPojo = doc.toSemesterPojo()
+                                if(semesterPojo.name == academicSemSelectedItem!!)
+                                {
+                                    semId = semesterPojo.id
+                                    break
+                                }
+                            }
+
+                            if (semId != null) {
+                                // Retrieve all class documents for the specified academic and semester document IDs
+                                val documents = ClassRepository.getAllClassDocuments(academicId, semId)
+                                // Iterate through the retrieved documents
+                                for (document in documents) {
+                                    // Add the class ID to the list of academic classes
+                                    academicClassItemList.add(document.toClassPojo().name)
+                                }
+                            }
+                        }
+
 
                         withContext(Dispatchers.Main) {
                             try {
@@ -755,50 +884,86 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onDeleteClick(position: Int) {
+        viewModel.apply {
+
         val dialog = DialogUtils(requireContext()).build()
 
         dialog.setTitle("Delete Batch")
             .setCancelable(false)
             .setMessage("Are you sure you want to delete the Batch and its data?")
             .show({
-                // Call the Cloud Function to initiate delete operation
-                try {
-                    // Construct the academic document ID using selected year and type
-                    val academicDocumentId = "${viewModel.academicYearSelectedItem}_${viewModel.academicTypeSelectedItem}"
-                    // Get the selected semester document ID
-                    val semesterDocumentId = viewModel.academicSemSelectedItem
-                    // Get the selected class document ID
-                    val classDocumentId = viewModel.academicClassSelectedItem
-                    // Get the batch document ID at the specified position from the Batch list
-                    val batchDocumentId = viewModel.academicBatchList[position]
-
-                    // Call the deleteBatch function with the academic document ID, semester document ID, class document ID, batch document ID, and a callback
-                    deleteBatch(academicDocumentId,semesterDocumentId!!,classDocumentId!!,batchDocumentId){
-                        try {
-                            // Check if the deletion was successful
-                            if(it)
+                MainScope().launch(Dispatchers.Main)
+                {
+                    // Call the Cloud Function to initiate delete operation
+                    try {
+                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
+                        var academicId:String? = null
+                        for(document in allAcademicDocument)
+                        {
+                            val academicPojo = document.toAcademicPojo()
+                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
                             {
-                                // If successful, remove the batch from the ViewModel's list and notify the adapter
-                                viewModel.academicBatchList.removeAt(position)
-                                viewModel.academicBatchAdapter.notifyItemRemoved(position)
-                                requireContext().showToast("Batch deleted successfully.")
+                                academicId = academicPojo.id
+                                break
                             }
-                            else{
-                                requireContext().showToast("Error occur while deleting batch.")
-                            }
-                        } catch (e: Exception) {
-                            Log.e(TAG,e.toString())
-                            throw e
                         }
+                        val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
+                        var semId:String? = null
+                        for(doc in allSemesterDocuments)
+                        {
+                            val semesterPojo = doc.toSemesterPojo()
+                            if(semesterPojo.name == academicSemSelectedItem!!)
+                            {
+                                semId = semesterPojo.id
+                                break
+                            }
+                        }
+
+                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
+                        var classId:String? = null
+                        for(doc in allClassDocuments)
+                        {
+                            val classPojo = doc.toClassPojo()
+                            if(classPojo.name == academicClassSelectedItem!!)
+                            {
+                                classId = classPojo.id
+                                break
+                            }
+                        }
+                        // Get the batch document ID at the specified position from the Batch list
+                        val batchPojo = viewModel.academicBatchList[position]
+
+                        // Call the deleteBatch function with the academic document ID, semester document ID, class document ID, batch document ID, and a callback
+                        deleteBatch(academicId,semId,classId!!,batchPojo.id){
+                            try {
+                                // Check if the deletion was successful
+                                if(it)
+                                {
+                                    // If successful, remove the batch from the ViewModel's list and notify the adapter
+                                    viewModel.academicBatchList.removeAt(position)
+                                    viewModel.academicBatchAdapter.notifyItemRemoved(position)
+                                    viewModel.academicBatchAdapter.notifyItemRangeChanged(position,viewModel.academicBatchAdapter.itemCount-position)
+                                    requireContext().showToast("Batch deleted successfully.")
+                                }
+                                else{
+                                    requireContext().showToast("Error occur while deleting batch.")
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG,e.toString())
+                                throw e
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG,e.toString())
+                        requireContext().showToast("Error occur while deleting batch.")
                     }
-                } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
-                    requireContext().showToast("Error occur while deleting batch.")
+                    dialog.dismiss()
                 }
-                dialog.dismiss()
+
             },{
                 dialog.dismiss()
             })
+        }
 
 
     }
@@ -824,7 +989,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     BatchRepository.deleteBatchDocument(academicDocumentId, semesterDocumentId, classDocumentId, batchDocumentId)
 
                     // Check if the batch document still exists after deletion
-                    isBatchDocumentExists(academicDocumentId,semesterDocumentId,classDocumentId,batchDocumentId){
+                    isBatchDocumentExistsById(academicDocumentId,semesterDocumentId,classDocumentId,batchDocumentId){
                         // Notify the caller whether the deletion was successful
                         isDeleted(!it)
                     }

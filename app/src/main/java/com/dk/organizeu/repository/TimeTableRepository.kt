@@ -2,6 +2,7 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
+import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -65,16 +66,15 @@ class TimeTableRepository {
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,
-            timetableDocumentId: String,
-            inputHashMap: HashMap<String, String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            timetablePojo: TimetablePojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
         ) {
             try {
-                timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
-                    .set(inputHashMap)
+                timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id)
+                    .set(timetablePojo)
                     .addOnSuccessListener {
-                        successCallback(inputHashMap)
+                        successCallback(true)
                     }.addOnFailureListener {
                         failureCallback(it)
                     }
@@ -82,6 +82,17 @@ class TimeTableRepository {
             } catch (e: Exception) {
                 failureCallback(e)
             }
+        }
+
+        suspend fun insertTimeTableDocument(
+            academicDocumentId: String,
+            semesterDocumentId: String,
+            classDocumentId: String,
+            timetablePojo: TimetablePojo,
+        ) {
+            timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id)
+                .set(timetablePojo)
+                .await()
         }
     }
 }

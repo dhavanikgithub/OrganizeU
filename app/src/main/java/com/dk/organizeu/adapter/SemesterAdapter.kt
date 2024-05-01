@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddSemBinding
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.SemesterPojo
 
-class SemAdapter(private val academicSemList: ArrayList<String>,private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<SemAdapter.AcademicViewHolder>() {
+class SemesterAdapter(private val semesterPojos: ArrayList<SemesterPojo>, private val listener: OnItemClickListener) :
+    RecyclerView.Adapter<SemesterAdapter.AcademicViewHolder>() {
 
     companion object{
         const val TAG = "OrganizeU-SemAdapter"
@@ -21,14 +22,14 @@ class SemAdapter(private val academicSemList: ArrayList<String>,private val list
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcademicViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_add_sem, parent, false)
-        binding = DataBindingUtil.bind(view)!!
-        return AcademicViewHolder(binding.root)
+        return AcademicViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AcademicViewHolder, position: Int) {
         try {
-            val currentItem = academicSemList[holder.adapterPosition]
-            binding.semesterNumber = currentItem
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val currentItem = semesterPojos[holder.adapterPosition]
+            binding.semesterPojo = currentItem
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
@@ -37,7 +38,7 @@ class SemAdapter(private val academicSemList: ArrayList<String>,private val list
     }
 
     override fun getItemCount(): Int {
-        return academicSemList.size
+        return semesterPojos.size
     }
 
     class AcademicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

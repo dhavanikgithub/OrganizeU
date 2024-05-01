@@ -29,9 +29,9 @@
     </fragment>
     <fragment
         android:id="@+id/addAcademicFragment"
-        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.AddAcademicFragment"
+        android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment"
         android:label="Add Academic"
-        tools:layout="@layout/fragment_add_academic" >
+        tools:layout="@layout/fragment_academic_details" >
         <action
             android:id="@+id/action_addAcademicFragment_to_addBatchFragment"
             app:destination="@id/addBatchFragment" />

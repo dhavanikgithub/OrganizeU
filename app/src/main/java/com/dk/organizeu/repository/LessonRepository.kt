@@ -2,10 +2,9 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
-import com.dk.organizeu.firebase.key_mapping.TimeTableCollection
 import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
+import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.TimetablePojo
-import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -54,35 +53,26 @@ class LessonRepository {
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,
-            timetableDocumentId:String,
-            inputHashMap: HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            timetablePojo: TimetablePojo,
+            lessonPojo: LessonPojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
             ){
             try {
-                val myHashMap = hashMapOf(
-                    TimeTableCollection.WEEKDAY.displayName to timetableDocumentId
-                )
-                TimeTableRepository.insertTimeTableDocument(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, myHashMap,
-                    {
-                        try {
-                            lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
-                                .document()
-                                .set(inputHashMap)
-                                .addOnSuccessListener {
-                                    successCallback(inputHashMap)
-                                }
-                                .addOnFailureListener {
-                                    failureCallback(it)
-                                }
-                        } catch (e: Exception) {
-                            Log.e(TAG,e.message.toString())
-                            throw e
+                try {
+                    lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id)
+                        .document(lessonPojo.id)
+                        .set(lessonPojo)
+                        .addOnSuccessListener {
+                            successCallback(true)
                         }
-                    }, {
-                        Log.e(TAG,it.message.toString())
-                        throw it
-                    })
+                        .addOnFailureListener {
+                            failureCallback(it)
+                        }
+                } catch (e: Exception) {
+                    Log.e(TAG,e.message.toString())
+                    throw e
+                }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -90,10 +80,10 @@ class LessonRepository {
 
         }
 
-        suspend fun deleteLessonDocument(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonDocumentId:String)
+        suspend fun deleteLessonDocument(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId: String, id:String)
         {
             try {
-                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId).delete().await()
+                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, id).delete().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -112,33 +102,11 @@ class LessonRepository {
             }
         }
 
-        fun lessonDocumentToLessonObj(document: DocumentSnapshot,counter:Int): TimetablePojo {
-            try {
-                return TimetablePojo(
-                    document.id,
-                    document.get(WeekdayCollection.CLASS_NAME.displayName).toString(),
-                    document.get(WeekdayCollection.SUBJECT_NAME.displayName).toString(),
-                    document.get(WeekdayCollection.SUBJECT_CODE.displayName).toString(),
-                    document.get(WeekdayCollection.LOCATION.displayName).toString(),
-                    document.get(WeekdayCollection.START_TIME.displayName).toString().convert24HourTo12Hour(),
-                    document.get(WeekdayCollection.END_TIME.displayName).toString().convert24HourTo12Hour(),
-                    document.get(WeekdayCollection.DURATION.displayName).toString(),
-                    document.get(WeekdayCollection.TYPE.displayName).toString(),
-                    document.get(WeekdayCollection.FACULTY_NAME.displayName).toString(),
-                    counter,
-                    document.get(WeekdayCollection.MUTE_REQUEST_CODE.displayName).toString().toInt(),
-                    document.get(WeekdayCollection.UNMUTE_REQUEST_CODE.displayName).toString().toInt(),
-                    document.get(WeekdayCollection.NOTIFICATION_CODE.displayName).toString().toInt()
-                )
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
 
-        fun isLessonDocumentExists(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonDocumentId: String,callback: (Boolean) -> Unit){
+
+        fun isLessonDocumentExistsById(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId: String, id: String, callback: (Boolean) -> Unit){
             try {
-                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, lessonDocumentId)
+                lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, id)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
                         callback(documentSnapshot.exists())

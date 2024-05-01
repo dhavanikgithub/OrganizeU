@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="semesterNumber"
-            type="String" />
+            name="semesterPojo"
+            type="com.dk.organizeu.pojo.SemesterPojo" />
         <variable
             name="listener"
             type="com.dk.organizeu.listener.OnItemClickListener" />
@@ -35,7 +35,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text='@{"Semester: "+semesterNumber}'
+                android:text='@{"Semester: "+semesterPojo.name}'
                 tools:text="Semester: 1"
                 android:layout_weight=".7"
                 android:textColor="@color/colorPrimary"

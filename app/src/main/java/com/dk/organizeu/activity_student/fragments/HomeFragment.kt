@@ -16,7 +16,8 @@ import com.dk.organizeu.adapter.LessonAdapterStudent
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
-import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.pojo.LessonPojo
+import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
 import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
@@ -229,7 +230,7 @@ class HomeFragment : Fragment() {
             viewModel.apply {
                 try {
                     // Initialize an empty list to store timetable data
-                    val timetableList: ArrayList<TimetablePojo> = ArrayList()
+                    val timetableList: ArrayList<LessonPojo> = ArrayList()
 
                     // Retrieve all timetable documents for the specified academic year, semester, and class
                     val timetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicDocumentId, semesterDocumentId, classDocumentId)
@@ -246,12 +247,12 @@ class HomeFragment : Fragment() {
                         val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocument.id, WeekdayCollection.START_TIME.displayName)
 
                         var count = 1
-                        var lesson: TimetablePojo
+                        var lesson: LessonPojo
 
                         // Iterate through each lesson document
                         for (lessonDocument in lessonDocuments) {
                             // Convert the lesson document to a TimetablePojo object
-                            lesson = LessonRepository.lessonDocumentToLessonObj(lessonDocument, count++)
+                            lesson = lessonDocument.toLessonPojo()
                             timetableList.add(lesson)
 
 

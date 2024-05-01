@@ -2,15 +2,12 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
-import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.pojo.SubjectPojo
+import com.dk.organizeu.pojo.SubjectPojo.Companion.toMap
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class SubjectRepository {
@@ -25,9 +22,9 @@ class SubjectRepository {
             }
         }
 
-        fun subjectDocumentRef(subjectDocumentId: String): DocumentReference{
+        fun subjectDocumentRef(id: String): DocumentReference{
             try {
-                return subjectCollectionRef().document(subjectDocumentId)
+                return subjectCollectionRef().document(id)
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -43,9 +40,9 @@ class SubjectRepository {
             }
         }
 
-        suspend fun getSubjectDocumentById(subjectDocumentId: String): DocumentSnapshot? {
+        suspend fun getSubjectDocumentById(id: String): DocumentSnapshot? {
             try {
-                return subjectDocumentRef(subjectDocumentId).get().await()
+                return subjectDocumentRef(id).get().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -53,16 +50,15 @@ class SubjectRepository {
         }
 
         fun insertSubjectDocument(
-            subjectDocumentId: String,
-            inputHashMap: HashMap<String,String>,
-            successCallback: (HashMap<String, String>) -> Unit,
+            subjectPojo: SubjectPojo,
+            successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
         )
         {
             try{
-                subjectDocumentRef(subjectDocumentId).set(inputHashMap)
+                subjectDocumentRef(subjectPojo.id).set(subjectPojo)
                     .addOnSuccessListener {
-                        successCallback(inputHashMap)
+                        successCallback(true)
                     }
                     .addOnFailureListener {
                         failureCallback(it)
@@ -75,52 +71,76 @@ class SubjectRepository {
             }
         }
 
-        fun subjectDocumentToSubjectObj(document: DocumentSnapshot): SubjectPojo {
+        fun isSubjectDocumentExistsById(id: String, isExists: (Boolean) -> Unit) {
             try {
-                return SubjectPojo(document.id,document.get(SubjectCollection.CODE.displayName).toString(),document.get(SubjectCollection.TYPE.displayName).toString())
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
-
-        fun subjectDocumentToSubjectObj(subjectDocumentId: String,subjectData: HashMap<String, String>): SubjectPojo {
-            try {
-                return SubjectPojo(subjectDocumentId,subjectData[SubjectCollection.CODE.displayName].toString(),subjectData[SubjectCollection.TYPE.displayName].toString())
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
-
-        fun isSubjectDocumentExists(subjectDocumentId: String, code:String, callback: (Boolean) -> Unit) {
-            try {
-                subjectDocumentRef(subjectDocumentId).get()
+                subjectDocumentRef(id).get()
                     .addOnSuccessListener { documentSnapshot ->
-                        if(!documentSnapshot.exists())
+                        isExists(documentSnapshot.exists())
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun isSubjectDocumentExistsByName(name: String, isExists: (Boolean) -> Unit) {
+            try {
+                subjectCollectionRef().whereEqualTo("name",name).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        isExists(!documentSnapshot.isEmpty)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun isSubjectDocumentExistsByCode(code: String, isExists: (Boolean) -> Unit) {
+            try {
+                subjectCollectionRef().whereEqualTo("code",code).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        isExists(!documentSnapshot.isEmpty)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isExists(true)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun isSubjectDocumentExistsByNameAndCode(subjectPojo: SubjectPojo, isExists: (Boolean) -> Unit) {
+            try {
+                subjectCollectionRef()
+                    .whereEqualTo("name",subjectPojo.name)
+                    .get()
+                    .addOnSuccessListener { querySnapshot  ->
+                        if(querySnapshot.isEmpty)
                         {
-                            subjectCollectionRef()
-                                .get().addOnSuccessListener {documents ->
-                                for(document in documents.documents)
-                                {
-                                    val subjectCode = document.getString(SubjectCollection.CODE.displayName)
-                                    if (subjectCode==code)
-                                    {
-                                        callback(true)
-                                        return@addOnSuccessListener
-                                    }
-                                }
-                                callback(false)
-                                return@addOnSuccessListener
+                            subjectCollectionRef().whereEqualTo("code",subjectPojo.code).get().addOnSuccessListener {
+                                isExists(!it.isEmpty)
+                            }
+                            .addOnFailureListener {
+                                isExists(true)
                             }
                         }
                         else{
-                            callback(true)
+                            isExists(true)
                         }
                     }
                     .addOnFailureListener { exception ->
                         Log.w("TAG", "Error checking document existence", exception)
-                        callback(false)
+                        isExists(true)
                     }
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
@@ -128,25 +148,10 @@ class SubjectRepository {
             }
         }
 
-        fun isSubjectDocumentExists(subjectDocumentId: String, callback: (Boolean) -> Unit) {
-            try {
-                subjectDocumentRef(subjectDocumentId).get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        callback(documentSnapshot.exists())
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
-                        callback(false)
-                    }
-            } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
-                throw e
-            }
-        }
 
-        suspend fun deleteSubjectDocument(subjectDocumentId: String){
+        suspend fun deleteSubjectDocument(id: String){
             try {
-                subjectDocumentRef(subjectDocumentId).delete().await()
+                subjectDocumentRef(id).delete().await()
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
@@ -164,41 +169,12 @@ class SubjectRepository {
             }
         }
 
-        fun updateSubjectDocument(oldDocumentId: String, newDocumentId: String, inputData:HashMap<String,String>, isRenamed:(Boolean)->Unit) {
-            val oldDocRef = subjectDocumentRef(oldDocumentId)
-            if(oldDocumentId==newDocumentId)
-            {
-                oldDocRef.update(inputData as Map<String, Any>).addOnSuccessListener {
-                    isRenamed(true)
-                }.addOnFailureListener {
-                    isRenamed(false)
-                }
-            }
-            else{
-                val newDocRef = subjectDocumentRef(newDocumentId)
-
-                oldDocRef.get().addOnSuccessListener { oldDocSnapshotTask ->
-                    val data = oldDocSnapshotTask.data
-                    newDocRef.set(data!!).addOnSuccessListener {
-                        try {
-                            newDocRef.update(inputData as Map<String, Any>).addOnSuccessListener {
-                                MainScope().launch(Dispatchers.IO)
-                                {
-                                    deleteSubjectDocument(oldDocumentId)
-                                    isRenamed(true)
-                                }
-                            }.addOnFailureListener {
-                                isRenamed(false)
-                            }
-                        } catch (e: Exception) {
-                            isRenamed(false)
-                        }
-                    }.addOnFailureListener {
-                        isRenamed(false)
-                    }
-                }.addOnFailureListener {
-                    isRenamed(false)
-                }
+        fun updateSubjectDocument(subjectPojo: SubjectPojo, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = subjectDocumentRef(subjectPojo.id)
+            oldDocRef.update(subjectPojo.toMap()).addOnSuccessListener {
+                isRenamed(true)
+            }.addOnFailureListener {
+                isRenamed(false)
             }
 
         }
