@@ -106,10 +106,13 @@ class PermissionFragment : Fragment() {
      * and then navigates to the UserSelectionFragment.
      */
     private fun gotoUserSelectionPage() {
-        // Pop the back stack to remove any fragments in the navigation stack
-        findNavController().popBackStack()
-        // Navigate to the UserSelectionFragment
-        findNavController().navigate(R.id.userSelectionFragment)
+        try {// Pop the back stack to remove any fragments in the navigation stack
+            findNavController().popBackStack()
+            // Navigate to the UserSelectionFragment
+            findNavController().navigate(R.id.userSelectionFragment)
+        } catch (e: Exception) {
+
+        }
     }
 
 
