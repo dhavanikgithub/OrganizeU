@@ -389,26 +389,13 @@ class TimetableFragment : Fragment() {
                     // Launch a coroutine to fetch academic type data in the background
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicIdEVEN:String? = null
-                            var academicIdODD:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(AcademicType.EVEN.name==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
-                                {
-                                    academicIdEVEN = academicPojo.id
-                                }
-                                else if(AcademicType.ODD.name==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
-                                {
-                                    academicIdODD = academicPojo.id
-                                }
-                            }
-                            if (academicIdEVEN!=null) {
+                            val academicEvenPojo = AcademicRepository.getAcademicPojoByYearAndType(selectedAcademicYearItem!!,AcademicType.EVEN.name)
+                            val academicOddPojo = AcademicRepository.getAcademicPojoByYearAndType(selectedAcademicYearItem!!,AcademicType.ODD.name)
+                            if (academicEvenPojo!=null) {
                                 academicTypeList.add(AcademicType.EVEN.name)
                             }
 
-                            if (academicIdODD!=null) {
+                            if (academicOddPojo!=null) {
                                 academicTypeList.add(AcademicType.ODD.name)
                             }
 
@@ -455,17 +442,8 @@ class TimetableFragment : Fragment() {
                             semesterList.clear()
 
 
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicId:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(selectedAcademicTypeItem==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
-                                {
-                                    academicId = academicPojo.id
-                                    break
-                                }
-                            }
+                            val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(selectedAcademicYearItem!!,selectedAcademicTypeItem!!)
+
                             // Retrieve semester documents from the repository
                             val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
 
@@ -519,18 +497,8 @@ class TimetableFragment : Fragment() {
                             // Clear the existing class list
                             classList.clear()
 
+                            val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(selectedAcademicYearItem!!,selectedAcademicTypeItem!!)
 
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicId:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(selectedAcademicTypeItem==academicPojo.type && selectedAcademicYearItem==academicPojo.year)
-                                {
-                                    academicId = academicPojo.id
-                                    break
-                                }
-                            }
                             val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                             var semId:String? = null
                             for(doc in allsemesterDocuments)

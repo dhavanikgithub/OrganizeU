@@ -151,29 +151,16 @@ class AddSemFragment : Fragment(), OnItemClickListener {
 
                         val job = lifecycleScope.launch(Dispatchers.Main) {
                             try {
-                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                var academicIdEVEN:String? = null
-                                var academicIdODD:String? = null
-                                for(document in allAcademicDocument)
-                                {
-                                    val academicPojo = document.toAcademicPojo()
-                                    if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                    {
-                                        academicIdEVEN = academicPojo.id
-                                    }
-                                    else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                    {
-                                        academicIdODD = academicPojo.id
-                                    }
-                                }
+                                val academicEvenPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.EVEN.name)
+                                val academicOddPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.ODD.name)
 
                                 // If even semester document exists, add "EVEN" to the academicTypeItemList
-                                if (academicIdEVEN != null) {
+                                if (academicEvenPojo != null) {
                                     academicTypeItemList.add(AcademicType.EVEN.name)
                                 }
 
                                 // If odd semester document exists, add "ODD" to the academicTypeItemList
-                                if (academicIdODD !=null) {
+                                if (academicOddPojo !=null) {
                                     academicTypeItemList.add(AcademicType.ODD.name)
                                 }
 
@@ -217,17 +204,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         progressDialog.start("Loading Semester...")
                         MainScope().launch(Dispatchers.IO) {
                             try {
-                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                var academicId:String? = null
-                                for(document in allAcademicDocument)
-                                {
-                                    val academicPojo = document.toAcademicPojo()
-                                    if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                    {
-                                        academicId = academicPojo.id
-                                        break
-                                    }
-                                }
+                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                                 // Retrieve all semester documents related to the academic document ID
                                 val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
                                 // Add the retrieved semester documents to the academicSemList
@@ -291,17 +268,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         {
                             MainScope().launch(Dispatchers.IO){
                                 try {
-                                    val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                    var academicId:String? = null
-                                    for(document in allAcademicDocument)
-                                    {
-                                        val academicPojo = document.toAcademicPojo()
-                                        if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                        {
-                                            academicId = academicPojo.id
-                                            break
-                                        }
-                                    }
+                                    val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                                     val newSemesterPojo = SemesterPojo(name = academicSemSelectedItem!!)
 
                                     SemesterRepository.insertSemesterDocuments(academicId!!,newSemesterPojo,{
@@ -365,17 +332,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     {
                         try {
                             academicSemList.clear()
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicId:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicId = academicPojo.id
-                                    break
-                                }
-                            }
+                            val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                             // Fetch all semester documents for the academic document ID
                             val documents = SemesterRepository.getAllSemesterDocuments(academicId!!)
                             // Add semester documents to the list
@@ -557,27 +514,15 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     academicTypeItemList.clear()
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicIdEVEN:String? = null
-                            var academicIdODD:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdEVEN = academicPojo.id
-                                }
-                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdODD = academicPojo.id
-                                }
-                            }
+                            val academicEvenPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.EVEN.name)
+                            val academicOddPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.ODD.name)
 
-                            if (academicIdEVEN!=null) {
+
+                            if (academicEvenPojo!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
 
-                            if (academicIdODD != null) {
+                            if (academicOddPojo != null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
 
@@ -672,18 +617,8 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     {
                         // Get the semester at the specified position from the semester list
                         val semester = viewModel.academicSemList[position]
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(viewModel.academicTypeSelectedItem==academicPojo.type && viewModel.academicYearSelectedItem==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
 
                         // Call the deleteSemester function with the academic document ID, semester, and a callback
                         deleteSemester(academicId!!,semester.id){

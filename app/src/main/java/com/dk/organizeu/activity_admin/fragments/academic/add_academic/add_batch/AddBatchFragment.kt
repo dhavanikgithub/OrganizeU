@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
+import com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.dk.organizeu.enum_class.AcademicType
@@ -183,27 +184,13 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
 
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicIdEVEN:String? = null
-                            var academicIdODD:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdEVEN = academicPojo.id
-                                }
-                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdODD = academicPojo.id
-                                }
-                            }
-
+                            val academicEvenPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.EVEN.name)
+                            val academicOddPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.ODD.name)
                             // Add existing academic types to the academic type dropdown
-                            if (academicIdEVEN!=null) {
+                            if (academicEvenPojo!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
-                            if (academicIdODD!=null) {
+                            if (academicOddPojo!=null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
                             // Set up the adapter for the academic type drop down
@@ -334,17 +321,8 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
 
                             MainScope().launch(Dispatchers.Main)
                             {
-                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                var academicId:String? = null
-                                for(document in allAcademicDocument)
-                                {
-                                    val academicPojo = document.toAcademicPojo()
-                                    if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                    {
-                                        academicId = academicPojo.id
-                                        break
-                                    }
-                                }
+                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
+
                                 val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                                 var semId:String? = null
                                 for(doc in allsemesterDocuments)
@@ -470,17 +448,8 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                         // Clear the existing list of academic batches
                         academicBatchList.clear()
                         // Construct the academic document ID
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
+
                         if(academicSemSelectedItem!=null && academicClassSelectedItem!=null)
                         {
                             try {
@@ -693,27 +662,14 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     // Use a coroutine to perform database operations asynchronously
                     val job = lifecycleScope.launch(Dispatchers.Main) {
                         try {
-                            val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                            var academicIdEVEN:String? = null
-                            var academicIdODD:String? = null
-                            for(document in allAcademicDocument)
-                            {
-                                val academicPojo = document.toAcademicPojo()
-                                if(AcademicType.EVEN.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdEVEN = academicPojo.id
-                                }
-                                else if(AcademicType.ODD.name==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                                {
-                                    academicIdODD = academicPojo.id
-                                }
-                            }
+                            val academicEvenPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.EVEN.name)
+                            val academicOddPojo = AcademicRepository.getAcademicPojoByYearAndType(academicYearSelectedItem!!,AcademicType.ODD.name)
                             // If the even semester document exists, add "EVEN" to the list of academic types
-                            if (academicIdEVEN!=null) {
+                            if (academicEvenPojo!=null) {
                                 academicTypeItemList.add(AcademicType.EVEN.name)
                             }
                             // If the odd semester document exists, add "ODD" to the list of academic types
-                            if (academicIdODD!=null) {
+                            if (academicOddPojo!=null) {
                                 academicTypeItemList.add(AcademicType.ODD.name)
                             }
                             // Initialize the adapter with the list of academic types
@@ -757,17 +713,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     try {
                         // Clear the list of academic semesters
                         academicSemItemList.clear()
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
                         // Check if the academic document ID is not null
                         if (academicId != null) {
@@ -817,17 +763,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     try {
                         // Clear the list of academic classes
                         academicClassItemList.clear()
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                         if(academicSemSelectedItem!=null)
                         {
                             val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
@@ -896,17 +832,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                 {
                     // Call the Cloud Function to initiate delete operation
                     try {
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicTypeSelectedItem==academicPojo.type && academicYearSelectedItem==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                         val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                         var semId:String? = null
                         for(doc in allSemesterDocuments)

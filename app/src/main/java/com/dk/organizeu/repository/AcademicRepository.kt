@@ -3,6 +3,7 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.AcademicPojo
+import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -40,6 +41,28 @@ class AcademicRepository {
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
+            }
+        }
+
+        suspend fun getAcademicPojoByYearAndType(year:String, type:String): AcademicPojo? {
+            return try {
+                academicCollectionRef()
+                    .whereEqualTo("year", year)
+                    .whereEqualTo("type", type)
+                    .get().await().documents[0].toAcademicPojo()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        suspend fun getAcademicIdByYearAndType(year:String, type:String): String? {
+            return try {
+                academicCollectionRef()
+                    .whereEqualTo("year", year)
+                    .whereEqualTo("type", type)
+                    .get().await().documents[0].id
+            } catch (e: Exception) {
+                null
             }
         }
 
@@ -108,17 +131,19 @@ class AcademicRepository {
                     .addOnSuccessListener { documentSnapshot ->
                         if(documentSnapshot.isEmpty)
                         {
-                            academicCollectionRef()
-                                .whereEqualTo("type",academicPojo)
-                                .get()
-                                .addOnSuccessListener {
-                                    isExists(!it.isEmpty)
-                                }.addOnFailureListener {
-                                    isExists(true)
-                                }
+                            isExists(false)
                         }
                         else{
-                            isExists(true)
+                            for (doc in documentSnapshot.documents)
+                            {
+                                val academicData = doc.toAcademicPojo()
+                                if(academicData.type == academicPojo.type)
+                                {
+                                    isExists(true)
+                                    return@addOnSuccessListener
+                                }
+                            }
+                            isExists(false)
                         }
                     }
                     .addOnFailureListener { exception ->

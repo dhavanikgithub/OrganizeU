@@ -261,17 +261,9 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                             // Clear existing timetable data
                             timetableData.clear()
 
-                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                var academicId:String? = null
-                                for(document in allAcademicDocument)
-                                {
-                                    val academicPojo = document.toAcademicPojo()
-                                    if(academicType==academicPojo.type && academicYear==academicPojo.year)
-                                    {
-                                        academicId = academicPojo.id
-                                        break
-                                    }
-                                }
+                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
+                                    academicYear, academicType)
+
                                 val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                                 var semId:String? = null
                                 for(doc in allSemesterDocuments)
@@ -388,18 +380,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                 MainScope().launch(Dispatchers.Main) {
                     // Call the Cloud Function to initiate delete operation
                     try {
-                        // Get the room document ID at the specified position from the lesson list
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicType==academicPojo.type && academicYear==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(academicYear, academicType)
                         val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                         var semId:String? = null
                         for(doc in allSemesterDocuments)

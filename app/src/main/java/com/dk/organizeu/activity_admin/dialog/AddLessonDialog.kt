@@ -316,17 +316,9 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                     notificationCode = notificationCode
                                 )
 
-                                val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                                var academicId:String? = null
-                                for(document in allAcademicDocument)
-                                {
-                                    val academicPojo = document.toAcademicPojo()
-                                    if(academicType==academicPojo.type && academicYear==academicPojo.year)
-                                    {
-                                        academicId = academicPojo.id
-                                        break
-                                    }
-                                }
+                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
+                                    academicYear, academicType)
+
                                 val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                                 var semId:String? = null
                                 for(doc in allsemesterDocuments)
@@ -550,17 +542,9 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     batchList.clear()
                     AddLessonFragment.apply {
 
-                        val allAcademicDocument = AcademicRepository.getAllAcademicDocuments()
-                        var academicId:String? = null
-                        for(document in allAcademicDocument)
-                        {
-                            val academicPojo = document.toAcademicPojo()
-                            if(academicType==academicPojo.type && academicYear==academicPojo.year)
-                            {
-                                academicId = academicPojo.id
-                                break
-                            }
-                        }
+                        val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
+                            academicYear, academicType)
+
                         val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
                         var semId:String? = null
                         for(doc in allsemesterDocuments)
