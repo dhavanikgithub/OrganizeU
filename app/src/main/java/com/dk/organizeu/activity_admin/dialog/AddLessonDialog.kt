@@ -18,9 +18,7 @@ import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
 import com.dk.organizeu.enum_class.RoomType
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.listener.AddDocumentListener
-import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
 import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
-import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
 import com.dk.organizeu.pojo.FacultyPojo.Companion.toFacultyPojo
 import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.RoomPojo
@@ -29,7 +27,6 @@ import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.pojo.TimetablePojo
-import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.BatchRepository
 import com.dk.organizeu.repository.ClassRepository
@@ -319,45 +316,15 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                 val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
                                     academicYear, academicType)
 
-                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allsemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == semesterNumber!!)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                                val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterNumber)
+                                val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, className)
 
-                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                                var classId:String? = null
-                                for(doc in allClassDocuments)
-                                {
-                                    val classPojo = doc.toClassPojo()
-                                    if(classPojo.name == className!!)
-                                    {
-                                        classId = classPojo.id
-                                        break
-                                    }
-                                }
+                                var timetablePojo:TimetablePojo? = TimeTableRepository.getTimetablePojoByName(academicId,semId,classId!!,Weekday.getWeekdayNameByNumber(selectedTab))
 
-                                val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
-                                var timetableData:TimetablePojo? = null
-                                for(doc in allTimetableDocuments)
+                                if(timetablePojo==null)
                                 {
-                                    val timetablePojo = doc.toTimetablePojo()
-                                    if(timetablePojo.name == Weekday.getWeekdayNameByNumber(selectedTab))
-                                    {
-                                        timetableData = timetablePojo
-                                        break
-                                    }
-                                }
-                                if(timetableData==null)
-                                {
-                                    timetableData = TimetablePojo(name = Weekday.getWeekdayNameByNumber(selectedTab))
-                                    TimeTableRepository.insertTimeTableDocument(academicId,semId,classId,timetableData)
+                                    timetablePojo = TimetablePojo(name = Weekday.getWeekdayNameByNumber(selectedTab))
+                                    TimeTableRepository.insertTimeTableDocument(academicId,semId,classId,timetablePojo)
                                 }
 
 
@@ -366,7 +333,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                     academicId,
                                     semId,
                                     classId,
-                                    timetableData.id,
+                                    timetablePojo.id,
                                     selectedLessonTime[0],
                                     selectedLessonTime[1],
                                     selectedFaculty!!,
@@ -375,7 +342,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                     try {
                                         if (!it) {
                                             // If there's no conflict, insert the lesson document
-                                            LessonRepository.insertLessonDocument(academicId, semId, classId, timetableData, newLessonPojo,
+                                            LessonRepository.insertLessonDocument(academicId, semId, classId, timetablePojo.id, newLessonPojo,
                                                 {
                                                     // Invoke the onAddLesson listener callback
                                                     listener.onAddLesson()
@@ -545,29 +512,8 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                         val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
                             academicYear, academicType)
 
-                        val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                        var semId:String? = null
-                        for(doc in allsemesterDocuments)
-                        {
-                            val semesterPojo = doc.toSemesterPojo()
-                            if(semesterPojo.name == semesterNumber!!)
-                            {
-                                semId = semesterPojo.id
-                                break
-                            }
-                        }
-
-                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                        var classId:String? = null
-                        for(doc in allClassDocuments)
-                        {
-                            val classPojo = doc.toClassPojo()
-                            if(classPojo.name == className!!)
-                            {
-                                classId = classPojo.id
-                                break
-                            }
-                        }
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterNumber)
+                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, className)
 
 
                         if(classId!=null)

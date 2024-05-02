@@ -499,17 +499,7 @@ class TimetableFragment : Fragment() {
 
                             val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(selectedAcademicYearItem!!,selectedAcademicTypeItem!!)
 
-                            val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                            var semId:String? = null
-                            for(doc in allsemesterDocuments)
-                            {
-                                val semesterPojo = doc.toSemesterPojo()
-                                if(semesterPojo.name == selectedSemesterItem!!)
-                                {
-                                    semId = semesterPojo.id
-                                    break
-                                }
-                            }
+                            val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, selectedSemesterItem!!)
 
                             // Retrieve class documents from the repository
                             val documents = ClassRepository.getAllClassDocuments(academicId, semId!!)

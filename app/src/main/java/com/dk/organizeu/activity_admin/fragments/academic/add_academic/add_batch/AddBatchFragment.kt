@@ -15,11 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_admin.dialog.EditBatchDialog
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
-import com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.adapter.BatchAdapter
 import com.dk.organizeu.databinding.FragmentAddBatchBinding
 import com.dk.organizeu.enum_class.AcademicType
+import com.dk.organizeu.listener.BatchDocumentListener
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
 import com.dk.organizeu.pojo.BatchPojo
@@ -47,7 +48,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class AddBatchFragment : Fragment(), OnItemClickListener {
+class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener {
 
     companion object {
         fun newInstance() = AddBatchFragment()
@@ -323,29 +324,12 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                             {
                                 val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
-                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allsemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == academicSemSelectedItem!!)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                                val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
 
-                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                                var classId:String? = null
-                                for(doc in allClassDocuments)
-                                {
-                                    val classPojo = doc.toClassPojo()
-                                    if(classPojo.name == academicClassSelectedItem!!)
-                                    {
-                                        classId = classPojo.id
-                                        break
-                                    }
-                                }
+                                val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!,
+                                    academicClassSelectedItem!!
+                                )
+
                                 batchDocumentId = etAcademicBatch.text.toString().trim().replace(Regex("\\s+")," ")
                                 if(!batchDocumentId!!.containsOnlyAllowedCharacters())
                                 {
@@ -453,29 +437,11 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                         if(academicSemSelectedItem!=null && academicClassSelectedItem!=null)
                         {
                             try {
-                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allsemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == academicSemSelectedItem!!)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                                val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
 
-                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                                var classId:String? = null
-                                for(doc in allClassDocuments)
-                                {
-                                    val classPojo = doc.toClassPojo()
-                                    if(classPojo.name == academicClassSelectedItem!!)
-                                    {
-                                        classId = classPojo.id
-                                        break
-                                    }
-                                }
+                                val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!,
+                                    academicClassSelectedItem!!
+                                )
                                 // Check if academic document ID, semester document ID, and class document ID are not null
                                 if(classId!=null)
                                 {
@@ -766,17 +732,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                         val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
                         if(academicSemSelectedItem!=null)
                         {
-                            val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                            var semId:String? = null
-                            for(doc in allsemesterDocuments)
-                            {
-                                val semesterPojo = doc.toSemesterPojo()
-                                if(semesterPojo.name == academicSemSelectedItem!!)
-                                {
-                                    semId = semesterPojo.id
-                                    break
-                                }
-                            }
+                            val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
 
                             if (semId != null) {
                                 // Retrieve all class documents for the specified academic and semester document IDs
@@ -833,29 +789,11 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
                     // Call the Cloud Function to initiate delete operation
                     try {
                         val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
-                        val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                        var semId:String? = null
-                        for(doc in allSemesterDocuments)
-                        {
-                            val semesterPojo = doc.toSemesterPojo()
-                            if(semesterPojo.name == academicSemSelectedItem!!)
-                            {
-                                semId = semesterPojo.id
-                                break
-                            }
-                        }
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
 
-                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                        var classId:String? = null
-                        for(doc in allClassDocuments)
-                        {
-                            val classPojo = doc.toClassPojo()
-                            if(classPojo.name == academicClassSelectedItem!!)
-                            {
-                                classId = classPojo.id
-                                break
-                            }
-                        }
+                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!,
+                            academicClassSelectedItem!!
+                        )
                         // Get the batch document ID at the specified position from the Batch list
                         val batchPojo = viewModel.academicBatchList[position]
 
@@ -895,7 +833,21 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        MainScope().launch(Dispatchers.Main)
+        {
+            try {
+                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
+                val semId = SemesterRepository.getSemesterIdByName(academicId!!,viewModel.academicSemSelectedItem!!)
+                val classId = ClassRepository.getClassIdByName(academicId,semId!!,viewModel.academicClassSelectedItem!!)
+                val batchPojo = viewModel.academicBatchList[position]
+                val dialogFragment = EditBatchDialog(academicId,semId,classId!!,batchPojo,position)
+                dialogFragment.isCancelable=false
+                dialogFragment.show(childFragmentManager, "customDialog")
+            } catch (e: Exception) {
+                Log.e(TAG, e.message.toString())
+                requireContext().unexpectedErrorMessagePrint(e)
+            }
+        }
     }
 
     /**
@@ -928,6 +880,19 @@ class AddBatchFragment : Fragment(), OnItemClickListener {
         catch (e: Exception){
             Log.e(TAG,e.toString())
             throw e
+        }
+    }
+
+    override fun onEdited(batchPojo: BatchPojo, position: Int) {
+        try {
+            viewModel.academicBatchList[position].name = batchPojo.name
+            MainScope().launch(Dispatchers.Main)
+            {
+                viewModel.academicBatchAdapter.notifyItemChanged(position)
+                requireContext().showToast("Batch Name Updated")
+            }
+        } catch (e: Exception) {
+            requireContext().showToast("Batch Name Update Failed")
         }
     }
 }

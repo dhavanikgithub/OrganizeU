@@ -3,6 +3,8 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.BatchPojo
+import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
+import com.dk.organizeu.pojo.BatchPojo.Companion.toMap
 import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -86,6 +88,25 @@ class BatchRepository {
             }
         }
 
+        suspend fun getBatchPojoByName(academicDocumentId: String,semesterDocumentId: String, classDocumentId: String,name:String): BatchPojo? {
+            return try {
+                batchCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).whereEqualTo("name",name)
+                    .get()
+                    .await()
+                    .documents[0].toBatchPojo()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        suspend fun getBatchIdByName(academicDocumentId: String,semesterDocumentId: String, classDocumentId: String,name:String): String? {
+            return try {
+                getBatchPojoByName(academicDocumentId, semesterDocumentId, classDocumentId, name)!!.id
+            } catch (e: Exception) {
+                null
+            }
+        }
+
         fun isBatchDocumentExistsById(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, id: String, callback: (Boolean) -> Unit) {
             try {
                 batchDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, id)
@@ -118,6 +139,15 @@ class BatchRepository {
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
                 throw e
+            }
+        }
+
+        fun updateBatchDocument(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String,batchPojo: BatchPojo, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = batchDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId,batchPojo.id)
+            oldDocRef.update(batchPojo.toMap()).addOnSuccessListener {
+                isRenamed(true)
+            }.addOnFailureListener {
+                isRenamed(false)
             }
         }
     }

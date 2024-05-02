@@ -4,7 +4,6 @@ import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
 import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.LessonPojo
-import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -53,14 +52,14 @@ class LessonRepository {
             academicDocumentId: String,
             semesterDocumentId: String,
             classDocumentId: String,
-            timetablePojo: TimetablePojo,
+            timetableDocumentId: String,
             lessonPojo: LessonPojo,
             successCallback: (Boolean) -> Unit,
             failureCallback: (Exception) -> Unit
             ){
             try {
                 try {
-                    lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id)
+                    lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
                         .document(lessonPojo.id)
                         .set(lessonPojo)
                         .addOnSuccessListener {

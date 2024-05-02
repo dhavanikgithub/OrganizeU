@@ -12,11 +12,13 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.EditClassDialogLayoutBinding
 import com.dk.organizeu.listener.ClassDocumentListener
 import com.dk.organizeu.pojo.ClassPojo
+import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
+import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
 
-class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: String, val oldClassPojo: ClassPojo) : AppCompatDialogFragment() {
+class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: String, val oldClassPojo: ClassPojo, val position: Int) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
     private var classDocumentListener: ClassDocumentListener? = null
 
@@ -40,7 +42,7 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
         try {
             // Set the classAddListener if the parentFragment implements EditDocumentListener
             classDocumentListener = parentFragment as? ClassDocumentListener
-            var title = "Edit Class"
+            val title = "Edit Class"
             binding.etClassName.setText(oldClassPojo.name)
             // Create an AlertDialog.Builder instance with the provided context, view, and title
             builder = AlertDialog.Builder(requireContext())
@@ -56,19 +58,29 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
                 btnEdit.setOnClickListener {
                     try {
                         // get class name from input field
-                        val classDocumentId = etClassName.text.toString().trim().replace(Regex("\\s+")," ")
+                        val className = etClassName.text.toString().trim().replace(Regex("\\s+")," ")
 
-                        if(!classDocumentId.containsOnlyAllowedCharacters())
+                        if(!className.containsOnlyAllowedCharacters())
                         {
                             tlClassName.error = "Class name only allows alphabets, -, _."
                             return@setOnClickListener
                         }
-
-
-
                         tlClassName.error = null
-
-
+                        oldClassPojo.name = className
+                        ClassRepository.isClassDocumentExistsByName(academicDocumentId,semesterDocumentId,oldClassPojo.name){exists ->
+                            if(exists)
+                            {
+                                requireContext().showToast("Class Name Already Exist")
+                                return@isClassDocumentExistsByName
+                            }
+                            ClassRepository.updateClassDocument(academicDocumentId,semesterDocumentId,oldClassPojo){
+                                if (it)
+                                {
+                                    classDocumentListener!!.onEdited(oldClassPojo, position)
+                                    dismiss()
+                                }
+                            }
+                        }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
                         Log.e(TAG,e.message.toString())

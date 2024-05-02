@@ -298,17 +298,8 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             {
                                 val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
-                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allsemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == academicSemSelectedItem!!)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                                val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
+
                                 classDocumentId = etAcademicClass.text.toString().trim().replace(Regex("\\s+")," ")
 
                                 if(!classDocumentId!!.containsOnlyAllowedCharacters())
@@ -418,17 +409,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                 return@launch
                             }
                             try {
-                                val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allsemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == academicSemSelectedItem!!)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                                val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, academicSemSelectedItem!!)
                                 // Fetch class documents from the repository if required document IDs not null
                                 if(semId!=null)
                                 {
@@ -719,17 +700,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     {
                         val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
-                        val allsemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                        var semId:String? = null
-                        for(doc in allsemesterDocuments)
-                        {
-                            val semesterPojo = doc.toSemesterPojo()
-                            if(semesterPojo.name == viewModel.academicSemSelectedItem!!)
-                            {
-                                semId = semesterPojo.id
-                                break
-                            }
-                        }
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, viewModel.academicSemSelectedItem!!)
                         // Get the class document ID at the specified position from the class list
                         val classPojo = viewModel.academicClassList[position]
 
@@ -782,12 +753,12 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                 val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(viewModel.academicYearSelectedItem!!,viewModel.academicTypeSelectedItem!!)
 
                 // Get the selected semester document ID
-                val semesterDocumentId = viewModel.academicSemSelectedItem
+                val semId = SemesterRepository.getSemesterIdByName(academicId!!,viewModel.academicSemSelectedItem!!)
                 // Get the class document ID at the specified position from the class list
                 val classPojo = viewModel.academicClassList[position]
 
                 // Create an instance of the AddRoomDialog
-                val dialogFragment = EditClassDialog(academicId!!,semesterDocumentId!!,classPojo)
+                val dialogFragment = EditClassDialog(academicId,semId!!,classPojo, position)
                 dialogFragment.isCancelable=false
                 // Show the dialog using childFragmentManager
                 dialogFragment.show(childFragmentManager, "customDialog")
@@ -844,14 +815,10 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
         position: Int
     ) {
         try {
-            val index = viewModel.academicClassList.indexOfFirst {
-                it.id == classPojo.id
-            }
-            viewModel.academicClassList.removeAt(index)
-            viewModel.academicClassList.add(classPojo)
+            viewModel.academicClassList[position].name = classPojo.name
             MainScope().launch(Dispatchers.Main)
             {
-                viewModel.academicClassAdapter.notifyDataSetChanged()
+                viewModel.academicClassAdapter.notifyItemChanged(position)
                 requireContext().showToast("Class Name Updated")
             }
         } catch (e: Exception) {

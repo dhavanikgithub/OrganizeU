@@ -15,11 +15,7 @@ import com.dk.organizeu.adapter.LessonAdapterAdmin
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.listener.OnItemClickListener
-import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
-import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
-import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
-import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.LessonRepository
@@ -253,88 +249,52 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
      * @param weekDay The day of the week for which lessons are to be initialized.
      */
     private fun initLesson(weekDay: Int) {
-        binding.apply {
-            viewModel.apply {
-                try {
-                    MainScope().launch(Dispatchers.IO) {
+        MainScope().launch(Dispatchers.IO) {
+            try {
+                binding.apply {
+                    viewModel.apply {
+                        // Clear existing timetable data
+                        timetableData.clear()
 
-                            // Clear existing timetable data
-                            timetableData.clear()
+                        withContext(Dispatchers.Main) {
+                            // Initialize the adapter with the updated timetableData and set it to Lesson RecyclerView
+                            lessonAdapter = LessonAdapterAdmin(timetableData,this@AddLessonFragment)
+                            rvLesson.adapter = lessonAdapter
+                        }
 
-                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
-                                    academicYear, academicType)
+                        val academicId: String = AcademicRepository.getAcademicIdByYearAndType(academicYear, academicType) ?: return@launch
 
-                                val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                                var semId:String? = null
-                                for(doc in allSemesterDocuments)
-                                {
-                                    val semesterPojo = doc.toSemesterPojo()
-                                    if(semesterPojo.name == semesterNumber)
-                                    {
-                                        semId = semesterPojo.id
-                                        break
-                                    }
-                                }
+                        val semId:String = SemesterRepository.getSemesterIdByName(academicId, semesterNumber) ?: return@launch
 
-                                val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                                var classId:String? = null
-                                for(doc in allClassDocuments)
-                                {
-                                    val classPojo = doc.toClassPojo()
-                                    if(classPojo.name == className)
-                                    {
-                                        classId = classPojo.id
-                                        break
-                                    }
-                                }
+                        val classId:String = ClassRepository.getClassIdByName(academicId,semId, className) ?: return@launch
 
-                                val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
-                                var timetableId:String? = null
-                                for(doc in allTimetableDocuments)
-                                {
-                                    val timetablePojo = doc.toTimetablePojo()
-                                    if(timetablePojo.name == Weekday.getWeekdayNameByNumber(weekDay))
-                                    {
-                                        timetableId = timetablePojo.id
-                                        break
-                                    }
-                                }
+                        val timetableId:String = TimeTableRepository.getTimetableIdByName(academicId,semId,classId,Weekday.getWeekdayNameByNumber(weekDay)) ?: return@launch
 
-                                // Retrieve lesson documents from the repository
-                                val documents = LessonRepository.getAllLessonDocuments(
-                                    academicId, semId, classId, timetableId!!,
-                                    "startTime"
-                                )
+                        // Retrieve lesson documents from the repository
+                        val documents = LessonRepository.getAllLessonDocuments(
+                            academicId, semId, classId, timetableId,
+                            "startTime"
+                        )
 
-                                // Convert lesson documents to Lesson objects and add them to timetableData
-                                for (document in documents) {
-                                    val lessonItem = document.toLessonPojo()
-                                    timetableData.add(lessonItem)
-                                }
+                        // Convert lesson documents to Lesson objects and add them to timetableData
+                        for (document in documents) {
+                            val lessonItem = document.toLessonPojo()
+                            timetableData.add(lessonItem)
+                        }
 
-
-                            withContext(Dispatchers.Main) {
-                                try {
-                                    // Initialize the adapter with the updated timetableData and set it to Lesson RecyclerView
-                                    lessonAdapter = LessonAdapterAdmin(timetableData,this@AddLessonFragment)
-                                    rvLesson.adapter = lessonAdapter
-                                } catch (e: Exception) {
-                                    // Log any unexpected exceptions that occur
-                                    Log.e(TAG,e.message.toString())
-                                    // Display an unexpected error message to the user
-                                    requireContext().unexpectedErrorMessagePrint(e)
-                                    throw e
-                                }
-                            }
-
+                        withContext(Dispatchers.Main) {
+                            // Initialize the adapter with the updated timetableData and set it to Lesson RecyclerView
+                            lessonAdapter = LessonAdapterAdmin(timetableData,this@AddLessonFragment)
+                            rvLesson.adapter = lessonAdapter
+                        }
                     }
-                } catch (e: Exception) {
-                    // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
-                    // Display an unexpected error message to the user
-                    requireContext().unexpectedErrorMessagePrint(e)
-                    throw e
                 }
+            } catch (e: Exception) {
+                // Log any unexpected exceptions that occur
+                Log.e(TAG,e.message.toString())
+                // Display an unexpected error message to the user
+                requireContext().unexpectedErrorMessagePrint(e)
+                throw e
             }
         }
     }
@@ -381,41 +341,10 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     // Call the Cloud Function to initiate delete operation
                     try {
                         val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(academicYear, academicType)
-                        val allSemesterDocuments = SemesterRepository.getAllSemesterDocuments(academicId!!)
-                        var semId:String? = null
-                        for(doc in allSemesterDocuments)
-                        {
-                            val semesterPojo = doc.toSemesterPojo()
-                            if(semesterPojo.name == semesterNumber)
-                            {
-                                semId = semesterPojo.id
-                                break
-                            }
-                        }
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterNumber)
+                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, className)
+                        val timetableId:String? = TimeTableRepository.getTimetableIdByName(academicId,semId,classId!!,Weekday.getWeekdayNameByNumber(selectedTab))
 
-                        val allClassDocuments = ClassRepository.getAllClassDocuments(academicId,semId!!)
-                        var classId:String? = null
-                        for(doc in allClassDocuments)
-                        {
-                            val classPojo = doc.toClassPojo()
-                            if(classPojo.name == className)
-                            {
-                                classId = classPojo.id
-                                break
-                            }
-                        }
-
-                        val allTimetableDocuments = TimeTableRepository.getAllTimeTableDocuments(academicId,semId,classId!!)
-                        var timetableId:String? = null
-                        for(doc in allTimetableDocuments)
-                        {
-                            val timetablePojo = doc.toTimetablePojo()
-                            if(timetablePojo.name == Weekday.getWeekdayNameByNumber(selectedTab))
-                            {
-                                timetableId = timetablePojo.id
-                                break
-                            }
-                        }
                         val lesson = viewModel.timetableData[position]
                         deleteLesson(academicId,semId,classId,timetableId!!,lesson.id){
                             try {

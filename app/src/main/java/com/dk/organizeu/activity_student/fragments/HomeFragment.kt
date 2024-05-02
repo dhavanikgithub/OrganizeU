@@ -15,10 +15,13 @@ import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.adapter.LessonAdapterStudent
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.enum_class.Weekday
-import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
+import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
+import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.LessonRepository
+import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.LessonMuteManagement
@@ -88,12 +91,17 @@ class HomeFragment : Fragment() {
                         }
 
                         // Define academic, semester, and class IDs
-                        val academicDocumentId = "2024-2025_EVEN"
-                        val semesterDocumentId = "4"
-                        val classDocumentId = "CEIT-A"
+                        val semesterDocumentId = "2"
+                        val classDocumentId = "CEIT-B"
+
+                        val academicId: String? = AcademicRepository.getAcademicIdByYearAndType("2023-2024", "EVEN")
+
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterDocumentId)
+
+                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, classDocumentId)
 
                         // Load timetable data based on academic, semester, and class IDs
-                        loadTimeTableData(academicDocumentId, semesterDocumentId, classDocumentId)
+                        loadTimeTableData(academicId, semId, classId!!)
 
                         // Set refresh listener for swipeRefreshLayout
                         swipeRefresh.setOnRefreshListener {
@@ -239,20 +247,17 @@ class HomeFragment : Fragment() {
                     for (timetableDocument in timetableDocuments) {
                         // Clear the timetable list for each day
                         timetableList.clear()
-
+                        val timetablePojo = timetableDocument.toTimetablePojo()
                         // Get the weekday number from the timetable document's ID
-                        val weekDayNumber = Weekday.getWeekdayNumberByName(timetableDocument.id)
+                        val weekDayNumber = Weekday.getWeekdayNumberByName(timetablePojo.name)
 
                         // Retrieve all lesson documents for the current timetable document
-                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocument.id, WeekdayCollection.START_TIME.displayName)
-
-                        var count = 1
-                        var lesson: LessonPojo
+                        val lessonDocuments = LessonRepository.getAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id, "startTime")
 
                         // Iterate through each lesson document
                         for (lessonDocument in lessonDocuments) {
                             // Convert the lesson document to a TimetablePojo object
-                            lesson = lessonDocument.toLessonPojo()
+                            val lesson = lessonDocument.toLessonPojo()
                             timetableList.add(lesson)
 
 
@@ -350,6 +355,7 @@ class HomeFragment : Fragment() {
                             // If the lesson has ended, remove it from the timetable data and update the adapter
                             currentDayTimeTableData.value!!.removeAt(i)
                             lessonAdapter.notifyItemRemoved(i)
+                            lessonAdapter.notifyItemRangeChanged(i,lessonAdapter.itemCount-i)
                             len--
                             i--
                         }

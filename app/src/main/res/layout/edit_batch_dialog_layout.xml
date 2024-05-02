@@ -15,18 +15,18 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tlClassName"
+            android:id="@+id/tlBatchName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Class Name"
-            app:helperText="Class name only contain alphabets, number and - or  _ "
+            android:hint="Batch Name"
+            app:helperText="Batch name only contain alphabets, number and - or  _ "
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etClassName"
+                android:id="@+id/etBatchName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/tlClassName"
+            app:layout_constraintTop_toBottomOf="@id/tlBatchName"
             tools:layout_editor_absoluteX="10dp">
 
             <com.google.android.material.button.MaterialButton

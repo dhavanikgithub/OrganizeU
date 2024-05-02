@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
+import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat24H
 import java.util.Calendar
 
 class Validation {
@@ -12,7 +13,7 @@ class Validation {
 
             try {
                 val endDate = Calendar.getInstance().apply {
-                    time = timeFormat12H.parse(endTime)!!
+                    time = timeFormat24H.parse(endTime)!!
                     set(Calendar.YEAR, UtilFunction.calendar.get(Calendar.YEAR))
                     set(Calendar.MONTH, UtilFunction.calendar.get(Calendar.MONTH))
                     set(Calendar.DAY_OF_MONTH, UtilFunction.calendar.get(Calendar.DAY_OF_MONTH))

@@ -3,6 +3,8 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.ClassPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
+import com.dk.organizeu.pojo.ClassPojo.Companion.toMap
 import com.dk.organizeu.repository.SemesterRepository.Companion.semesterDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -122,5 +124,31 @@ class ClassRepository {
             }
         }
 
+        suspend fun getClassPojoByName(academicDocumentId: String,semesterDocumentId: String,name:String): ClassPojo? {
+            return try {
+                classCollectionRef(academicDocumentId,semesterDocumentId)
+                    .whereEqualTo("name", name)
+                    .get().await().documents[0].toClassPojo()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        suspend fun getClassIdByName(academicDocumentId: String,semesterDocumentId: String,name:String): String? {
+            return try {
+                getClassPojoByName(academicDocumentId, semesterDocumentId, name)!!.id
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        fun updateClassDocument(academicDocumentId: String,semesterDocumentId: String, classPojo: ClassPojo, isRenamed:(Boolean)->Unit) {
+            val oldDocRef = classDocumentRef(academicDocumentId,semesterDocumentId,classPojo.id)
+            oldDocRef.update(classPojo.toMap()).addOnSuccessListener {
+                isRenamed(true)
+            }.addOnFailureListener {
+                isRenamed(false)
+            }
+        }
     }
 }

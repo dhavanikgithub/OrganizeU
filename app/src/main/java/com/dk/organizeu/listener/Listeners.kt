@@ -1,6 +1,7 @@
 package com.dk.organizeu.listener
 
 import com.dk.organizeu.pojo.AcademicPojo
+import com.dk.organizeu.pojo.BatchPojo
 import com.dk.organizeu.pojo.ClassPojo
 import com.dk.organizeu.pojo.FacultyPojo
 import com.dk.organizeu.pojo.RoomPojo
@@ -31,6 +32,10 @@ interface SubjectDocumentListener {
 
 interface ClassDocumentListener {
     fun onEdited(classPojo: ClassPojo, position: Int)
+}
+
+interface BatchDocumentListener {
+    fun onEdited(batchPojo: BatchPojo, position: Int)
 }
 interface EditDocumentListener {
     fun onEdited(oldDocumentId:String,newDocumentId: String,documentData: HashMap<String,String>)

@@ -44,15 +44,16 @@ class LessonAdapterStudent(private val lessonPojos: ArrayList<LessonPojo>) : Rec
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         try {
-            if(isItemViewHolder)
+            if(!isItemViewHolder)
             {
-                binding = DataBindingUtil.bind(holder.itemView)!!
-                val item = lessonPojos[holder.adapterPosition]
-                if(binding!=null)
-                {
-                    binding!!.timetablePojo = item
+                return
+            }
+            binding = DataBindingUtil.bind(holder.itemView)!!
+            val item = lessonPojos[holder.adapterPosition]
+            if(binding!=null)
+            {
+                binding!!.lessonPojo = item
 
-                }
             }
 
         } catch (e: Exception) {

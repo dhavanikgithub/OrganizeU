@@ -3,6 +3,7 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.SemesterPojo
+import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.academicDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -80,6 +81,24 @@ class SemesterRepository {
             catch (e:java.lang.Exception)
             {
                 failureCallback(e)
+            }
+        }
+
+        suspend fun getSemesterPojoByName(academicDocumentId: String,name:String): SemesterPojo? {
+            return try {
+                semesterCollectionRef(academicDocumentId)
+                    .whereEqualTo("name", name)
+                    .get().await().documents[0].toSemesterPojo()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        suspend fun getSemesterIdByName(academicDocumentId: String,name:String): String? {
+            return try {
+                getSemesterPojoByName(academicDocumentId, name)!!.id
+            } catch (e: Exception) {
+                null
             }
         }
 

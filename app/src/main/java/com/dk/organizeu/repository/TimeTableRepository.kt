@@ -3,6 +3,7 @@ package com.dk.organizeu.repository
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.TimetablePojo
+import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
 import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -93,6 +94,29 @@ class TimeTableRepository {
             timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetablePojo.id)
                 .set(timetablePojo)
                 .await()
+        }
+
+        suspend fun getTimetablePojoByName(academicDocumentId: String,semesterDocumentId: String, classDocumentId: String,name:String): TimetablePojo? {
+            return try {
+                timetableCollectionRef(
+                    academicDocumentId,
+                    semesterDocumentId,
+                    classDocumentId
+                ).whereEqualTo("name",name)
+                    .get()
+                    .await()
+                    .documents[0].toTimetablePojo()
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        suspend fun getTimetableIdByName(academicDocumentId: String,semesterDocumentId: String, classDocumentId: String,name:String): String? {
+            return try {
+                getTimetablePojoByName(academicDocumentId, semesterDocumentId, classDocumentId, name)!!.id
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }

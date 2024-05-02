@@ -54,7 +54,7 @@ class LessonAdapterAdmin(private val lessonPojos: ArrayList<LessonPojo>, private
 
             if(binding!=null)
             {
-                binding!!.timetablePojo = item
+                binding!!.lessonPojo = item
                 binding!!.position = holder.adapterPosition
                 binding!!.listener = listener
             }

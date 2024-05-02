@@ -57,10 +57,7 @@ class AcademicRepository {
 
         suspend fun getAcademicIdByYearAndType(year:String, type:String): String? {
             return try {
-                academicCollectionRef()
-                    .whereEqualTo("year", year)
-                    .whereEqualTo("type", type)
-                    .get().await().documents[0].id
+                getAcademicPojoByYearAndType(year, type)!!.id
             } catch (e: Exception) {
                 null
             }
