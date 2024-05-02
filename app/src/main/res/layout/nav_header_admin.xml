@@ -28,7 +28,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Admin Name"
+            android:textColor="@color/colorPrimaryContainer"
+            android:textSize="@dimen/_13sdp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_marginStart="10dp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/txtAdminOtherDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Details"
+            android:textColor="@color/colorPrimaryContainer"
             android:layout_marginStart="10dp"
             android:padding="8dp" />
     </LinearLayout>
