@@ -1,26 +1,33 @@
 package com.dk.organizeu.activity_admin
 
+import android.R.attr.enabled
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityAdminBinding
+import com.dk.organizeu.listener.DrawerLocker
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
-class AdminActivity : AppCompatActivity() {
+
+class AdminActivity : AppCompatActivity(), DrawerLocker {
     private lateinit var binding: ActivityAdminBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navHostFragment:NavHostFragment
+    private lateinit var viewModel: AdminViewModel
     companion object{
         const val TAG = "OrganizeU-AdminActivity"
     }
@@ -29,7 +36,7 @@ class AdminActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_admin)
-
+        viewModel = ViewModelProvider(this)[AdminViewModel::class.java]
         binding.apply {
             try {
                 // Set the toolbar as the action bar
@@ -41,7 +48,7 @@ class AdminActivity : AppCompatActivity() {
                 // Define the navigation graph with top-level destinations
                 appBarConfiguration = AppBarConfiguration.Builder(
                     setOf(
-                        R.id.academicFragment,
+                        R.id.settingsFragmentAdmin,
                     )
                 ).build()
 
@@ -50,6 +57,7 @@ class AdminActivity : AppCompatActivity() {
 
                 // Set up the action bar with the navigation controller and configuration
                 setupActionBarWithNavController(navController, appBarConfiguration)
+
 
 
                 /*val mainMenuIcon = findViewById<ImageView>(R.id.iconMenu)
@@ -66,26 +74,18 @@ class AdminActivity : AppCompatActivity() {
                 this@AdminActivity.unexpectedErrorMessagePrint(e)
             }
 
-
-
-            // Add a destination changed listener to the NavController
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                try {
-                    // Check if the current destination is the home fragment (academicFragment)
-                    val isHomeFragment = destination.id == R.id.academicFragment
-
-                    // If it's the home fragment, display the home/up button with the menu icon
-                    if (isHomeFragment) {
-                        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-                    } else {
-                        // If it's not the home fragment, display the back arrow icon
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                when(destination.id)
+                {
+                    R.id.settingsFragmentAdmin -> {
+                        setDrawerEnabled(false)
                         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
                     }
-                } catch (e: Exception) {
-                    // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
-                    this@AdminActivity.unexpectedErrorMessagePrint(e)
+                    else -> {
+                        setDrawerEnabled(true)
+                        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+                    }
                 }
             }
 
@@ -181,6 +181,7 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_settings -> {
                         try {
                             if (!isDrawerMenuSelect(R.id.nav_settings)) {
+
                                 navController.popBackStack(R.id.settingsFragmentAdmin, true)
                                 navController.navigate(R.id.settingsFragmentAdmin)
                                 isMenuSelect = true
@@ -197,6 +198,7 @@ class AdminActivity : AppCompatActivity() {
                 {
                     // Toggle the drawer menu after handling the click event
                     toggleDrawerMenu()
+                    viewModel.selectedMenu = menuItem.itemId
                 }
                 // Indicate that the event has been handled successfully
                 isMenuSelect
@@ -206,25 +208,19 @@ class AdminActivity : AppCompatActivity() {
     }
 
 
-
-
     // Override the onOptionsItemSelected method to handle action bar item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Check if the clicked item is the home/up button
-        when (item.itemId) {
-            android.R.id.home -> {
-                // Check if the current destination is the academic fragment
-                if (navController.currentDestination?.id == R.id.academicFragment) {
-                    // Toggle the drawer menu when the home/up button is clicked in the academic fragment
-                    toggleDrawerMenu()
-                    // Return true to indicate that the action has been handled
-                    return true
-                }
+        return when(viewModel.selectedMenu) {
+            R.id.nav_settings -> {
+                viewModel.selectedMenu = 0
+                super.onOptionsItemSelected(item)
+            }
+            else -> {
+                toggleDrawerMenu()
+                true
             }
         }
-        // If the clicked item is not the home/up button or the current destination is not the academic fragment,
-        // let the superclass handle the click event
-        return super.onOptionsItemSelected(item)
+
     }
 
 
@@ -234,7 +230,7 @@ class AdminActivity : AppCompatActivity() {
         // Navigate up in the navigation controller's navigation hierarchy
         // If the navigation controller successfully navigates up, return true
         // Otherwise, let the superclass handle the navigation up event
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 
 
@@ -288,6 +284,11 @@ class AdminActivity : AppCompatActivity() {
                 throw e
             }
         }
+    }
+
+    override fun setDrawerEnabled(enabled: Boolean) {
+        val lockMode = if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        binding.adminDL.setDrawerLockMode(lockMode)
     }
 
 }

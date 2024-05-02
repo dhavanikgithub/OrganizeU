@@ -12,9 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.FragmentSplashBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class SplashFragment : Fragment() {
 
@@ -41,6 +39,11 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        MainScope().launch(Dispatchers.Main) {
+            Thread.sleep(2000L)
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.permissionFragment)
+        }
 
     }
 
@@ -52,26 +55,5 @@ class SplashFragment : Fragment() {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        MainScope().launch(Dispatchers.Main)
-        {
-            viewModel.delayAndNavigate(3000)
-            gotoPermissionFragment()
-        }
-
     }
-
-    /**
-     * Navigates to the PermissionFragment.
-     * If successful, finishes the current fragment.
-     */
-    private fun gotoPermissionFragment(){
-        try {
-            findNavController().popBackStack()
-            findNavController().navigate(R.id.permissionFragment)
-        } catch (e: Exception) {
-            // Handle any exceptions and print error messages
-            //requireContext().unexpectedErrorMessagePrint(e)
-        }
-    }
-
 }

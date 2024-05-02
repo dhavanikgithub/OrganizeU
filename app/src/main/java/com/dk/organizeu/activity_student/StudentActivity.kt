@@ -6,21 +6,27 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.databinding.ActivityStudentBinding
+import com.dk.organizeu.listener.DrawerLocker
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
-class StudentActivity : AppCompatActivity() {
+class StudentActivity : AppCompatActivity(), DrawerLocker {
     private lateinit var binding: ActivityStudentBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navHostFragment:NavHostFragment
+    private lateinit var viewModel: StudentViewModel
 
     companion object{
         const val TAG = "OrganizeU-StudentActivity"
@@ -28,6 +34,7 @@ class StudentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_student)
+        viewModel = ViewModelProvider(this)[StudentViewModel::class.java]
         binding.apply {
 
             try {
@@ -56,6 +63,22 @@ class StudentActivity : AppCompatActivity() {
                             studentDL.openDrawer(GravityCompat.START)
                         }
                     }*/
+
+                // Add a destination changed listener to the NavController
+                navController.addOnDestinationChangedListener { _, destination, _ ->
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    when(destination.id)
+                    {
+                        R.id.settingsFragmentStudent -> {
+                            setDrawerEnabled(false)
+                            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
+                        }
+                        else -> {
+                            setDrawerEnabled(true)
+                            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur during setup
                 Log.e(TAG, e.message.toString())
@@ -67,10 +90,12 @@ class StudentActivity : AppCompatActivity() {
 
             // Set up the navigation item selected listener for the student navigation drawer
             navigationViewStudent.setNavigationItemSelectedListener { menuItem ->
+                var isMenuSelect = false
                 when (menuItem.itemId) {
+
                     // Handle selection of the "Home" menu item
                     R.id.nav_home -> {
-                        try {
+                        isMenuSelect = try {
                             // Toggle the drawer menu and navigate to the "Home" fragment, popping the back stack if necessary
                             toggleDrawerMenu()
                             navHostFragment.findNavController().popBackStack(R.id.homeFragment, false)
@@ -82,51 +107,47 @@ class StudentActivity : AppCompatActivity() {
                             false // Return false to indicate that the item selection has not been handled
                         }
                     }
-                    // Handle selection of the "Available Class Rooms" menu item
                     R.id.nav_available_class_rooms -> {
                         this@StudentActivity.showToast("!Implement Soon!")
-                        false // Return false to indicate that the item selection has not been handled
+                        isMenuSelect = false
                     }
                     R.id.nav_aboutUs -> {
                         this@StudentActivity.showToast("!Implement Soon!")
-                        false
+                        isMenuSelect = false
                     }
                     R.id.nav_signOut -> {
                         this@StudentActivity.showToast("!Implement Soon!")
-                        false
+                        isMenuSelect = false
                     }
                     R.id.nav_settings -> {
                         toggleDrawerMenu()
                         navHostFragment.findNavController().popBackStack(R.id.settingsFragmentStudent, true)
                         navHostFragment.findNavController().navigate(R.id.settingsFragmentStudent)
-                        true
+                        isMenuSelect = true
                     }
-                    else -> false // Return false for any other menu items
+                    else -> isMenuSelect = false
                 }
+                if(isMenuSelect)
+                {
+                    viewModel.selectedMenu = menuItem.itemId
+                }
+                isMenuSelect
             }
 
         }
     }
     // Override the onOptionsItemSelected method to handle options menu item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                try {
-                    // Check if the selected menu item is the home button
-                    if (navController.currentDestination?.id == R.id.homeFragment) {
-                        // If the current fragment is the home fragment, toggle the drawer menu
-                        toggleDrawerMenu()
-                        return true // Return true to indicate that the item selection has been handled
-                    }
-                } catch (e: Exception) {
-                    // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
-                    this@StudentActivity.unexpectedErrorMessagePrint(e)
-                }
+        return when (viewModel.selectedMenu) {
+            R.id.nav_settings -> {
+                viewModel.selectedMenu = 0
+                super.onOptionsItemSelected(item)
+            }
+            else -> {
+                toggleDrawerMenu()
+                true
             }
         }
-        // Call the superclass method to handle the selected menu item
-        return super.onOptionsItemSelected(item)
     }
 
 
@@ -163,7 +184,7 @@ class StudentActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         try {
             // Attempt to navigate up in the navigation hierarchy
-            return navController.navigateUp() || super.onSupportNavigateUp()
+            return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
         } catch (e: Exception) {
             // Log and handle any exceptions that occur
             Log.e(TAG, e.message.toString())
@@ -192,6 +213,11 @@ class StudentActivity : AppCompatActivity() {
                 this@StudentActivity.unexpectedErrorMessagePrint(e)
             }
         }
+    }
+
+    override fun setDrawerEnabled(enabled: Boolean) {
+        val lockMode = if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        binding.studentDL.setDrawerLockMode(lockMode)
     }
 
 

@@ -24,6 +24,6 @@
     </fragment>
     <fragment
         android:id="@+id/userSelectionFragment"
-        android:name="com.dk.organizeu.activity_main.fragments.UserSelectionFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.user_selection.UserSelectionFragment"
         android:label="UserSelectionFragment" />
 </navigation>

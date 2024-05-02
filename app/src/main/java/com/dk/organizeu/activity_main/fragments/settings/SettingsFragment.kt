@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_main.fragments
+package com.dk.organizeu.activity_main.fragments.settings
 
 import android.content.Context
 import android.content.SharedPreferences

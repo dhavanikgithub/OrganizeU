@@ -1,16 +1,14 @@
 package com.dk.organizeu.listener
 
-import com.dk.organizeu.pojo.AcademicPojo
-import com.dk.organizeu.pojo.BatchPojo
-import com.dk.organizeu.pojo.ClassPojo
-import com.dk.organizeu.pojo.FacultyPojo
-import com.dk.organizeu.pojo.RoomPojo
-import com.dk.organizeu.pojo.SubjectPojo
+import com.dk.organizeu.pojo.*
 
 interface AddDocumentListener {
     fun onAdded(documentId: String,documentData: HashMap<String,String>)
 }
 
+interface DrawerLocker {
+    fun setDrawerEnabled(enabled: Boolean)
+}
 interface FacultyDocumentListener {
     fun onAdded(facultyPojo: FacultyPojo)
     fun onEdited(facultyPojo: FacultyPojo)

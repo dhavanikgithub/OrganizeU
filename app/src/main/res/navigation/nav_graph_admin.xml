@@ -91,6 +91,6 @@
         tools:layout="@layout/fragment_add_lesson" />
     <fragment
         android:id="@+id/settingsFragmentAdmin"
-        android:name="com.dk.organizeu.activity_main.fragments.SettingsFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.settings.SettingsFragment"
         android:label="Settings" />
 </navigation>
