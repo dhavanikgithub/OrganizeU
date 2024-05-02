@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        tools:context="com.appsnipp.mysettings.SettingsActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="30dp">
+
+            <TextView
+                style="@style/viewParent.headerText"
+                android:text="Settings"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileCircleImageView"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@color/colorPrimary"
+                    android:src="@drawable/ic_launcher"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/usernameTextView"
+                    style="@style/viewParent.headerText"
+                    android:text="OrganizeU"
+                    android:textSize="18sp"
+                    android:layout_toRightOf="@id/profileCircleImageView"
+                    android:layout_marginTop="20dp"/>
+
+                <TextView
+                    style="@style/viewParent.headerText"
+                    android:text="Edit personal details"
+                    android:textSize="16sp"
+                    android:textColor="@color/grey_40"
+                    android:layout_below="@id/usernameTextView"
+                    android:layout_toRightOf="@id/profileCircleImageView"/>
+
+                <ImageView
+                    style="@style/viewParent"
+                    android:src="@drawable/ic_more"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+            <Switch
+                android:id="@+id/darkModeSwitch"
+                style="@style/settingsText"
+                android:drawableLeft="@drawable/ic_dark_mode"
+                android:text="Dark Mode"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <TextView
+                style="@style/viewParent.headerText.settingsMiniTitle"
+                android:text="Profile"/>
+
+            <TextView
+                style="@style/viewParent.headerText.settingsTextIcon"
+                android:drawableLeft="@drawable/ic_edit_profile"
+                android:text="Edit Profile" />
+
+            <TextView
+                style="@style/viewParent.headerText.settingsTextIcon"
+                android:drawableLeft="@drawable/ic_edit_password"
+                android:layout_marginTop="10dp"
+                android:text="Change Password" />
+
+            <TextView
+                style="@style/viewParent.headerText.settingsMiniTitle"
+                android:text="Notifications"/>
+
+            <Switch
+                style="@style/settingsText"
+                android:drawableLeft="@drawable/ic_notifications2"
+                android:text="Notifications"
+                android:enabled="false"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <TextView
+                style="@style/viewParent.headerText.settingsMiniTitle"
+                android:text="Regional"/>
+
+            <TextView
+                style="@style/viewParent.headerText.settingsTextIcon"
+                android:drawableLeft="@drawable/ic_languages"
+                android:text="Language" />
+
+            <TextView
+                style="@style/viewParent.headerText.settingsTextIcon"
+                android:drawableLeft="@drawable/ic_logout"
+                android:text="Logout" />
+
+
+            <TextView
+                style="@style/viewParent.headerText.settingsMiniTitle"
+                android:text="App Version 1.0"
+                android:textAlignment="center"/>
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

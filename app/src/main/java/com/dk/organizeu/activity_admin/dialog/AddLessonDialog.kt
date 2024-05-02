@@ -21,11 +21,8 @@ import com.dk.organizeu.listener.AddDocumentListener
 import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
 import com.dk.organizeu.pojo.FacultyPojo.Companion.toFacultyPojo
 import com.dk.organizeu.pojo.LessonPojo
-import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
 import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
-import com.dk.organizeu.pojo.SubjectPojo
-import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.BatchRepository
@@ -38,6 +35,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.TimeConverter.Companion.convert12HourTo24Hour
+import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.convertTo12HourFormat
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -48,7 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFragment() {
+class AddLessonDialog(private val listener: LessonListener, val lessonPojo: LessonPojo?, val position: Int) : AppCompatDialogFragment() {
     private lateinit var binding: AddLessonDialogLayoutBinding
 
     private var lessonAddListener: AddDocumentListener? = null
@@ -86,6 +84,8 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
          * Called when a lesson conflict is detected while adding.
          */
         fun onConflict()
+
+        fun onEditedLesson(lessonPojo: LessonPojo, position: Int)
     }
 
     companion object{
@@ -114,10 +114,36 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
             var builder:AlertDialog.Builder? = null
 
             try {
-                // Create an AlertDialog.Builder instance with the context of the current fragment
-                builder = AlertDialog.Builder(requireContext())
-                    .setView(view) // Set the view of the dialog to the inflated view
-                    .setTitle("Add Lesson") // Set the title of the dialog
+                var title = "Add Lesson"
+
+
+
+
+                if(lessonPojo!=null)
+                {
+                    title = "Edit Lesson"
+                    btnAdd.text = "Edit"
+                    btnAdd.setIconResource(R.drawable.ic_edit)
+                    actSubject.setText(lessonPojo.subjectName)
+                    selectedSubject  = lessonPojo.subjectName
+                    actFaculty.setText(lessonPojo.facultyName)
+                    selectedFaculty = lessonPojo.facultyName
+                    actRoom.setText(lessonPojo.location.split(" - ")[0])
+                    selectedRoom = lessonPojo.location.split(" - ")[0]
+                    actLessonType.setText(lessonPojo.type)
+                    selectedLessonType = lessonPojo.type
+                    if(lessonPojo.batch!=null && lessonPojo.batch!="null" && lessonPojo.batch != "")
+                    {
+                        tlBatch.visibility = View.VISIBLE
+                        actBatch.setText(lessonPojo.batch)
+                        selectedBatch = lessonPojo.batch
+                    }
+                    else{
+                        tlBatch.visibility = View.GONE
+                    }
+                    txtSelectLessonTime.text = "${lessonPojo.startTime.convert24HourTo12Hour()} - ${lessonPojo.endTime.convert24HourTo12Hour()}"
+                    selectedTime = txtSelectLessonTime.text.toString()
+                }
 
                 // Define the list of lesson types (e.g., CLASS and LAB)
                 val lessonTypeList = arrayOf(RoomType.CLASS.name, RoomType.LAB.name)
@@ -126,10 +152,19 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                 // Set the adapter for the lesson type drop-down
                 actLessonType.setAdapter(lessonTypeAdapter)
 
+                // Create an AlertDialog.Builder instance with the context of the current fragment
+                builder = AlertDialog.Builder(requireContext())
+                    .setView(view) // Set the view of the dialog to the inflated view
+                    .setTitle(title) // Set the title of the dialog
+
                 // Initialize and populate the drop-down lists for subject, faculty, and batch
                 initSubjectDropDown()
                 initFacultyDropDown()
                 initBatchDropDown()
+                if(lessonPojo!=null)
+                {
+                    initRoomDropDown()
+                }
             } catch (e: Exception) {
                 // Log any exceptions that occur
                 Log.e(TAG, e.message.toString())
@@ -183,6 +218,7 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     }
                     // Get the selected lesson type from the parent adapter
                     selectedLessonType = parent.getItemAtPosition(position).toString()
+                    actRoom.text.clear()
 
                     // Check if the selected lesson type is a lab
                     if(selectedLessonType.equals(RoomType.LAB.name,true))
@@ -259,29 +295,8 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                     MainScope().launch(Dispatchers.IO) {
                         AddLessonFragment.apply {
                             try {
-                                val allSubjectDocuments = SubjectRepository.getAllSubjectDocuments()
-                                var subjectData:SubjectPojo?=null
-                                for(doc in allSubjectDocuments)
-                                {
-                                    val subjectPojo = doc.toSubjectPojo()
-                                    if(subjectPojo.name == selectedSubject!!)
-                                    {
-                                        subjectData = subjectPojo
-                                        break
-                                    }
-                                }
-
-                                val allRoomDocuments = RoomRepository.getAllRoomDocument()
-                                var roomData:RoomPojo?  = null
-                                for(doc in allRoomDocuments)
-                                {
-                                    val roomPojo = doc.toRoomPojo()
-                                    if(roomPojo.name == selectedRoom!!)
-                                    {
-                                        roomData = roomPojo
-                                        break
-                                    }
-                                }
+                                val subjectPojo = SubjectRepository.getSubjectPojoByName(selectedSubject!!)
+                                val roomPojo = RoomRepository.getRoomPojoByName(selectedRoom!!)
 
 
                                 // Split the selected lesson time into start and end times
@@ -289,77 +304,121 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                                 // output ['10:00 AM','11:00 AM']
                                 val selectedLessonTime = selectedTime!!.split(" - ")
 
-
-                                // Generate unique request codes for muting, unmuting, and notifications
-                                val muteRequestCode = System.currentTimeMillis().toInt()
-                                delay(100)
-                                val unMuteRequestCode = System.currentTimeMillis().toInt()
-                                delay(100)
-                                val notificationCode = System.currentTimeMillis().toInt()
-
-                                val newLessonPojo = LessonPojo(
-                                    className = className,
-                                    subjectName = selectedSubject!!,
-                                    subjectCode = subjectData!!.code,
-                                    location = "$selectedRoom - ${roomData!!.location}",
-                                    startTime = selectedLessonTime[0].convert12HourTo24Hour(),
-                                    endTime = selectedLessonTime[1].convert12HourTo24Hour(),
-                                    facultyName = selectedFaculty!!,
-                                    type = selectedLessonType!!,
-                                    batch = selectedBatch.toString(),
-                                    duration = UtilFunction.calculateLessonDuration(selectedLessonTime[0], selectedLessonTime[1]),
-                                    muteRequestCode = muteRequestCode,
-                                    unMuteRequestCode = unMuteRequestCode,
-                                    notificationCode = notificationCode
-                                )
-
-                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(
-                                    academicYear, academicType)
-
+                                val academicId:String? = AcademicRepository.getAcademicIdByYearAndType(academicYear, academicType)
                                 val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterNumber)
                                 val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, className)
-
                                 var timetablePojo:TimetablePojo? = TimeTableRepository.getTimetablePojoByName(academicId,semId,classId!!,Weekday.getWeekdayNameByNumber(selectedTab))
 
-                                if(timetablePojo==null)
+                                if(lessonPojo!=null)
                                 {
-                                    timetablePojo = TimetablePojo(name = Weekday.getWeekdayNameByNumber(selectedTab))
-                                    TimeTableRepository.insertTimeTableDocument(academicId,semId,classId,timetablePojo)
-                                }
-
-
-                                // Check if there's a conflict with existing lesson documents
-                                LessonRepository.isLessonDocumentConflict(
-                                    academicId,
-                                    semId,
-                                    classId,
-                                    timetablePojo.id,
-                                    selectedLessonTime[0],
-                                    selectedLessonTime[1],
-                                    selectedFaculty!!,
-                                    newLessonPojo.location
-                                ) {
-                                    try {
-                                        if (!it) {
-                                            // If there's no conflict, insert the lesson document
-                                            LessonRepository.insertLessonDocument(academicId, semId, classId, timetablePojo.id, newLessonPojo,
-                                                {
-                                                    // Invoke the onAddLesson listener callback
-                                                    listener.onAddLesson()
-                                                    // Close the dialog
-                                                    dismiss()
-                                                },
-                                                {
-                                                    // Close the dialog
-                                                    dismiss()
-                                                })
-                                        } else {
-                                            // If there's a conflict, invoke the onConflict listener callback
-                                            listener.onConflict()
+                                    lessonPojo.apply {
+                                        className = AddLessonFragment.className
+                                        subjectName = subjectPojo!!.name
+                                        subjectCode = subjectPojo.code
+                                        location = "${roomPojo!!.name} - ${roomPojo.location}"
+                                        if(startTime!=selectedLessonTime[0])
+                                        {
+                                            startTime = selectedLessonTime[0].convert12HourTo24Hour()
                                         }
-                                    } catch (e: Exception) {
-                                        Log.e(TAG, e.message.toString())
-                                        requireContext().unexpectedErrorMessagePrint(e)
+                                        if(endTime!=selectedLessonTime[1])
+                                        {
+                                            endTime = selectedLessonTime[1].convert12HourTo24Hour()
+                                        }
+
+                                        facultyName = selectedFaculty!!
+                                        type = selectedLessonType!!
+                                        duration = UtilFunction.calculateLessonDuration(selectedLessonTime[0], selectedLessonTime[1])
+                                    }
+
+                                    LessonRepository.isLessonDocumentConflict(
+                                        academicId,
+                                        semId,
+                                        classId,
+                                        timetablePojo!!.id,
+                                        selectedLessonTime[0],
+                                        selectedLessonTime[1],
+                                        selectedFaculty!!,
+                                        lessonPojo.location
+                                    ){isConflict ->
+                                        if(isConflict)
+                                        {
+                                            listener.onConflict()
+                                            return@isLessonDocumentConflict
+                                        }
+                                        LessonRepository.updateLesson(academicId,semId,classId,timetablePojo!!.id,lessonPojo){isUpdated ->
+                                            if(isUpdated)
+                                            {
+                                                listener.onEditedLesson(lessonPojo,position)
+                                                dismiss()
+                                                return@updateLesson
+                                            }
+                                        }
+                                    }
+                                }
+                                else{
+                                    // Generate unique request codes for muting, unmuting, and notifications
+                                    val muteRequestCode = System.currentTimeMillis().toInt()
+                                    delay(100)
+                                    val unMuteRequestCode = System.currentTimeMillis().toInt()
+                                    delay(100)
+                                    val notificationCode = System.currentTimeMillis().toInt()
+
+                                    val newLessonPojo = LessonPojo(
+                                        className = className,
+                                        subjectName = subjectPojo!!.name,
+                                        subjectCode = subjectPojo.code,
+                                        location = "${roomPojo!!.name} - ${roomPojo.location}",
+                                        startTime = selectedLessonTime[0].convert12HourTo24Hour(),
+                                        endTime = selectedLessonTime[1].convert12HourTo24Hour(),
+                                        facultyName = selectedFaculty!!,
+                                        type = selectedLessonType!!,
+                                        batch = selectedBatch.toString(),
+                                        duration = UtilFunction.calculateLessonDuration(selectedLessonTime[0], selectedLessonTime[1]),
+                                        muteRequestCode = muteRequestCode,
+                                        unMuteRequestCode = unMuteRequestCode,
+                                        notificationCode = notificationCode
+                                    )
+
+                                    if(timetablePojo==null)
+                                    {
+                                        timetablePojo = TimetablePojo(name = Weekday.getWeekdayNameByNumber(selectedTab))
+                                        TimeTableRepository.insertTimeTableDocument(academicId,semId,classId,timetablePojo)
+                                    }
+
+
+                                    // Check if there's a conflict with existing lesson documents
+                                    LessonRepository.isLessonDocumentConflict(
+                                        academicId,
+                                        semId,
+                                        classId,
+                                        timetablePojo.id,
+                                        selectedLessonTime[0],
+                                        selectedLessonTime[1],
+                                        selectedFaculty!!,
+                                        newLessonPojo.location
+                                    ) {
+                                        try {
+                                            if (!it) {
+                                                // If there's no conflict, insert the lesson document
+                                                LessonRepository.insertLessonDocument(academicId, semId, classId, timetablePojo.id, newLessonPojo,
+                                                    {
+                                                        // Invoke the onAddLesson listener callback
+                                                        listener.onAddLesson()
+                                                        // Close the dialog
+                                                        dismiss()
+                                                    },
+                                                    {
+                                                        // Close the dialog
+                                                        dismiss()
+                                                    })
+                                            } else {
+                                                // If there's a conflict, invoke the onConflict listener callback
+                                                listener.onConflict()
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e(TAG, e.message.toString())
+                                            requireContext().unexpectedErrorMessagePrint(e)
+                                        }
                                     }
                                 }
                             } catch (e: Exception) {
@@ -546,8 +605,6 @@ class AddLessonDialog(private val listener: LessonListener) : AppCompatDialogFra
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
                     Log.e(TAG,e.message.toString())
-                    // Display an unexpected error message to the user
-                    requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
         }

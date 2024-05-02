@@ -4,6 +4,7 @@ import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.pojo.RoomPojo.Companion.toMap
+import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -140,6 +141,17 @@ class RoomRepository {
             }
             .addOnFailureListener {
                 isRenamed(false)
+            }
+        }
+
+        suspend fun getRoomPojoByName(name:String):RoomPojo?
+        {
+            return try {
+                roomCollectionRef().whereEqualTo("name",name).get().await().documents[0].toRoomPojo()
+            }
+            catch (e: Exception)
+            {
+                null
             }
         }
     }

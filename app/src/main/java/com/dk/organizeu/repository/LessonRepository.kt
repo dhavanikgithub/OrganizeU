@@ -2,8 +2,9 @@ package com.dk.organizeu.repository
 
 import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
-import com.dk.organizeu.firebase.key_mapping.WeekdayCollection
 import com.dk.organizeu.pojo.LessonPojo
+import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
+import com.dk.organizeu.pojo.LessonPojo.Companion.toMap
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -120,7 +121,18 @@ class LessonRepository {
             }
         }
 
-        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, roomName:String, callback: (Boolean) -> Unit)
+        fun updateLesson(academicDocumentId: String,semesterDocumentId: String,classDocumentId: String,timetableDocumentId: String,lessonPojo: LessonPojo,isRenamed:(Boolean) -> Unit){
+            lessonDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,lessonPojo.id)
+                .update(lessonPojo.toMap())
+                .addOnSuccessListener {
+                    isRenamed(true)
+                }
+                .addOnFailureListener {
+                    isRenamed(false)
+                }
+        }
+
+        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, location:String, callback: (Boolean) -> Unit)
         {
             try {
                 val lessonStartTime = timeFormat12H.parse(startTime)
@@ -136,20 +148,21 @@ class LessonRepository {
                                 val lessonDocuments = getAllLessonDocuments(academicDocumentId, semesterDoc.id, classDoc.id, timetableDocumentId)
                                 for(lessonDoc in lessonDocuments)
                                 {
+                                    val lessonPojo = lessonDoc.toLessonPojo()
                                     try {
-                                        val parsedStartTime = timeFormat12H.parse(lessonDoc.get(WeekdayCollection.START_TIME.displayName).toString())
-                                        val parsedEndTime = timeFormat12H.parse(lessonDoc.get(WeekdayCollection.END_TIME.displayName).toString())
+                                        val parsedStartTime = timeFormat12H.parse(lessonPojo.startTime)
+                                        val parsedEndTime = timeFormat12H.parse(lessonPojo.endTime)
                                         if (parsedStartTime != null) {
                                             if (parsedEndTime != null) {
                                                 if (parsedStartTime.before(lessonEndTime) && parsedEndTime.after(lessonStartTime)) {
                                                     if (semesterDoc.id != semesterDocumentId)
                                                     {
-                                                        if (facultyName == (lessonDoc.get(WeekdayCollection.FACULTY_NAME.displayName).toString()))
+                                                        if (facultyName == lessonPojo.facultyName)
                                                         {
                                                             callback(true)
                                                             return
                                                         }
-                                                        else if(roomName == (lessonDoc.get(WeekdayCollection.LOCATION.displayName)))
+                                                        else if(location == lessonPojo.location)
                                                         {
                                                             callback(true)
                                                             return

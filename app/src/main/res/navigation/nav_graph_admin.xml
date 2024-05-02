@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_academicFragment_to_subjectsFragment"
             app:destination="@id/subjectsFragment" />
+        <action
+            android:id="@+id/action_academicFragment_to_settingsFragment"
+            app:destination="@id/settingsFragmentAdmin" />
     </fragment>
     <fragment
         android:id="@+id/addAcademicFragment"
@@ -86,4 +89,8 @@
         android:name="com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment"
         android:label="Add Lesson"
         tools:layout="@layout/fragment_add_lesson" />
+    <fragment
+        android:id="@+id/settingsFragmentAdmin"
+        android:name="com.dk.organizeu.activity_main.fragments.SettingsFragment"
+        android:label="Settings" />
 </navigation>

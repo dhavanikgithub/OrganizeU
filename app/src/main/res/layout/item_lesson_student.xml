@@ -8,6 +8,9 @@
             name="lessonPojo"
             type="com.dk.organizeu.pojo.LessonPojo" />
         <variable
+            name="position"
+            type="Integer" />
+        <variable
             name="timeConverter"
             type="com.dk.organizeu.utils.TimeConverter" />
     </data>
@@ -81,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimary"
-                    android:visibility="invisible"
+                    android:text='@{"Lesson: "+(position+1)}'
                     tools:text="@string/textLessonNumber"
                     android:textSize="@dimen/_10sdp" />
 

@@ -53,7 +53,7 @@ class LessonAdapterStudent(private val lessonPojos: ArrayList<LessonPojo>) : Rec
             if(binding!=null)
             {
                 binding!!.lessonPojo = item
-
+                binding!!.position = holder.adapterPosition
             }
 
         } catch (e: Exception) {

@@ -96,8 +96,10 @@ class StudentActivity : AppCompatActivity() {
                         false
                     }
                     R.id.nav_settings -> {
-                        this@StudentActivity.showToast("!Implement Soon!")
-                        false
+                        toggleDrawerMenu()
+                        navHostFragment.findNavController().popBackStack(R.id.settingsFragmentStudent, true)
+                        navHostFragment.findNavController().navigate(R.id.settingsFragmentStudent)
+                        true
                     }
                     else -> false // Return false for any other menu items
                 }

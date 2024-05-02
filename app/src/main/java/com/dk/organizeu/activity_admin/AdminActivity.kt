@@ -100,8 +100,7 @@ class AdminActivity : AppCompatActivity() {
                             // Check if the academic fragment is not already selected
                             if (!isDrawerMenuSelect(R.id.nav_academic)) {
                                 // Clear the back stack up to academicFragment and navigate to the academic fragment
-                                navController.popBackStack(R.id.academicFragment, true)
-                                navController.navigate(R.id.academicFragment)
+                                navController.popBackStack(R.id.academicFragment, false)
                                 isMenuSelect = true
                             }
                         } catch (e: Exception) {
@@ -179,10 +178,26 @@ class AdminActivity : AppCompatActivity() {
                     R.id.nav_sign_out ->{
                         this@AdminActivity.showToast("!Implement Soon!")
                     }
+                    R.id.nav_settings -> {
+                        try {
+                            if (!isDrawerMenuSelect(R.id.nav_settings)) {
+                                navController.popBackStack(R.id.settingsFragmentAdmin, true)
+                                navController.navigate(R.id.settingsFragmentAdmin)
+                                isMenuSelect = true
+                            }
+                        } catch (e: Exception) {
+                            // Log and handle any exceptions that occur
+                            Log.e(TAG, e.message.toString())
+                            this@AdminActivity.unexpectedErrorMessagePrint(e)
+                        }
+                    }
 
                 }
-                // Toggle the drawer menu after handling the click event
-                toggleDrawerMenu()
+                if(isMenuSelect)
+                {
+                    // Toggle the drawer menu after handling the click event
+                    toggleDrawerMenu()
+                }
                 // Indicate that the event has been handled successfully
                 isMenuSelect
             }

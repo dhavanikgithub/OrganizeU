@@ -4,6 +4,7 @@ import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.SUBJECT_COLLECTION
 import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.pojo.SubjectPojo.Companion.toMap
+import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -177,6 +178,15 @@ class SubjectRepository {
                 isRenamed(false)
             }
 
+        }
+
+        suspend fun getSubjectPojoByName(name:String):SubjectPojo?
+        {
+            return try {
+                subjectCollectionRef().whereEqualTo("name",name).get().await().documents[0].toSubjectPojo()
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ import com.dk.organizeu.adapter.LessonAdapterAdmin
 import com.dk.organizeu.databinding.FragmentAddLessonBinding
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.listener.OnItemClickListener
+import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.ClassRepository
@@ -125,7 +126,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     // Try to create and show the AddLessonDialog fragment
                     try {
                         // Create an instance of the AddLessonDialog
-                        val dialogFragment = AddLessonDialog(this@AddLessonFragment)
+                        val dialogFragment = AddLessonDialog(this@AddLessonFragment,null,-1)
                         dialogFragment.isCancelable=false
                         // Show the dialog using childFragmentManager
                         dialogFragment.show(childFragmentManager, "customDialog")
@@ -327,6 +328,16 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
         }
     }
 
+    override fun onEditedLesson(lessonPojo: LessonPojo, position: Int) {
+        try {
+            viewModel.timetableData[position] = lessonPojo
+            viewModel.lessonAdapter.notifyItemChanged(position)
+            requireContext().showToast("Lesson Updated")
+        } catch (e: Exception) {
+            requireContext().showToast("Lesson Update Failed")
+        }
+    }
+
     override fun onClick(position: Int) {
     }
 
@@ -376,7 +387,19 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
     }
 
     override fun onEditClick(position: Int) {
-        requireContext().showToast("!Implement Soon!")
+        // Try to create and show the AddLessonDialog fragment
+        try {
+            val lessonPojo = viewModel.timetableData[position]
+            // Create an instance of the AddLessonDialog
+            val dialogFragment = AddLessonDialog(this@AddLessonFragment,lessonPojo,position)
+            dialogFragment.isCancelable=false
+            // Show the dialog using childFragmentManager
+            dialogFragment.show(childFragmentManager, "customDialog")
+        } catch (e: Exception) {
+            // Log and handle any exceptions that occur while showing the dialog
+            Log.e(TAG, e.message.toString())
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
     }
 
     fun deleteLesson(
