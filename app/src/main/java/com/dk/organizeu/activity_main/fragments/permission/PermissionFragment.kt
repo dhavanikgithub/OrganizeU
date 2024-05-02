@@ -56,7 +56,7 @@ class PermissionFragment : Fragment() {
 
                     // If permissions are granted, proceed to the splash fragment
                     if (btnStart.isEnabled) {
-                        gotoSplashFragment()
+                        gotoUserSelectionPage()
                     }
                 } catch (e: Exception) {
                     // Handle any exceptions that occur during permission check
@@ -65,7 +65,7 @@ class PermissionFragment : Fragment() {
 
                 // Set up click listener for the start button to navigate to the splash fragment
                 btnStart.setOnClickListener {
-                    gotoSplashFragment()
+                    gotoUserSelectionPage()
                 }
 
                 // Set up click listener for the allow notification button
@@ -101,16 +101,15 @@ class PermissionFragment : Fragment() {
 
 
     /**
-     * Navigate to the SplashFragment.
+     * Navigate to the UserSelectionFragment.
      * This function pops the back stack to remove any fragments in the navigation stack
-     * and then navigates to the SplashFragment.
+     * and then navigates to the UserSelectionFragment.
      */
-    private fun gotoSplashFragment() {
+    private fun gotoUserSelectionPage() {
         // Pop the back stack to remove any fragments in the navigation stack
         findNavController().popBackStack()
-
-        // Navigate to the SplashFragment
-        findNavController().navigate(R.id.splashFragment)
+        // Navigate to the UserSelectionFragment
+        findNavController().navigate(R.id.userSelectionFragment)
     }
 
 

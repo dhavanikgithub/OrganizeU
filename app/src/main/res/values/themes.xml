@@ -110,4 +110,8 @@
         <item name="android:drawableRight">@drawable/ic_more</item>
     </style>
 
+    <style name="SplashWaveImageView">
+        <item name="android:src">@drawable/wave3</item>
+    </style>
+
 </resources>

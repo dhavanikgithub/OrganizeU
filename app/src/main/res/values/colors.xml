@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="mainBk">#e0f2fe</color>
+
+
     <color name="colorPrimary">#0284c7</color>
     <color name="colorOnPrimary">@color/white</color>
     <color name="colorPrimaryContainer">#e0f2fe</color>

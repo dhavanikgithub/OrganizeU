@@ -8,53 +8,67 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/mainBk"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop">
+
+            <ImageView
+                android:id="@+id/ivAppLauncher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_launcher_image_text"
+                android:scaleType="center"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:id="@+id/tvAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:letterSpacing=".2"
+                android:text="@string/app_name"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_20sdp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".7"
+            />
 
         <ImageView
-            android:id="@+id/ivAppLauncher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_launcher_image_text"
-            android:scaleType="center"
-            android:src="@drawable/ic_launcher"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/tvAppName"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvAppName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="@dimen/_20sdp"
-            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/ivAppLauncher"
-            app:layout_constraintStart_toStartOf="@+id/ivAppLauncher"
-            app:layout_constraintTop_toBottomOf="@+id/ivAppLauncher" />
+            style="@style/SplashWaveImageView"
+            android:scaleType="centerCrop"
+            />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStudentScreen"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Student Screen"
-            app:layout_constraintBottom_toTopOf="@+id/btnAdminScreen"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".20"
+            />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAdminScreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Admin Screen"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnStudentScreen" />
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -39,8 +39,6 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.isDarkMode = sharedPreferences.getBoolean("isDark",false)
         binding.darkModeSwitch.isChecked = viewModel.isDarkMode
-
-
     }
 
     override fun onResume() {

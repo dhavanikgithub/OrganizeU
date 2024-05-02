@@ -94,5 +94,8 @@
     <style name="viewParent.headerText.settingsTextIcon" parent="settingsText">
         <item name="android:drawableRight">@drawable/ic_more</item>
     </style>
+    <style name="SplashWaveImageView">
+        <item name="android:src">@drawable/wave3_night</item>
+    </style>
 
 </resources>

@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_main.fragments.splash
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,11 +9,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
-import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.databinding.FragmentSplashBinding
-import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
 
@@ -42,19 +42,6 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-
-            // Set click listener for admin screen button
-            btnAdminScreen.setOnClickListener {
-                gotoAdminActivity()
-            }
-
-            // Set click listener for student screen button
-            btnStudentScreen.setOnClickListener {
-                gotoStudentActivity()
-            }
-
-        }
     }
 
     override fun onResume() {
@@ -65,43 +52,25 @@ class SplashFragment : Fragment() {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+        MainScope().launch(Dispatchers.Main)
+        {
+            viewModel.delayAndNavigate(3000)
+            gotoPermissionFragment()
+        }
+
     }
 
     /**
-     * Navigates to the StudentActivity.
-     * If successful, finishes the current activity.
+     * Navigates to the PermissionFragment.
+     * If successful, finishes the current fragment.
      */
-    private fun gotoStudentActivity(){
+    private fun gotoPermissionFragment(){
         try {
-            // Create an intent to start the StudentActivity
-            Intent(requireActivity(), StudentActivity::class.java).apply {
-                // Start the activity
-                startActivity(this)
-            }
-            // Finish the current activity
-            requireActivity().finish()
+            findNavController().popBackStack()
+            findNavController().navigate(R.id.permissionFragment)
         } catch (e: Exception) {
             // Handle any exceptions and print error messages
-            requireContext().unexpectedErrorMessagePrint(e)
-        }
-    }
-
-    /**
-     * Navigates to the AdminActivity.
-     * If successful, finishes the current activity.
-     */
-    private fun gotoAdminActivity(){
-        try {
-            // Create an intent to start the AdminActivity
-            Intent(requireActivity(), AdminActivity::class.java).apply {
-                // Start the activity
-                startActivity(this)
-            }
-            // Finish the current activity
-            requireActivity().finish()
-        } catch (e:Exception) {
-            // Handle any exceptions and print error messages
-            requireContext().unexpectedErrorMessagePrint(e)
+            //requireContext().unexpectedErrorMessagePrint(e)
         }
     }
 

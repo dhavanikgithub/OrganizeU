@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="mainBk">#002C42</color>
+
     <color name="colorPrimary">#bae6fd</color>
     <color name="colorOnPrimary">#075985</color>
     <color name="colorPrimaryContainer">#0369a1</color>

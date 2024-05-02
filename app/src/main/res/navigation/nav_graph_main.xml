@@ -3,19 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_main"
-    app:startDestination="@id/permissionFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.dk.organizeu.activity_main.fragments.splash.SplashFragment"
-        android:label="SplashFragment" />
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment_to_permissionFragment"
+            app:destination="@id/permissionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/permissionFragment"
         android:name="com.dk.organizeu.activity_main.fragments.permission.PermissionFragment"
         android:label="fragment_permission"
         tools:layout="@layout/fragment_permission" >
         <action
-            android:id="@+id/action_permissionFragment_to_splashFragment"
-            app:destination="@id/splashFragment" />
+            android:id="@+id/action_permissionFragment_to_userSelectionFragment"
+            app:destination="@id/userSelectionFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/userSelectionFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.UserSelectionFragment"
+        android:label="UserSelectionFragment" />
 </navigation>
