@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_student.fragments
+package com.dk.organizeu.activity_student.fragments.home
 
 import android.os.Bundle
 import android.util.Log
@@ -105,10 +105,15 @@ class HomeFragment : Fragment() {
 
                         // Set refresh listener for swipeRefreshLayout
                         swipeRefresh.setOnRefreshListener {
-                            // Load timetable for the selected week day tab
-                            loadTimeTable(selectedWeekDayTab+1)
-                            // Stop the refreshing animation
-                            swipeRefresh.isRefreshing=false
+                            MainScope().launch(Dispatchers.Main)
+                            {
+                                // Load timetable data based on academic, semester, and class IDs
+                                loadTimeTableData(academicId, semId, classId)
+                                // Load timetable for the selected week day tab
+                                loadTimeTable(selectedWeekDayTab+1)
+                                // Stop the refreshing animation
+                                swipeRefresh.isRefreshing=false
+                            }
                         }
                     } catch (e: Exception) {
                         // Handle any exceptions and log error messages

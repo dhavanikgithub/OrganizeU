@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_student.fragments
+package com.dk.organizeu.activity_student.fragments.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

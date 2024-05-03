@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -245,8 +247,10 @@ class PermissionFragment : Fragment() {
      */
     private fun setPermissionDone(textView: TextView, layout: LinearLayout) {
         // Update text and text color of the TextView
-        textView.text = getString(R.string.Done)
-        textView.setTextColor(requireContext().getColor(R.color.colorSecondary))
+        textView.text = ""
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check)
+        DrawableCompat.setTint(drawable!!, ContextCompat.getColor(requireContext(), R.color.colorSecondary))
+        textView.setCompoundDrawablesWithIntrinsicBounds(drawable,null,null,null)
         // Update background color of the LinearLayout
         layout.setBackgroundColor(requireContext().getColor(R.color.colorSecondaryContainer))
     }

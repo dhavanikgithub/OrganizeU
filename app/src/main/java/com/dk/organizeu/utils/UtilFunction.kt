@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.utils.Constants.Companion.DATE_FORMAT_STRING
@@ -78,7 +79,25 @@ class UtilFunction {
             }
         }
 
+        fun showProgressBar(recyclerView: RecyclerView, progressBar: ProgressBar)
+        {
+            MainScope().launch(Dispatchers.Main)
+            {
+                recyclerView.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
+            }
+        }
+
         fun hideProgressBar(recyclerView: RecyclerView, progressBar: LinearLayout)
+        {
+            MainScope().launch(Dispatchers.Main)
+            {
+                progressBar.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+            }
+        }
+
+        fun hideProgressBar(recyclerView: RecyclerView, progressBar: ProgressBar)
         {
             MainScope().launch(Dispatchers.Main)
             {

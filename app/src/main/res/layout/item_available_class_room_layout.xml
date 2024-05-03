@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="availableClassRoomPojo"
+            type="com.dk.organizeu.pojo.AvailableClassRoomPojo" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="20dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/colorSecondaryContainer"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1"
+                android:padding="10dp"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="1"
+                    >
+                    <TextView
+                        android:id="@+id/txtRoomName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text='@{"Name: "+availableClassRoomPojo.name}'
+                        tools:text="Name: 102 1NB"
+                        android:layout_weight=".5"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/colorSecondary"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtRemainingTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        tools:text="Remaining: 30m"
+                        android:textColor="@color/colorSecondary"
+                        android:layout_weight=".5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/txtStartEndTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text='@{"Time: "+availableClassRoomPojo.time}'
+                        tools:text="Time: 9:00 AM - 10:00 AM"
+                        android:textColor="@color/colorSecondary"
+                        android:layout_weight=".5" />
+
+                    <TextView
+                        android:id="@+id/txtTotalDuration"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text='@{"Total Duration: "+availableClassRoomPojo.duration}'
+                        tools:text="Total Duration: 1h 0m"
+                        android:textColor="@color/colorSecondary"
+                        android:layout_weight=".5" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

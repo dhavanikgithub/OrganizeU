@@ -1,15 +1,17 @@
 package com.dk.organizeu.repository
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
 import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toMap
-import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.tasks.await
+import java.time.LocalTime
 
 class LessonRepository {
     companion object{
@@ -132,11 +134,16 @@ class LessonRepository {
                 }
         }
 
-        suspend fun isLessonDocumentConflict(academicDocumentId: String, semesterDocumentId: String, classDocumentId: String, timetableDocumentId:String, startTime:String, endTime:String, facultyName:String, location:String, callback: (Boolean) -> Unit)
+        @RequiresApi(Build.VERSION_CODES.O)
+        suspend fun isLessonDocumentConflict(academicDocumentId: String, weekdayName:String, inputLessonPojo: LessonPojo, conflict: (Boolean) -> Unit)
         {
             try {
-                val lessonStartTime = timeFormat12H.parse(startTime)
-                val lessonEndTime = timeFormat12H.parse(endTime)
+                var temp = inputLessonPojo.startTime.split(":")
+                val lessonStartTime = LocalTime.of(temp[0].toInt(),temp[1].toInt())
+                temp = inputLessonPojo.endTime.split(":")
+                val lessonEndTime =  LocalTime.of(temp[0].toInt(),temp[1].toInt())
+
+
                 val semesterDocuments = SemesterRepository.getAllSemesterDocuments(academicDocumentId)
                 for(semesterDoc in semesterDocuments)
                 {
@@ -145,34 +152,21 @@ class LessonRepository {
                         for (classDoc in classDocuments)
                         {
                             try {
-                                val lessonDocuments = getAllLessonDocuments(academicDocumentId, semesterDoc.id, classDoc.id, timetableDocumentId)
+                                val timetableDocumentId = TimeTableRepository.getTimetableIdByName(academicDocumentId,semesterDoc.id,classDoc.id,weekdayName)
+                                val lessonDocuments = getAllLessonDocuments(academicDocumentId, semesterDoc.id, classDoc.id, timetableDocumentId!!)
                                 for(lessonDoc in lessonDocuments)
                                 {
                                     val lessonPojo = lessonDoc.toLessonPojo()
                                     try {
-                                        val parsedStartTime = timeFormat12H.parse(lessonPojo.startTime)
-                                        val parsedEndTime = timeFormat12H.parse(lessonPojo.endTime)
-                                        if (parsedStartTime != null) {
-                                            if (parsedEndTime != null) {
-                                                if (parsedStartTime.before(lessonEndTime) && parsedEndTime.after(lessonStartTime)) {
-                                                    if (semesterDoc.id != semesterDocumentId)
-                                                    {
-                                                        if (facultyName == lessonPojo.facultyName)
-                                                        {
-                                                            callback(true)
-                                                            return
-                                                        }
-                                                        else if(location == lessonPojo.location)
-                                                        {
-                                                            callback(true)
-                                                            return
-                                                        }
-                                                    }
-                                                    else{
-                                                        callback(true)
-                                                        return
-                                                    }
-                                                }
+                                        temp = lessonPojo.startTime.split(":")
+                                        val parsedStartTime =  LocalTime.of(temp[0].toInt(),temp[1].toInt())
+                                        temp = lessonPojo.endTime.split(":")
+                                        val parsedEndTime =  LocalTime.of(temp[0].toInt(),temp[1].toInt())
+                                        if (lessonStartTime in parsedStartTime..parsedEndTime) {
+                                            if((lessonPojo.facultyName == inputLessonPojo.facultyName) || (lessonPojo.location == inputLessonPojo.location))
+                                            {
+                                                conflict(true)
+                                                return
                                             }
                                         }
                                     } catch (e: Exception) {
@@ -187,10 +181,9 @@ class LessonRepository {
                         Log.e(TAG,e.message.toString())
                     }
                 }
-                callback(false)
+                conflict(false)
             } catch (e: Exception) {
                 Log.e(TAG,e.message.toString())
-                callback(false)
                 throw e
             }
         }

@@ -332,13 +332,8 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
 
                                     LessonRepository.isLessonDocumentConflict(
                                         academicId,
-                                        semId,
-                                        classId,
-                                        timetablePojo!!.id,
-                                        selectedLessonTime[0],
-                                        selectedLessonTime[1],
-                                        selectedFaculty!!,
-                                        lessonPojo.location
+                                        Weekday.getWeekdayNameByNumber(selectedTab),
+                                        lessonPojo
                                     ){isConflict ->
                                         if(isConflict)
                                         {
@@ -389,13 +384,8 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                     // Check if there's a conflict with existing lesson documents
                                     LessonRepository.isLessonDocumentConflict(
                                         academicId,
-                                        semId,
-                                        classId,
-                                        timetablePojo.id,
-                                        selectedLessonTime[0],
-                                        selectedLessonTime[1],
-                                        selectedFaculty!!,
-                                        newLessonPojo.location
+                                        Weekday.getWeekdayNameByNumber(selectedTab),
+                                        newLessonPojo
                                     ) {
                                         try {
                                             if (!it) {

@@ -97,4 +97,6 @@ dependencies {
     //for circular image
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
+    implementation "com.github.skydoves:powermenu:2.2.4"
+
 }

@@ -44,7 +44,6 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
         val view  = inflater.inflate(R.layout.fragment_faculty, container, false)
         binding = DataBindingUtil.bind(view)!!
         viewModel = ViewModelProvider(this)[FacultyViewModel::class.java]
@@ -83,6 +82,9 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                     swipeRefresh.isRefreshing = false
                 }
 
+
+
+
                 btnAddFaculty.setOnClickListener {
                     // Create an instance of the AddFacultyDialog
                     val dialogFragment = AddFacultyDialog(null)
@@ -100,7 +102,6 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
             }
         }
     }
-
 
 
     /**

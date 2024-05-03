@@ -15,7 +15,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
-import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.databinding.ActivityStudentBinding
 import com.dk.organizeu.listener.DrawerLocker
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -108,14 +107,11 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                         }
                     }
                     R.id.nav_available_class_rooms -> {
-                        this@StudentActivity.showToast("!Implement Soon!")
-                        isMenuSelect = false
+                        navHostFragment.findNavController().popBackStack(R.id.homeFragment,false)
+                        navHostFragment.findNavController().navigate(R.id.availableClassRoomFragment)
+                        isMenuSelect = true
                     }
                     R.id.nav_aboutUs -> {
-                        this@StudentActivity.showToast("!Implement Soon!")
-                        isMenuSelect = false
-                    }
-                    R.id.nav_signOut -> {
                         this@StudentActivity.showToast("!Implement Soon!")
                         isMenuSelect = false
                     }
@@ -130,6 +126,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                 if(isMenuSelect)
                 {
                     viewModel.selectedMenu = menuItem.itemId
+                    toggleDrawerMenu()
                 }
                 isMenuSelect
             }

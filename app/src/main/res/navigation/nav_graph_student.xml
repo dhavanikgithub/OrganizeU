@@ -7,15 +7,22 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.dk.organizeu.activity_student.fragments.HomeFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_settingsFragment2"
             app:destination="@id/settingsFragmentStudent" />
+        <action
+            android:id="@+id/action_homeFragment_to_availableClassRoomFragment"
+            app:destination="@id/availableClassRoomFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragmentStudent"
         android:name="com.dk.organizeu.activity_main.fragments.settings.SettingsFragment"
         android:label="Settings" />
+    <fragment
+        android:id="@+id/availableClassRoomFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.available_classroom.AvailableClassRoomFragment"
+        android:label="Available Class Room" />
 </navigation>

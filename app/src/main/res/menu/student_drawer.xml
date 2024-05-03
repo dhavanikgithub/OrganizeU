@@ -21,10 +21,6 @@
                 android:title="About Us"
                 android:icon="@drawable/ic_about"/>
             <item
-                android:id="@+id/nav_signOut"
-                android:title="Sign out"
-                android:icon="@drawable/ic_signout"/>
-            <item
                 android:id="@+id/nav_settings"
                 android:title="Settings"
                 android:icon="@drawable/ic_settings"/>

@@ -54,11 +54,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginBottom="5dp"
+                android:weightSum="1"
                 app:layout_constraintBottom_toTopOf="@+id/layoutAddFaculty"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -70,17 +71,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:hint="Select Academic"
-                    app:layout_constraintEnd_toStartOf="@+id/tlAcademicType"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_weight=".5">
 
                     <AutoCompleteTextView
                         android:id="@+id/actAcademicYear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:inputType="none"
                         tools:text="2024-2025" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -91,22 +87,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:hint="Academic Type"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/tlAcademicYear"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_weight=".5"
+                    android:hint="Academic Type">
 
                     <AutoCompleteTextView
                         android:id="@+id/actAcademicType"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:inputType="none"
-                        tools:text="Even" />
+                        tools:text="EVEN" />
                 </com.google.android.material.textfield.TextInputLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutAddFaculty"
@@ -137,6 +128,9 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:inputType="none"
+                        android:drawableStart="@drawable/ic_semester"
+                        android:drawablePadding="10dp"
+                        android:drawableTint="@color/colorPrimary"
                         tools:text="8" />
 
                 </com.google.android.material.textfield.TextInputLayout>

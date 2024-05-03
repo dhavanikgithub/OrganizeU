@@ -1,6 +1,5 @@
 package com.dk.organizeu.activity_admin
 
-import android.R.attr.enabled
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -173,9 +172,6 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                         }
                     }
                     R.id.nav_aboutUs -> {
-                        this@AdminActivity.showToast("!Implement Soon!")
-                    }
-                    R.id.nav_sign_out ->{
                         this@AdminActivity.showToast("!Implement Soon!")
                     }
                     R.id.nav_settings -> {

@@ -39,7 +39,8 @@
             android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintBottom_toTopOf="@+id/guidlinetop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            app:layout_constraintTop_toTopOf="@+id/view"
+            />
 
         <TextView
             android:id="@+id/txtAppHeader"
@@ -61,8 +62,11 @@
             app:layout_constraintTop_toBottomOf="@id/txtAppHeader"
             android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginTop="10dp"
+            android:lineSpacingExtra="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:justificationMode="inter_word"
             />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

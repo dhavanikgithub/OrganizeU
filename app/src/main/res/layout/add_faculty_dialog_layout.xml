@@ -29,6 +29,9 @@
                 android:id="@+id/etFacultyName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_text"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/colorPrimary"
                 android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -47,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/dialog_btn_add"
                 style="@style/DialogAddButton"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btnClose"
                 app:layout_constraintHorizontal_bias="0.5"
