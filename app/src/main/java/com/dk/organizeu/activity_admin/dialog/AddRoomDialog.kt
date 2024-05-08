@@ -103,22 +103,29 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
                                             requireContext().showToast("Room is not exists")
                                             return@isRoomDocumentExistsById
                                         }
+                                        RoomRepository.isRoomDocumentConflict(roomPojo){
+                                            if(it)
+                                            {
+                                                requireContext().showToast("Room is name or location duplicate found")
+                                                return@isRoomDocumentConflict
+                                            }
+                                            RoomRepository.updateRoomDocument(roomPojo)
+                                            {
+                                                if(it)
+                                                {
+                                                    MainScope().launch(Dispatchers.Main)
+                                                    {
+                                                        roomDocumentListener!!.onEdited(roomPojo,position)
+                                                        dismiss()
+                                                    }
 
-                                       RoomRepository.updateRoomDocument(roomPojo)
-                                       {
-                                           if(it)
-                                           {
-                                               MainScope().launch(Dispatchers.Main)
-                                               {
-                                                   roomDocumentListener!!.onEdited(roomPojo,position)
-                                                   dismiss()
-                                               }
+                                                }
+                                                else{
+                                                    requireContext().showToast("Room Data Update Failed")
+                                                }
+                                            }
+                                        }
 
-                                           }
-                                           else{
-                                               requireContext().showToast("Room Data Update Failed")
-                                           }
-                                       }
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
                                         Log.e(TAG,e.message.toString())
@@ -129,14 +136,15 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
                                 return@setOnClickListener
                             }
                             val newRoomPojo = RoomPojo(name = roomName, location = roomLocation, type = roomType)
+
                             // Check if the room document already exists
-                            RoomRepository.isRoomDocumentExistsByName(newRoomPojo.name) { exists ->
+                            RoomRepository.isRoomDocumentExistsByNameLocation(newRoomPojo) { exists ->
                                 try {
                                     // If the room document already exists, dismiss the dialog and return
                                     if(exists)
                                     {
                                         requireContext().showToast("Room is exists")
-                                        return@isRoomDocumentExistsByName
+                                        return@isRoomDocumentExistsByNameLocation
                                     }
                                     // If the room document does not exist, add it to the database
                                     addNewRoom(newRoomPojo)

@@ -188,5 +188,19 @@ class SubjectRepository {
                 null
             }
         }
+
+        suspend fun getSubjectPojosByName(name:String):ArrayList<SubjectPojo>?
+        {
+
+            return try {
+                val subjectPojos = ArrayList<SubjectPojo>()
+                subjectCollectionRef().whereEqualTo("name",name).get().await().documents.map {
+                    subjectPojos.add(it.toSubjectPojo())
+                }
+                subjectPojos
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 }

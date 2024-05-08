@@ -5,6 +5,7 @@ import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.pojo.RoomPojo.Companion.toMap
 import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
+import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -98,9 +99,40 @@ class RoomRepository {
                 throw e
             }
         }
-        fun isRoomDocumentExistsByName(name:String, isExists: (Boolean) -> Unit) {
+        fun isRoomDocumentConflict(roomPojo: RoomPojo, isConflict: (Boolean) -> Unit) {
             try {
-                roomCollectionRef().whereEqualTo("name",name).get()
+                roomCollectionRef()
+                    .whereNotEqualTo("id",roomPojo.id)
+                    .whereEqualTo("name",roomPojo.name)
+                    .get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        var isConflict = false
+                        if (!documentSnapshot.isEmpty) {
+                            for(document in documentSnapshot.documents)
+                            {
+                                val temp = document.toRoomPojo()
+                                if(temp.location == roomPojo.location)
+                                {
+                                    isConflict = true
+                                    break
+                                }
+                            }
+                        }
+                        isConflict(isConflict)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TAG", "Error checking document existence", exception)
+                        isConflict(true)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG,e.message.toString())
+                throw e
+            }
+        }
+
+        fun isRoomDocumentExistsByNameLocation(roomPojo: RoomPojo, isExists: (Boolean) -> Unit) {
+            try {
+                roomCollectionRef().whereEqualTo("name",roomPojo.name).whereEqualTo("location",roomPojo.location).get()
                     .addOnSuccessListener { documentSnapshot ->
                         isExists(!documentSnapshot.isEmpty)
                     }
@@ -154,5 +186,6 @@ class RoomRepository {
                 null
             }
         }
+
     }
 }

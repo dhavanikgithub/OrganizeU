@@ -165,8 +165,11 @@ class LessonRepository {
                                         if (lessonStartTime in parsedStartTime..parsedEndTime) {
                                             if((lessonPojo.facultyName == inputLessonPojo.facultyName) || (lessonPojo.location == inputLessonPojo.location))
                                             {
-                                                conflict(true)
-                                                return
+                                                if(lessonPojo.id != inputLessonPojo.id)
+                                                {
+                                                    conflict(true)
+                                                    return
+                                                }
                                             }
                                         }
                                     } catch (e: Exception) {

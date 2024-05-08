@@ -14,12 +14,17 @@ import com.dk.organizeu.enum_class.SubjectType
 import com.dk.organizeu.firebase.key_mapping.SubjectCollection
 import com.dk.organizeu.listener.SubjectDocumentListener
 import com.dk.organizeu.pojo.SubjectPojo
+import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.isValidSubjectCode
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCompatDialogFragment() {
     private lateinit var db: FirebaseFirestore
@@ -126,17 +131,35 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
                                         subjectPojo.code = subjectCode
                                         subjectPojo.type = subjectType
 
-                                        SubjectRepository.isSubjectDocumentExistsByNameAndCode(subjectPojo){
-                                            if(it)
+                                        MainScope().launch(Dispatchers.IO)
+                                        {
+                                            var flag = true
+                                            val subjectDocuments = SubjectRepository.getAllSubjectDocuments()
+                                            for(item in subjectDocuments)
                                             {
-                                                requireContext().showToast("Subject name and code can't duplicate")
-                                                return@isSubjectDocumentExistsByNameAndCode
-                                            }
-                                            SubjectRepository.updateSubjectDocument(subjectPojo){isUpdated ->
-                                                if(isUpdated)
+                                                val temp = item.toSubjectPojo()
+                                                if(temp.id != subjectPojo.id)
                                                 {
-                                                    subjectDocumentListener!!.onEdited(subjectPojo,position)
-                                                    dismiss()
+                                                    if(subjectPojo.name == temp.name || subjectPojo.code == temp.code)
+                                                    {
+                                                        flag = false
+                                                        break
+                                                    }
+                                                }
+                                            }
+                                            withContext(Dispatchers.Main)
+                                            {
+                                                if(!flag)
+                                                {
+                                                    requireContext().showToast("Subject name or code can't duplicate")
+                                                    return@withContext
+                                                }
+                                                SubjectRepository.updateSubjectDocument(subjectPojo){isUpdated ->
+                                                    if(isUpdated)
+                                                    {
+                                                        subjectDocumentListener!!.onEdited(subjectPojo,position)
+                                                        dismiss()
+                                                    }
                                                 }
                                             }
                                         }

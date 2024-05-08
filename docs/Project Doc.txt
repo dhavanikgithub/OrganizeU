@@ -175,7 +175,7 @@ implementation 'com.google.firebase:firebase-auth:22.3.1'
 9. Swipe Refresh: For implement Functionality of swipe and refresh content of the screen
 implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-10. Range Time Picker: Used for pick start [Initial time|Begning time] and end time range.
+10. Range Time Picker: Used for pick start [Initial time|Beginning time] and end time range.
 implementation 'com.github.ashiqursuperfly:Android-Material-Ranged-Time-Picker-Dialog:1.0.2'
 
 11. Dexter: Provide easy way to handle android application runtime permissions

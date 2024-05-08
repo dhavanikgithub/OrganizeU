@@ -3,12 +3,14 @@ package com.dk.organizeu.activity_admin.dialog
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.ashiqurrahman.rangedtimepickerdialog.library.TimeRangePickerDialog
@@ -93,6 +95,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Initialize a LayoutInflater with the context of the current fragment
@@ -622,8 +625,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     {
                         roomList.add(document.toRoomPojo().name)
                     }
-                    withContext(Dispatchers.Main)
-                    {
+                    withContext(Dispatchers.Main) {
                         try {
                             // Create an ArrayAdapter for the room drop-down list
                             roomAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,roomList)
@@ -636,7 +638,8 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
-                } catch (e: Exception) {
+                }
+                catch (e: Exception) {
                     // Log any unexpected exceptions that occur
                     Log.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
