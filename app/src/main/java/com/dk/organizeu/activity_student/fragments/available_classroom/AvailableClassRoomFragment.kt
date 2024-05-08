@@ -109,19 +109,23 @@ class AvailableClassRoomFragment : Fragment() {
     private fun updateRecyclerView(weekday: String){
         MainScope().launch(Dispatchers.IO)
         {
-            withContext(Dispatchers.Main)
-            {
-                showProgressBar(binding.rvAvailableClassRoom,binding.progressBar)
-            }
-            academicId = AcademicRepository.getAcademicIdByYearAndType("2024-2025", "EVEN")
-            loadRoomData()
-            // Load timetable data based on academic, semester, and class IDs
-            loadTimeTableData(academicId!!,weekday)
-            withContext(Dispatchers.Main)
-            {
-                findAvailableClassrooms(viewModel.roomData,viewModel.lessonData)
-                viewModel.availableClassRoomAdapter!!.notifyDataSetChanged()
-                hideProgressBar(binding.rvAvailableClassRoom,binding.progressBar)
+            try {
+                withContext(Dispatchers.Main)
+                {
+                    showProgressBar(binding.rvAvailableClassRoom,binding.progressBar)
+                }
+                academicId = AcademicRepository.getAcademicIdByYearAndType("2023-2024", "ODD")
+                loadRoomData()
+                // Load timetable data based on academic, semester, and class IDs
+                loadTimeTableData(academicId!!,weekday)
+                withContext(Dispatchers.Main)
+                {
+                    findAvailableClassrooms(viewModel.roomData,viewModel.lessonData)
+                    viewModel.availableClassRoomAdapter!!.notifyDataSetChanged()
+                    hideProgressBar(binding.rvAvailableClassRoom,binding.progressBar)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

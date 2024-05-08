@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
 import com.dk.organizeu.activity_student.StudentActivity
@@ -43,7 +44,8 @@ class UserSelectionFragment : Fragment() {
 
             // Set click listener for student screen button
             btnUserStudent.setOnClickListener {
-                gotoStudentActivity()
+                //gotoStudentActivity()
+                gotoStudentLogin()
             }
 
         }
@@ -66,6 +68,12 @@ class UserSelectionFragment : Fragment() {
             // Handle any exceptions and print error messages
             requireContext().unexpectedErrorMessagePrint(e)
         }
+    }
+
+    private fun gotoStudentLogin()
+    {
+        findNavController().popBackStack()
+        findNavController().navigate(R.id.studentLoginFragment)
     }
 
     /**

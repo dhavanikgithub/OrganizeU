@@ -91,10 +91,10 @@ class HomeFragment : Fragment() {
                         }
 
                         // Define academic, semester, and class IDs
-                        val semesterDocumentId = "2"
-                        val classDocumentId = "CEIT-A"
+                        val semesterDocumentId = "7"
+                        val classDocumentId = "7CEIT-A"
 
-                        val academicId: String? = AcademicRepository.getAcademicIdByYearAndType("2024-2025", "EVEN")
+                        val academicId: String? = AcademicRepository.getAcademicIdByYearAndType("2023-2024", "ODD")
 
                         val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterDocumentId)
 

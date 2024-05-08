@@ -1,8 +1,5 @@
 package com.dk.organizeu.firebase
 
-import com.google.firebase.firestore.*
-import kotlinx.coroutines.tasks.await
-
 class FirebaseConfig {
     companion object{
         val ACADEMIC_COLLECTION = "academic"
@@ -14,6 +11,6 @@ class FirebaseConfig {
         val FACULTY_COLLECTION = "faculty"
         val ROOM_COLLECTION = "room"
         val SUBJECT_COLLECTION = "subject"
-
+        val STUDENT_COLLECTION = "student"
     }
 }

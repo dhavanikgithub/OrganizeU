@@ -114,4 +114,16 @@
         <item name="android:src">@drawable/wave3</item>
     </style>
 
+    <style name="login_page">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="login_page_card">
+        <item name="android:backgroundTint">@color/colorTertiaryContainer</item>
+    </style>
+
+    <style name="login_page_title_text">
+        <item name="android:textColor">@color/colorPrimaryContainer</item>
+    </style>
+
 </resources>

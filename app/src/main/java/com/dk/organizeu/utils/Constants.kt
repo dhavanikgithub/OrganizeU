@@ -13,5 +13,7 @@ class Constants {
 
         const val TIME_FORMAT_12H_STRING = "hh:mm a"
         const val TIME_FORMAT_24H_STRING = "HH:mm"
+
+        const val SHARED_PREFERENCES_NAME = "Student"
     }
 }

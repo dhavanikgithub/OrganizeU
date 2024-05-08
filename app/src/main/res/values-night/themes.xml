@@ -98,4 +98,16 @@
         <item name="android:src">@drawable/wave3_night</item>
     </style>
 
+    <style name="login_page">
+        <item name="android:background">#002C42</item>
+    </style>
+
+    <style name="login_page_card">
+        <item name="android:backgroundTint">#002C42</item>
+    </style>
+
+    <style name="login_page_title_text">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 </resources>

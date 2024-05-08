@@ -25,5 +25,21 @@
     <fragment
         android:id="@+id/userSelectionFragment"
         android:name="com.dk.organizeu.activity_main.fragments.user_selection.UserSelectionFragment"
-        android:label="UserSelectionFragment" />
+        android:label="UserSelectionFragment" >
+        <action
+            android:id="@+id/action_userSelectionFragment_to_studentLoginFragment"
+            app:destination="@id/studentLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentLoginFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.login.StudentLoginFragment"
+        android:label="StudentLoginFragment" >
+        <action
+            android:id="@+id/action_studentLoginFragment_to_studentRegisterFragment"
+            app:destination="@id/studentRegisterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentRegisterFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.register.StudentRegisterFragment"
+        android:label="StudentRegisterFragment" />
 </navigation>

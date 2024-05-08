@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/login_bg"
+        tools:context=".MainActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/login_page"
+            android:alpha="0.7"/>
+
+        <LinearLayout
+            android:id="@+id/titleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/card_view"
+            android:padding="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:fontFamily="@font/harabara_mais_demo"
+                android:textSize="32sp"
+                android:letterSpacing=".1"
+                style="@style/login_page_title_text"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/titleLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="28dp"
+            android:background="@drawable/login_card_bg"
+            android:id="@+id/card_view"
+            style="@style/login_page_card"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="28dp"
+                >
+                <LinearLayout
+                    android:id="@+id/layout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Student"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="32sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Please register with your information"
+                        android:alpha="0.7"/>
+
+                </LinearLayout>
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlStudentId"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Student Id"
+
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etStudentId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_user_student"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                android:inputType="text"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlStudentName"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Name"
+
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etStudentName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_text"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                android:inputType="text"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlAcademicYear"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Academic Year"
+                            >
+
+                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                android:id="@+id/actAcademicYear"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_academic"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                android:inputType="none"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Semester Type"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupAcademicType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipEven"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="EVEN"
+                                style="@style/ChipStyle"
+                                android:checked="true"
+                                app:checkedIconTint="@color/colorPrimaryContainer"
+                                app:chipBackgroundColor="@color/colorPrimary"
+                                android:textColor="@color/colorPrimaryContainer"/>
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipOdd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ODD"
+                                style="@style/ChipStyle"
+                                app:checkedIconTint="@color/colorPrimaryContainer"
+                                app:chipBackgroundColor="@color/colorPrimary"
+                                android:textColor="@color/colorPrimaryContainer"/>
+                        </com.google.android.material.chip.ChipGroup>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1"
+                            >
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tlClass"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Class"
+                                android:layout_weight=".6"
+                                android:layout_marginEnd="5dp"
+                                >
+
+                                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                    android:id="@+id/actClass"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="none"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tlBatch"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:hint="Batch"
+                                android:layout_weight=".4"
+                                >
+
+                                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                    android:id="@+id/actBatch"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="none"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlPassword"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Create Password"
+                            app:passwordToggleEnabled="true"
+                            app:passwordToggleTint="@color/colorPrimary"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_password"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                android:inputType="textPassword" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginBottom="20dp"
+                            >
+                            <View
+                                android:layout_width="wrap_content"
+                                android:layout_height="10dp"/>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnRegister"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:text="Register"
+                                android:backgroundTint="@color/colorPrimary"
+                                app:cornerRadius="32dp"/>
+
+                            <View
+                                android:layout_width="wrap_content"
+                                android:layout_height="10dp"/>
+                            <TextView
+                                android:id="@+id/txtLogin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Or Login"
+
+                                android:layout_gravity="center"
+                                android:alpha="0.7"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
