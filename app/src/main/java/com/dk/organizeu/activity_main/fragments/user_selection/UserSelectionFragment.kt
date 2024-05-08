@@ -44,8 +44,8 @@ class UserSelectionFragment : Fragment() {
 
             // Set click listener for student screen button
             btnUserStudent.setOnClickListener {
-                //gotoStudentActivity()
-                gotoStudentLogin()
+                gotoStudentActivity()
+//                gotoStudentLogin()
             }
 
         }

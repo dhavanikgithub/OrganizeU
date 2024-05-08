@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/addAcademicFragment"
         android:name="com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment"
-        android:label="Add Academic"
+        android:label="Academic Details"
         tools:layout="@layout/fragment_academic_details" >
         <action
             android:id="@+id/action_addAcademicFragment_to_addBatchFragment"

@@ -102,8 +102,6 @@ class RoomRepository {
         fun isRoomDocumentConflict(roomPojo: RoomPojo, isConflict: (Boolean) -> Unit) {
             try {
                 roomCollectionRef()
-                    .whereNotEqualTo("id",roomPojo.id)
-                    .whereEqualTo("name",roomPojo.name)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
                         var isConflict = false
@@ -111,10 +109,13 @@ class RoomRepository {
                             for(document in documentSnapshot.documents)
                             {
                                 val temp = document.toRoomPojo()
-                                if(temp.location == roomPojo.location)
+                                if(temp.location == roomPojo.location && temp.name == roomPojo.name)
                                 {
-                                    isConflict = true
-                                    break
+                                    if(temp.id != roomPojo.id)
+                                    {
+                                        isConflict = true
+                                        break
+                                    }
                                 }
                             }
                         }
@@ -176,10 +177,10 @@ class RoomRepository {
             }
         }
 
-        suspend fun getRoomPojoByName(name:String):RoomPojo?
+        suspend fun getRoomPojoByNameLocation(name:String,location:String):RoomPojo?
         {
             return try {
-                roomCollectionRef().whereEqualTo("name",name).get().await().documents[0].toRoomPojo()
+                roomCollectionRef().whereEqualTo("name",name).whereEqualTo("location",location).get().await().documents[0].toRoomPojo()
             }
             catch (e: Exception)
             {

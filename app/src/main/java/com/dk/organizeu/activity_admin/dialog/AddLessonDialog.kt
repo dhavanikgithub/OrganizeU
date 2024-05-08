@@ -299,7 +299,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                         AddLessonFragment.apply {
                             try {
                                 val subjectPojo = SubjectRepository.getSubjectPojoByName(selectedSubject!!)
-                                val roomPojo = RoomRepository.getRoomPojoByName(selectedRoom!!)
+
 
 
                                 // Split the selected lesson time into start and end times
@@ -318,7 +318,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                         className = AddLessonFragment.className
                                         subjectName = subjectPojo!!.name
                                         subjectCode = subjectPojo.code
-                                        location = "${roomPojo!!.name} - ${roomPojo.location}"
+                                        location = selectedRoom!!
                                         if(startTime!=selectedLessonTime[0])
                                         {
                                             startTime = selectedLessonTime[0].convert12HourTo24Hour()
@@ -365,7 +365,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                         className = className,
                                         subjectName = subjectPojo!!.name,
                                         subjectCode = subjectPojo.code,
-                                        location = "${roomPojo!!.name} - ${roomPojo.location}",
+                                        location = selectedRoom!!,
                                         startTime = selectedLessonTime[0].convert12HourTo24Hour(),
                                         endTime = selectedLessonTime[1].convert12HourTo24Hour(),
                                         facultyName = selectedFaculty!!,
@@ -623,7 +623,8 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     // Iterate through the room documents and add them to the room list
                     for(document in documents)
                     {
-                        roomList.add(document.toRoomPojo().name)
+                        val roomPojo = document.toRoomPojo()
+                        roomList.add(roomPojo.name+" - "+roomPojo.location)
                     }
                     withContext(Dispatchers.Main) {
                         try {
