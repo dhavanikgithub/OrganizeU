@@ -90,49 +90,63 @@ Student Accessibility in this Application:
 Database Structure in Firebase
 
 Collection: academic
-    Document: year+type [even or odd]
-        Field: year {number}
-        Field: type {string}
-        Collection: semester
-            Document: sem_number
-                Collection: class
-                    Document: class_name
-                        Field: batches {list}
-                Collection: time_table
-                    Document: semester_number
-                        Collection: class
-                            Document: weekday_name
-                                Collection: lesson
-                                    Document: lesson_number
-                                        Field: type {String}
-                                        Field: batch_name {String} [May be NUll]
-                                        Field: subject {String}
-                                        Field: faculty {String}
-                                        Field: room_name {String}
-                                        Field: room_location {String}
-                                        Field: start_time {Time}
-                                        Field: end_time {Time}
-					Field: notification_code {Int}
-					Field: mute_code {Int}
-					Field: unmute_code {Int}
+    Document: id
+        Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+        Field: year [example: 2023-2024]
+        Field: type [example: EVEN]
+    Collection: semester
+        Document: id
+            Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+            Field: name [example: 1, 2, 3 or 8 etc]
+        Collection: class
+            Document: id
+                Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+                Field: name [example: CEIT-A, CEIT-B, CEIT-C ect]
+            Collection: batch
+                Document: id
+                    Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+                    Field: name [example: AB1, AB2, AB3 etc]
+            Collection: timetable
+                Document: id
+                    Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+                    Field: name [example: MMonday, Tuesday, Wednesday etc]
+                Collection: weekday
+                    Document: id
+                        Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+                        Field: type [ex: LAB or CLASS]
+                        Field: batch [AB1, AB2 or may be null]
+                        Field: subjectName [example: Compiler Design, Mobile Development etc]
+                        Field: subjectCode [example: 2CEIT501, 2CEIT502, 2CEIT401 etc]
+                        Field: className [example: CEIT-A, CEIT-B, etc]
+                        Field: facultyName [example: HMS, MDT etc]
+                        Field: location [example: "102 - 1NB", "005 - 1NB", "004 - 2NB" etc.]
+                        Field: startTime [example: "10:00", "15:00" etc]
+                        Field: endTime [example: "11:00", "16:00" etc]
+                        Field: duration [example: 1h0m, 45m etc]
+                        Field: notificationCode [example: 1199565153]
+                        Field: muteRequestCode [example: 1199564949]
+                        Field: unMuteRequestCode [example: 1199565051]
 
 
 Collection: faculty
-    Document: faculty_name
-        Field: name {string}
-
-Collection: student
-    Document: enrollment
-        Field: name {String}
-        Field: semester {number}
-        Field: active {String}
-
+    Document: id
+        Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+        Field: name [example: HMS, MDT etc]
 
 Collection: room
-    Document: room_name
-        Field: location {String}
-        Field: type {String}
+    Document: id
+        Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+        Field: name [example: 102, 005, 103 etc]
+        Field: location [example: 1NB, 2NB etc]
+        Field: type [ex: LAB or CLASS]
 
+
+Collection: subject
+    Document: id
+        Field: id [example: 02b0e087-b127-4ec9-abee-51b9f94f6011]
+        Field: name [example: Compiler Design, Mobile Development etc]
+        Field: code [example: 2CEIT501, 2CEIT502, 2CEIT401 etc]
+        Field: type [example: PRACTICAL or THEORY or PRACTICAL + THEORY]
 ---
 
 Library which are i am using in my project.
