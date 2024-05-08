@@ -131,8 +131,8 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     selectedSubject  = lessonPojo.subjectName
                     actFaculty.setText(lessonPojo.facultyName)
                     selectedFaculty = lessonPojo.facultyName
-                    actRoom.setText(lessonPojo.location.split(" - ")[0])
-                    selectedRoom = lessonPojo.location.split(" - ")[0]
+                    actRoom.setText(lessonPojo.location)
+                    selectedRoom = lessonPojo.location
                     actLessonType.setText(lessonPojo.type)
                     selectedLessonType = lessonPojo.type
                     if(lessonPojo.batch!=null && lessonPojo.batch!="null" && lessonPojo.batch != "")
@@ -330,6 +330,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
 
                                         facultyName = selectedFaculty!!
                                         type = selectedLessonType!!
+                                        batch = selectedBatch
                                         duration = UtilFunction.calculateLessonDuration(selectedLessonTime[0], selectedLessonTime[1])
                                     }
 
