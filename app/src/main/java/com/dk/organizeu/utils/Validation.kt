@@ -26,6 +26,94 @@ class Validation {
             }
         }
 
+        fun validateEnrollment(enrollment: String): Boolean {
+            // Check if the enrollment number is exactly 11 characters long
+            if (enrollment.length != 11) {
+                return false
+            }
+
+            // Check if all characters are digits
+            if (!enrollment.all { it.isDigit() }) {
+                return false
+            }
+
+            // If all conditions are satisfied, return true
+            return true
+        }
+
+        fun validateStudentName(name: String): Boolean {
+            // Check if the name is not empty and not longer than 50 characters
+            if (name.isEmpty() || name.length > 50) {
+                return false
+            }
+
+            // Check if the name contains only letters and spaces
+            if (!name.all { it.isLetter() || it == ' ' }) {
+                return false
+            }
+
+            // If all conditions are satisfied, return true
+            return true
+        }
+
+        fun validatePassword(
+            password: String,
+            minPasswordLength: Int=6,
+            maxPasswordLength: Int=20,
+            requireAlphaChars: Boolean=true,
+            minRequiredAlphaChars: Int=1,
+            requireMixedCase: Boolean=true,
+            requireNonAlphaChars: Boolean=true,
+            minRequiredNonAlphaChars: Int=1,
+            prohibitSpaceCharacter: Boolean=true
+        ): Boolean {
+            // Check if password length is within range
+            if (password.length !in minPasswordLength..maxPasswordLength) {
+                return false
+            }
+
+            // Check if password starts with prohibited characters
+            val prohibitedStartingChars = listOf('#', '=', '~', '>', '<')
+            if (password.isNotEmpty() && prohibitedStartingChars.contains(password.first())) {
+                return false
+            }
+
+            // Check for alphabet characters if required
+            if (requireAlphaChars && !password.any { it.isLetter() }) {
+                return false
+            }
+
+            // Check for required minimum alphabet characters
+            if (requireAlphaChars && password.count { it.isLetter() } < minRequiredAlphaChars) {
+                return false
+            }
+
+            // Check for mixed case if required
+            if (requireMixedCase && (password.none { it.isUpperCase() } || password.none { it.isLowerCase() })) {
+                return false
+            }
+
+            // Check for non-alphabet characters if required
+            if (requireNonAlphaChars && !password.any { it.isDigit() || it.isLetter() }) {
+                return false
+            }
+
+            // Check for required minimum non-alphabet characters
+            if (requireNonAlphaChars && password.count { it.isDigit() || it.isLetter() } < minRequiredNonAlphaChars) {
+                return false
+            }
+
+            // Check for space character if prohibited
+            if (prohibitSpaceCharacter && password.contains(' ')) {
+                return false
+            }
+
+            // All conditions met, return true
+            return true
+        }
+
+
+
 
         fun isItemSelected(autoCompleteTextView: AutoCompleteTextView): Boolean {
             try {

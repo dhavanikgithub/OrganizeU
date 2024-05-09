@@ -203,50 +203,78 @@
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
 
-                        <LinearLayout
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlSemester"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:weightSum="1"
+                            android:hint="Semester"
+                            android:layout_weight=".6"
+                            android:layout_marginEnd="5dp"
                             >
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/tlClass"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                                android:layout_width="0dp"
+
+                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                android:id="@+id/actSemester"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Class"
-                                android:layout_weight=".6"
-                                android:layout_marginEnd="5dp"
-                                >
+                                android:inputType="none"
+                                android:drawableStart="@drawable/ic_semester"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                />
 
-                                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                                    android:id="@+id/actClass"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="none"
-                                    />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                            </com.google.android.material.textfield.TextInputLayout>
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlClass"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Class"
+                            android:layout_weight=".6"
+                            android:layout_marginEnd="5dp"
+                            >
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/tlBatch"
-                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                                android:layout_width="0dp"
+                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                android:id="@+id/actClass"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Batch"
-                                android:layout_weight=".4"
-                                >
+                                android:inputType="none"
+                                android:drawableStart="@drawable/ic_class"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                />
 
-                                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                                    android:id="@+id/actBatch"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="none"
-                                    />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                            </com.google.android.material.textfield.TextInputLayout>
-                        </LinearLayout>
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_10sdp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tlBatch"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Batch"
+                            android:layout_weight=".4"
+                            >
+
+                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                                android:id="@+id/actBatch"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:drawableStart="@drawable/ic_academic_type"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/colorPrimary"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
 
                         <View
                             android:layout_width="wrap_content"
@@ -304,6 +332,25 @@
 
                                 android:layout_gravity="center"
                                 android:alpha="0.7"/>
+                            <TextView
+                                android:id="@+id/passwordRulesTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Password Rules:"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="16dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="• Password length: 6 to 20 characters.\n• Password must not start with '#', '=', '~', '>', or '<'.\n• Password must contain at least 1 alphabetical character (both upper and lower case if needed).\n• Password must contain at least 1 numerical or symbolic character.\n• Password should not include spaces."
+                                android:layout_below="@id/passwordRulesTextView"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"/>
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
