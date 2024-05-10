@@ -69,7 +69,7 @@
                     android:text="@{timeConverter.Companion.convert24HourTo12Hour(lessonPojo.endTime)}"
                     tools:text="@string/textEndTime"
                     android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorSecondary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

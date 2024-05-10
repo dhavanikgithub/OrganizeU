@@ -15,8 +15,8 @@
     <string name="userNameTextDrawerMenu">Student Name</string>
     <string name="AdminNameTextDrawerMenu">Admin Name</string>
     <string name="userOtherDetailsTextDrawerMenu">Sem: 8 Class: A Lab: AB5</string>
-    <string name="textStartTime">9:05AM</string>
-    <string name="textEndTime">9:55AM</string>
+    <string name="textStartTime">9:05 AM</string>
+    <string name="textEndTime">9:55 AM</string>
     <string name="textLessonNumber">Lesson: 1</string>
     <string name="textSubjectName">AI</string>
     <string name="textClassName">002 1NB</string>

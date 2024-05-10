@@ -153,8 +153,10 @@ class AvailableClassRoomFragment : Fragment() {
                     if (lessonStartTime > startTime) {
                         val availableClassRoomPojo = AvailableClassRoomPojo(
                             "${classroom.name} - ${classroom.location}",
-                            "${startTime.convert24HourTo12Hour()} - ${lessonStartTime.convert24HourTo12Hour()}",
-                            calculateLessonDuration(startTime.toString(),lessonStartTime.toString())
+                            startTime.convert24HourTo12Hour(),
+                            lessonStartTime.convert24HourTo12Hour(),
+                            calculateLessonDuration(startTime.toString(),lessonStartTime.toString()),
+                            classroom.type
                         )
                         viewModel.availableClassRoomPojos.add(availableClassRoomPojo)
                     }
@@ -165,9 +167,10 @@ class AvailableClassRoomFragment : Fragment() {
             // Add remaining available time slot after the last lesson
             if (endTime > startTime) {
                 val availableClassRoomPojo = AvailableClassRoomPojo(
-                    "${classroom.name} - ${classroom.location}",
-                    "${startTime.convert24HourTo12Hour()} - ${endTime.convert24HourTo12Hour()}",
-                    calculateLessonDuration(startTime.toString(),endTime.toString())
+                    "${classroom.name} - ${classroom.location}",startTime.convert24HourTo12Hour(),
+                    endTime.convert24HourTo12Hour(),
+                    calculateLessonDuration(startTime.toString(),endTime.toString()),
+                    classroom.type
                 )
                 viewModel.availableClassRoomPojos.add(availableClassRoomPojo)
             }

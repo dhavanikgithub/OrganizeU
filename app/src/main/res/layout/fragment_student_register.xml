@@ -139,7 +139,6 @@
                                 android:drawablePadding="10dp"
                                 android:drawableTint="@color/colorPrimary"
                                 android:inputType="number"
-
                                 />
 
                         </com.google.android.material.textfield.TextInputLayout>
