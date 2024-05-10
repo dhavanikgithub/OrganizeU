@@ -130,4 +130,8 @@
         <item name="android:src">@drawable/admin_avtar</item>
     </style>
 
+    <style name="dialog_under_construction_card_style">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
 </resources>

@@ -34,6 +34,14 @@ class UtilFunction {
             return  dateFormat.format(calendar.time)
         }
 
+        fun underConstructionDialog(context: Context)
+        {
+            val dialog = UnderConstructionDialog(context).build().setCancelable(false)
+            dialog.show {
+                dialog.dismiss()
+            }
+        }
+
         fun getCurrentTime12H():String{
             return  timeFormat12H.format(calendar.time)
         }

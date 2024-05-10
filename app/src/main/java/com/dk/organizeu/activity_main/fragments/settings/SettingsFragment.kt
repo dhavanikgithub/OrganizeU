@@ -16,7 +16,9 @@ import com.dk.organizeu.activity_main.MainActivity
 import com.dk.organizeu.databinding.FragmentSettingsBinding
 import com.dk.organizeu.enum_class.AdminLocalDBKey
 import com.dk.organizeu.enum_class.StudentLocalDBKey
+import com.dk.organizeu.utils.LogoutConfirmDialog
 import com.dk.organizeu.utils.SharedPreferencesManager
+import com.dk.organizeu.utils.UtilFunction.Companion.underConstructionDialog
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class SettingsFragment : Fragment() {
@@ -59,18 +61,38 @@ class SettingsFragment : Fragment() {
             binding.txtEditProfile.visibility = View.GONE
         }
 
+        binding.layoutEditDetails.setOnClickListener {
+            underConstructionDialog(requireContext())
+        }
+        binding.txtChangePassword.setOnClickListener {
+            underConstructionDialog(requireContext())
+        }
+
+        binding.txtEditProfile.setOnClickListener {
+            underConstructionDialog(requireContext())
+        }
+
         binding.logout.setOnClickListener {
-            if(viewModel.isStudent)
-            {
-                clearStudent()
-                gotoMainActivity()
-            }
-            else{
-                clearAdmin()
-                gotoMainActivity()
-            }
+            val logoutDialog = LogoutConfirmDialog(requireContext()).setCancelable(false).build()
+
+            logoutDialog.show({
+                if(viewModel.isStudent)
+                {
+                    clearStudent()
+                    gotoMainActivity()
+                }
+                else{
+                    clearAdmin()
+                    gotoMainActivity()
+                }
+            },{
+                logoutDialog.dismiss()
+            })
+
         }
     }
+
+
 
     override fun onResume() {
         super.onResume()

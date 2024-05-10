@@ -24,6 +24,7 @@
                 android:visibility="gone"/>
 
             <RelativeLayout
+                android:id="@+id/layoutEditDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -79,6 +80,7 @@
                 android:text="Edit Profile" />
 
             <TextView
+                android:id="@+id/txtChangePassword"
                 style="@style/viewParent.headerText.settingsTextIcon"
                 android:drawableLeft="@drawable/ic_edit_password"
                 android:layout_marginTop="10dp"

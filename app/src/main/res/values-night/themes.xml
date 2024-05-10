@@ -114,4 +114,8 @@
         <item name="android:src">@drawable/admin_avtar_dark</item>
     </style>
 
+    <style name="dialog_under_construction_card_style">
+        <item name="android:backgroundTint">#2C2C2C</item>
+    </style>
+
 </resources>

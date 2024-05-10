@@ -21,7 +21,7 @@ import com.dk.organizeu.databinding.ActivityAdminBinding
 import com.dk.organizeu.enum_class.AdminLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
 import com.dk.organizeu.utils.SharedPreferencesManager
-import com.dk.organizeu.utils.UtilFunction.Companion.showToast
+import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 
@@ -185,7 +185,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                         }
                     }
                     R.id.nav_aboutUs -> {
-                        this@AdminActivity.showToast("!Implement Soon!")
+                        UtilFunction.underConstructionDialog(this@AdminActivity)
                     }
                     R.id.nav_settings -> {
                         try {

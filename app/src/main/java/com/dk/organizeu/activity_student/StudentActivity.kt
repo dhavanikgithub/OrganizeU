@@ -21,7 +21,7 @@ import com.dk.organizeu.databinding.ActivityStudentBinding
 import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
 import com.dk.organizeu.utils.SharedPreferencesManager
-import com.dk.organizeu.utils.UtilFunction.Companion.showToast
+import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class StudentActivity : AppCompatActivity(), DrawerLocker {
@@ -126,7 +126,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                         isMenuSelect = true
                     }
                     R.id.nav_aboutUs -> {
-                        this@StudentActivity.showToast("!Implement Soon!")
+                        UtilFunction.underConstructionDialog(this@StudentActivity)
                         isMenuSelect = false
                     }
                     R.id.nav_settings -> {
