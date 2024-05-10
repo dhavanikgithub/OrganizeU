@@ -16,6 +16,7 @@ import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.pojo.StudentPojo
 import com.dk.organizeu.repository.StudentRepository
 import com.dk.organizeu.utils.SharedPreferencesManager
+import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.auth.FirebaseAuth
@@ -49,6 +50,9 @@ class StudentLoginFragment : Fragment() {
         {
             binding.etStudentId.setText(SharedPreferencesManager.getString(requireContext(),StudentLocalDBKey.REMEMBER.displayName,""))
             binding.cbRemember.isChecked = true
+        }
+        binding.txtForgotPassword.setOnClickListener {
+            UtilFunction.underConstructionDialog(requireContext())
         }
 
         binding.btnLogin.setOnClickListener {
