@@ -106,8 +106,8 @@ class UtilFunction {
             }
         }
 
-        fun trimExtraSpaces(input: String): String {
-            return input.trim().replace(Regex("\\s+"), " ")
+        fun String.trimExtraSpaces(): String {
+            return this.trim().replace(Regex("\\s+"), " ")
         }
 
         fun getDayOfWeek(dayNumber: Int): String {

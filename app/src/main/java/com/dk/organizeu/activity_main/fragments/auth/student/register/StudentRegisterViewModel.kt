@@ -1,4 +1,4 @@
-package com.dk.organizeu.activity_student.fragments.register
+package com.dk.organizeu.activity_main.fragments.auth.student.register
 
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModel

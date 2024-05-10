@@ -25,12 +25,13 @@ class StudentRepository {
         }
 
         fun isMatchLoginDetails(studentId: String, password:String, isMatch:(Boolean) -> Unit, exception:(Exception) -> Unit){
-            studentCollectionRef().whereEqualTo("studentId",studentId)
+            studentCollectionRef().whereEqualTo("id",studentId)
                 .get()
                 .addOnSuccessListener {
-                    if(it.isEmpty)
+                    if(it.isEmpty || it.documents.isEmpty())
                     {
                         isMatch(false)
+                        return@addOnSuccessListener
                     }
                     val studentPojo = it.documents[0].toStudentPojo()
                     val temp = password.toSHA256()
@@ -63,7 +64,18 @@ class StudentRepository {
 
         fun isStudentExistById(studentId: String, isExist:(Boolean) -> Unit)
         {
-            studentCollectionRef().whereEqualTo("studentId",studentId)
+            studentCollectionRef().whereEqualTo("id",studentId)
+                .get()
+                .addOnSuccessListener {
+                    isExist(!it.isEmpty)
+                }
+                .addOnFailureListener {
+                    isExist(true)
+                }
+        }
+
+        fun isStudentExistByName(studentName: String,isExist:(Boolean) -> Unit){
+            studentCollectionRef().whereEqualTo("name",studentName)
                 .get()
                 .addOnSuccessListener {
                     isExist(!it.isEmpty)

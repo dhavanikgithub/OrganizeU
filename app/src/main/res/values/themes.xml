@@ -125,5 +125,9 @@
     <style name="login_page_title_text">
         <item name="android:textColor">@color/colorPrimaryContainer</item>
     </style>
+    
+    <style name="image_view_admin_avtar_style">
+        <item name="android:src">@drawable/admin_avtar</item>
+    </style>
 
 </resources>

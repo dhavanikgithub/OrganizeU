@@ -1,5 +1,6 @@
 package com.dk.organizeu.activity_main.fragments.permission
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.databinding.FragmentPermissionBinding
+import com.dk.organizeu.enum_class.AdminLocalDBKey
+import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.utils.Constants.Companion.AUDIO_SETTING_PERMISSION
 import com.dk.organizeu.utils.Constants.Companion.NOTIFICATION_PERMISSION
 import com.dk.organizeu.utils.PermissionManager.Companion.appNotificationSettingIntent
@@ -24,6 +29,7 @@ import com.dk.organizeu.utils.PermissionManager.Companion.isAudioSettingsPermiss
 import com.dk.organizeu.utils.PermissionManager.Companion.isDoNotDisturbPermissionGranted
 import com.dk.organizeu.utils.PermissionManager.Companion.isNotificationPermissionGranted
 import com.dk.organizeu.utils.PermissionManager.Companion.requestPermission
+import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 class PermissionFragment : Fragment() {
@@ -52,22 +58,21 @@ class PermissionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             viewModel.apply {
-                try {
-                    // Check if the necessary permissions are granted
-                    btnStart.isEnabled = permissionCheck()
-
-                    // If permissions are granted, proceed to the splash fragment
-                    if (btnStart.isEnabled) {
-                        gotoUserSelectionPage()
-                    }
-                } catch (e: Exception) {
-                    // Handle any exceptions that occur during permission check
-                    requireContext().unexpectedErrorMessagePrint(e)
-                }
-
+                btnStart.isEnabled = permissionCheck()
                 // Set up click listener for the start button to navigate to the splash fragment
                 btnStart.setOnClickListener {
-                    gotoUserSelectionPage()
+                   if(isStudentAlreadyLogin())
+                   {
+                        gotoStudentActivity()
+                   }
+                   else if(isAdminAlreadyLogin())
+                   {
+                        gotoAdminActivity()
+                   }
+                   else
+                   {
+                        gotoUserSelectionPage()
+                   }
                 }
 
                 // Set up click listener for the allow notification button
@@ -101,6 +106,51 @@ class PermissionFragment : Fragment() {
         }
     }
 
+    /**
+     * Navigates to the AdminActivity.
+     * If successful, finishes the current activity.
+     */
+    private fun gotoAdminActivity(){
+        try {
+            // Create an intent to start the AdminActivity
+            Intent(requireActivity(), AdminActivity::class.java).apply {
+                // Start the activity
+                startActivity(this)
+            }
+            // Finish the current activity
+            requireActivity().finish()
+        } catch (e:Exception) {
+            // Handle any exceptions and print error messages
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
+    }
+
+    /**
+     * Navigates to the StudentActivity.
+     * If successful, finishes the current activity.
+     */
+    private fun gotoStudentActivity(){
+        try {
+            // Create an intent to start the StudentActivity
+            Intent(requireActivity(), StudentActivity::class.java).apply {
+                // Start the activity
+                startActivity(this)
+            }
+            // Finish the current activity
+            requireActivity().finish()
+        } catch (e: Exception) {
+            // Handle any exceptions and print error messages
+            requireContext().unexpectedErrorMessagePrint(e)
+        }
+    }
+
+    fun isStudentAlreadyLogin():Boolean{
+        return SharedPreferencesManager.containsKey(requireContext(), StudentLocalDBKey.ID.displayName)
+    }
+
+    fun isAdminAlreadyLogin():Boolean{
+        return SharedPreferencesManager.containsKey(requireContext(), AdminLocalDBKey.ID.displayName)
+    }
 
     /**
      * Navigate to the UserSelectionFragment.

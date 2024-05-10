@@ -31,7 +31,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login"
+                android:text="Admin Login"
                 android:fontFamily="@font/harabara_mais_demo"
                 android:textSize="32sp"
                 android:letterSpacing=".1"
@@ -39,13 +39,22 @@
         </LinearLayout>
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="fitEnd"
-            android:src="@drawable/student_avtar"
+            style="@style/image_view_admin_avtar_style"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/guidelineTo2"
+            app:layout_constraintStart_toEndOf="@id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".7"
             />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTo2"
@@ -54,15 +63,14 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent=".3"
             />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent=".25"
+            app:layout_constraintGuide_percent=".3"
             />
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,7 +90,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Welcome"
+                    android:text="Admin Panel"
                     android:textColor="@color/colorPrimary"
                     android:textSize="32sp"
                     android:textStyle="bold"/>
@@ -99,23 +107,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Student Id"
+                    android:text="Admin Id *"
                     android:alpha="0.7"
                     android:textStyle="bold"/>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tlStudentId"
+                    android:id="@+id/tlAdminId"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Student Id"
+                    android:hint="Admin ID"
                     app:endIconMode="clear_text"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="11"
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etStudentId"
+                        android:id="@+id/etAdminId"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_user_student"
@@ -132,12 +138,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password"
+                    android:text="Password *"
                     android:alpha="0.7"
                     android:textStyle="bold"/>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tlPassword"
+                    android:id="@+id/tlAdminPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -147,7 +153,7 @@
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPassword"
+                        android:id="@+id/etAdminPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_password"
@@ -174,7 +180,9 @@
                         android:layout_height="wrap_content"
                         android:text="I forgot my password"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:visibility="invisible"
+                        />
 
                 </RelativeLayout>
                 <View
@@ -182,23 +190,12 @@
                     android:layout_height="10dp"/>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogin"
+                    android:id="@+id/btnLoginAdmin"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:text="Login"
                     android:backgroundTint="@color/colorPrimary"
                     app:cornerRadius="32dp"/>
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp"/>
-                <TextView
-                    android:id="@+id/txtRegister"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Or Register"
-                    android:layout_gravity="center"
-                    android:alpha="0.7"/>
             </LinearLayout>
 
 

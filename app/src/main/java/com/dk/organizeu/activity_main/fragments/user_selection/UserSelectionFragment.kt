@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
-import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.databinding.FragmentUserSelectionBinding
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
@@ -39,41 +38,29 @@ class UserSelectionFragment : Fragment() {
 
             // Set click listener for admin screen button
             btnUserAdmin.setOnClickListener {
-                gotoAdminActivity()
+                gotoAdminLogin()
             }
 
             // Set click listener for student screen button
             btnUserStudent.setOnClickListener {
-                gotoStudentActivity()
-//                gotoStudentLogin()
+                gotoStudentLogin()
             }
 
         }
     }
 
-    /**
-     * Navigates to the StudentActivity.
-     * If successful, finishes the current activity.
-     */
-    private fun gotoStudentActivity(){
-        try {
-            // Create an intent to start the StudentActivity
-            Intent(requireActivity(), StudentActivity::class.java).apply {
-                // Start the activity
-                startActivity(this)
-            }
-            // Finish the current activity
-            requireActivity().finish()
-        } catch (e: Exception) {
-            // Handle any exceptions and print error messages
-            requireContext().unexpectedErrorMessagePrint(e)
-        }
-    }
+
+
+
 
     private fun gotoStudentLogin()
     {
-        findNavController().popBackStack()
         findNavController().navigate(R.id.studentLoginFragment)
+    }
+
+    private fun gotoAdminLogin()
+    {
+        findNavController().navigate(R.id.adminLoginFragment)
     }
 
     /**

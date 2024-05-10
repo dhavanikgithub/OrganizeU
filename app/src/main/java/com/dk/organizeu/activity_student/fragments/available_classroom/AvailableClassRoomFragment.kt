@@ -16,6 +16,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.activity_student.fragments.home.HomeFragment
 import com.dk.organizeu.adapter.AvailableClassRoomAdapter
 import com.dk.organizeu.databinding.FragmentAvailableClassRoomBinding
+import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.pojo.AvailableClassRoomPojo
 import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
 import com.dk.organizeu.pojo.LessonPojo
@@ -29,6 +30,7 @@ import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
+import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.TimeConverter.Companion.calculateLessonDuration
 import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
@@ -114,7 +116,10 @@ class AvailableClassRoomFragment : Fragment() {
                 {
                     showProgressBar(binding.rvAvailableClassRoom,binding.progressBar)
                 }
-                academicId = AcademicRepository.getAcademicIdByYearAndType("2023-2024", "ODD")
+                academicId = AcademicRepository.getAcademicIdByYearAndType(
+                    SharedPreferencesManager.getString(requireContext(),
+                        StudentLocalDBKey.ACADEMIC_YEAR.displayName), SharedPreferencesManager.getString(requireContext(),
+                        StudentLocalDBKey.ACADEMIC_TYPE.displayName))
                 loadRoomData()
                 // Load timetable data based on academic, semester, and class IDs
                 loadTimeTableData(academicId!!,weekday)

@@ -13,14 +13,14 @@
         android:orientation="vertical"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivStudentUser"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:src="@mipmap/ic_launcher_foreground"
+            android:layout_width="@dimen/_75sdp"
+            android:layout_height="@dimen/_75sdp"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="5dp"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/student_dp_avtar" />
 
         <TextView
             android:id="@+id/txtStudentName"

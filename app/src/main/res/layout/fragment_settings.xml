@@ -33,7 +33,7 @@
                     android:layout_height="60dp"
                     app:civ_border_width="2dp"
                     app:civ_border_color="@color/colorPrimary"
-                    android:src="@drawable/ic_launcher"
+                    android:src="@drawable/student_dp_avtar"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="10dp"/>
 
@@ -73,6 +73,7 @@
                 android:text="Profile"/>
 
             <TextView
+                android:id="@+id/txtEditProfile"
                 style="@style/viewParent.headerText.settingsTextIcon"
                 android:drawableLeft="@drawable/ic_edit_profile"
                 android:text="Edit Profile" />
@@ -84,10 +85,12 @@
                 android:text="Change Password" />
 
             <TextView
+                android:id="@+id/txtNotificationTitle"
                 style="@style/viewParent.headerText.settingsMiniTitle"
                 android:text="Notifications"/>
 
             <Switch
+                android:id="@+id/switchNotification"
                 style="@style/settingsText"
                 android:drawableLeft="@drawable/ic_notifications2"
                 android:text="Notifications"
@@ -96,14 +99,18 @@
 
             <TextView
                 style="@style/viewParent.headerText.settingsMiniTitle"
-                android:text="Regional"/>
+                android:text="Regional"
+                android:visibility="gone"
+                />
 
             <TextView
                 style="@style/viewParent.headerText.settingsTextIcon"
                 android:drawableLeft="@drawable/ic_languages"
-                android:text="Language" />
+                android:text="Language"
+                android:visibility="gone"/>
 
             <TextView
+                android:id="@+id/logout"
                 style="@style/viewParent.headerText.settingsTextIcon"
                 android:drawableLeft="@drawable/ic_logout"
                 android:text="Logout" />

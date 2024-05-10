@@ -3,6 +3,8 @@ package com.dk.organizeu.activity_student
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -16,7 +18,9 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityStudentBinding
+import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
+import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
@@ -26,6 +30,9 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navHostFragment:NavHostFragment
     private lateinit var viewModel: StudentViewModel
+    private lateinit var navHeader: View
+    private lateinit var studentNameTextView: TextView
+    private lateinit var  studentOtherDetailsTextView: TextView
 
     companion object{
         const val TAG = "OrganizeU-StudentActivity"
@@ -34,7 +41,14 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_student)
         viewModel = ViewModelProvider(this)[StudentViewModel::class.java]
+        navHeader = binding.navigationViewStudent.getHeaderView(0)
         binding.apply {
+            studentNameTextView = navHeader.findViewById(R.id.txtStudentName)
+            studentOtherDetailsTextView = navHeader.findViewById(R.id.txtStudentOtherDetails)
+
+            studentNameTextView.text = SharedPreferencesManager.getString(this@StudentActivity,StudentLocalDBKey.NAME.displayName)
+            val studentOtherDetails = "Sem: ${SharedPreferencesManager.getString(this@StudentActivity,StudentLocalDBKey.SEMESTER.displayName)} | ${SharedPreferencesManager.getString(this@StudentActivity,StudentLocalDBKey.CLASS.displayName)} (${SharedPreferencesManager.getString(this@StudentActivity,StudentLocalDBKey.BATCH.displayName)})"
+            studentOtherDetailsTextView.text = studentOtherDetails
 
             try {
                 // Set up the toolbar and navigation for the student activity
@@ -117,8 +131,10 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                     }
                     R.id.nav_settings -> {
                         toggleDrawerMenu()
+                        val bundle = Bundle()
+                        bundle.putBoolean("isStudent",true)
                         navHostFragment.findNavController().popBackStack(R.id.settingsFragmentStudent, true)
-                        navHostFragment.findNavController().navigate(R.id.settingsFragmentStudent)
+                        navHostFragment.findNavController().navigate(R.id.settingsFragmentStudent,bundle)
                         isMenuSelect = true
                     }
                     else -> isMenuSelect = false

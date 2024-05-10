@@ -13,4 +13,6 @@ class HomeViewModel : ViewModel() {
     var currentDayTimeTableData = MutableLiveData(ArrayList<LessonPojo>())
     var selectedWeekDayTab: Int = 0
     var selectedTab: Int = 1
+
+
 }

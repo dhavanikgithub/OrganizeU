@@ -14,6 +14,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.adapter.LessonAdapterStudent
 import com.dk.organizeu.databinding.FragmentHomeBinding
+import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.enum_class.Weekday
 import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
@@ -25,6 +26,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.LessonMuteManagement
+import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -90,15 +92,13 @@ class HomeFragment : Fragment() {
                             showProgressBar(rvLesson,progressBar)
                         }
 
-                        // Define academic, semester, and class IDs
-                        val semesterDocumentId = "7"
-                        val classDocumentId = "7CEIT-A"
 
-                        val academicId: String? = AcademicRepository.getAcademicIdByYearAndType("2023-2024", "ODD")
 
-                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, semesterDocumentId)
+                        val academicId: String? = AcademicRepository.getAcademicIdByYearAndType(SharedPreferencesManager.getString(requireContext(),StudentLocalDBKey.ACADEMIC_YEAR.displayName), SharedPreferencesManager.getString(requireContext(),StudentLocalDBKey.ACADEMIC_TYPE.displayName))
 
-                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, classDocumentId)
+                        val semId:String? = SemesterRepository.getSemesterIdByName(academicId!!, SharedPreferencesManager.getString(requireContext(),StudentLocalDBKey.SEMESTER.displayName))
+
+                        val classId:String? = ClassRepository.getClassIdByName(academicId,semId!!, SharedPreferencesManager.getString(requireContext(),StudentLocalDBKey.CLASS.displayName))
 
                         // Load timetable data based on academic, semester, and class IDs
                         loadTimeTableData(academicId, semId, classId!!)

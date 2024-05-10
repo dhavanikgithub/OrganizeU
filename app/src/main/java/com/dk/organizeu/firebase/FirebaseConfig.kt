@@ -12,5 +12,6 @@ class FirebaseConfig {
         val ROOM_COLLECTION = "room"
         val SUBJECT_COLLECTION = "subject"
         val STUDENT_COLLECTION = "student"
+        val ADMIN_COLLECTION = "admin"
     }
 }

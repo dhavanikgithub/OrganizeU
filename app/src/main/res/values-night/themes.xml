@@ -110,4 +110,8 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="image_view_admin_avtar_style">
+        <item name="android:src">@drawable/admin_avtar_dark</item>
+    </style>
+
 </resources>

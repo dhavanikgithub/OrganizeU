@@ -3,6 +3,8 @@ package com.dk.organizeu.activity_admin
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -16,7 +18,9 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityAdminBinding
+import com.dk.organizeu.enum_class.AdminLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
+import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
@@ -27,6 +31,9 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navHostFragment:NavHostFragment
     private lateinit var viewModel: AdminViewModel
+    private lateinit var navHeader: View
+    private lateinit var adminNameTextView: TextView
+    private lateinit var  adminOtherDetailsTextView: TextView
     companion object{
         const val TAG = "OrganizeU-AdminActivity"
     }
@@ -36,6 +43,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_admin)
         viewModel = ViewModelProvider(this)[AdminViewModel::class.java]
+        navHeader = binding.adminNV.getHeaderView(0)
         binding.apply {
             try {
                 // Set the toolbar as the action bar
@@ -57,7 +65,12 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 // Set up the action bar with the navigation controller and configuration
                 setupActionBarWithNavController(navController, appBarConfiguration)
 
-
+                adminNameTextView = navHeader.findViewById(R.id.txtAdminName)
+                adminOtherDetailsTextView = navHeader.findViewById(R.id.txtAdminOtherDetails)
+                adminNameTextView.text = SharedPreferencesManager.getString(this@AdminActivity,
+                    AdminLocalDBKey.NAME.displayName)
+                adminOtherDetailsTextView.text = "Id: ${SharedPreferencesManager.getString(this@AdminActivity,
+                    AdminLocalDBKey.ID.displayName)}"
 
                 /*val mainMenuIcon = findViewById<ImageView>(R.id.iconMenu)
                 mainMenuIcon.setOnClickListener {
@@ -177,9 +190,10 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                     R.id.nav_settings -> {
                         try {
                             if (!isDrawerMenuSelect(R.id.nav_settings)) {
-
+                                val bundle = Bundle()
+                                bundle.putBoolean("isStudent",false)
                                 navController.popBackStack(R.id.settingsFragmentAdmin, true)
-                                navController.navigate(R.id.settingsFragmentAdmin)
+                                navController.navigate(R.id.settingsFragmentAdmin,bundle)
                                 isMenuSelect = true
                             }
                         } catch (e: Exception) {

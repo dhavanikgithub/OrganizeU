@@ -29,10 +29,13 @@
         <action
             android:id="@+id/action_userSelectionFragment_to_studentLoginFragment"
             app:destination="@id/studentLoginFragment" />
+        <action
+            android:id="@+id/action_userSelectionFragment_to_adminLoginFragment"
+            app:destination="@id/adminLoginFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentLoginFragment"
-        android:name="com.dk.organizeu.activity_student.fragments.login.StudentLoginFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.auth.student.login.StudentLoginFragment"
         android:label="StudentLoginFragment" >
         <action
             android:id="@+id/action_studentLoginFragment_to_studentRegisterFragment"
@@ -40,6 +43,10 @@
     </fragment>
     <fragment
         android:id="@+id/studentRegisterFragment"
-        android:name="com.dk.organizeu.activity_student.fragments.register.StudentRegisterFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.auth.student.register.StudentRegisterFragment"
         android:label="StudentRegisterFragment" />
+    <fragment
+        android:id="@+id/adminLoginFragment"
+        android:name="com.dk.organizeu.activity_main.fragments.auth.admin.AdminLoginFragment"
+        android:label="AdminLoginFragment" />
 </navigation>

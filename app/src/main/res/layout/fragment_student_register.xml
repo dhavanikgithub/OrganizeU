@@ -24,9 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
+            android:gravity="start"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/card_view"
+            app:layout_constraintBottom_toTopOf="@id/guidelineTop"
             android:padding="@dimen/_10sdp">
 
             <TextView
@@ -39,12 +39,36 @@
                 style="@style/login_page_title_text"/>
         </LinearLayout>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:scaleType="fitEnd"
+            android:src="@drawable/student_avtar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/guidelineTo2"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTo2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".3"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".25"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/titleLayout"
+            app:layout_constraintTop_toBottomOf="@id/guidelineTop"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:cardCornerRadius="28dp"
             android:background="@drawable/login_card_bg"
             android:id="@+id/card_view"
             style="@style/login_page_card"
@@ -89,13 +113,22 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Student ID *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlStudentId"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Student Id"
-
+                            app:endIconMode="clear_text"
+                            app:counterEnabled="true"
+                            app:counterMaxLength="11"
+                            app:helperText="Length 11 must"
                             >
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -105,7 +138,8 @@
                                 android:drawableStart="@drawable/ic_user_student"
                                 android:drawablePadding="10dp"
                                 android:drawableTint="@color/colorPrimary"
-                                android:inputType="text"
+                                android:inputType="number"
+
                                 />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -114,13 +148,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Student Name *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlStudentName"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Name"
-
+                            app:endIconMode="clear_text"
+                            app:helperText="Only alphabet and space allow with max 50 length"
                             >
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -139,6 +180,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Academic Year *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlAcademicYear"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -147,7 +194,7 @@
                             android:hint="Academic Year"
                             >
 
-                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            <AutoCompleteTextView
                                 android:id="@+id/actAcademicYear"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -165,7 +212,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Semester Type"
+                            android:text="Semester Type *"
                             android:alpha="0.7"
                             android:textStyle="bold"/>
 
@@ -173,8 +220,7 @@
                             android:id="@+id/chipGroupAcademicType"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            app:singleSelection="true">
 
 
                             <com.google.android.material.chip.Chip
@@ -202,6 +248,12 @@
                         <View
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Semester *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlSemester"
@@ -213,7 +265,7 @@
                             android:layout_marginEnd="5dp"
                             >
 
-                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            <AutoCompleteTextView
                                 android:id="@+id/actSemester"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -229,6 +281,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Class *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlClass"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -239,7 +298,7 @@
                             android:layout_marginEnd="5dp"
                             >
 
-                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            <AutoCompleteTextView
                                 android:id="@+id/actClass"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -255,6 +314,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Batch *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlBatch"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -264,7 +330,7 @@
                             android:layout_weight=".4"
                             >
 
-                            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            <AutoCompleteTextView
                                 android:id="@+id/actBatch"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -279,6 +345,13 @@
                         <View
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_10sdp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Password *"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tlPassword"
@@ -332,25 +405,7 @@
 
                                 android:layout_gravity="center"
                                 android:alpha="0.7"/>
-                            <TextView
-                                android:id="@+id/passwordRulesTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Password Rules:"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:layout_marginTop="16dp"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="8dp"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="• Password length: 6 to 20 characters.\n• Password must not start with '#', '=', '~', '>', or '<'.\n• Password must contain at least 1 alphabetical character (both upper and lower case if needed).\n• Password must contain at least 1 numerical or symbolic character.\n• Password should not include spaces."
-                                android:layout_below="@id/passwordRulesTextView"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="8dp"/>
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
