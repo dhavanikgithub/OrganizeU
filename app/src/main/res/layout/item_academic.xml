@@ -21,6 +21,7 @@
         app:cardCornerRadius="7dp"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="5dp"
+        android:backgroundTint="@color/colorPrimaryContainer3"
         android:onClickListener="@{() -> listener.onClick(position)}"
         >
 
@@ -84,7 +85,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:background="@color/colorSecondaryContainer"
+                    android:background="@color/colorSecondaryContainer2"
                     android:onClickListener="@{() -> listener.onDeleteClick(position)}"
                     android:gravity="center">
 

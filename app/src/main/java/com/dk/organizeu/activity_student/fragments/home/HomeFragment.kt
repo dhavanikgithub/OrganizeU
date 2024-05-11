@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_student.StudentActivity
 import com.dk.organizeu.adapter.LessonAdapterStudent
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_END_LESSON
+import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver.Companion.ACTION_START_LESSON
 import com.dk.organizeu.databinding.FragmentHomeBinding
 import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.enum_class.Weekday
@@ -265,9 +267,8 @@ class HomeFragment : Fragment() {
                             val lesson = lessonDocument.toLessonPojo()
                             timetableList.add(lesson)
 
-
-                            // lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.startTime, ACTION_START_LESSON, lesson.muteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
-                            // lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.endTime, ACTION_END_LESSON, lesson.unmuteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                             lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.startTime, ACTION_START_LESSON, lesson.muteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
+                             lessonMuteManagement.scheduleLessonAlarm(requireContext(), lesson.endTime, ACTION_END_LESSON, lesson.unMuteRequestCode, Weekday.getSystemWeekDayByNumber(weekDayNumber))
                         }
 
                         // Add the timetable data for the current day to the timetableData map

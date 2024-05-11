@@ -3,6 +3,45 @@
 
     <color name="mainBk">#e0f2fe</color>
 
+    <color name="colorPrimary2">#0284c7</color>
+    <color name="colorPrimaryContainer2">#e0f2fe</color>
+    <color name="colorPrimaryContainer3">#FFFFFFFF</color>
+
+    <color name="colorSecondary2">#0d9488</color>
+    <color name="colorSecondaryContainer2">#ccfbf1</color>
+
+    <color name="colorTertiary2">#0891b2</color>
+    <color name="colorTertiaryContainer2">#cffafe</color>
+
+    <!--<color name="colorPrimary">#67b5dd</color>
+    <color name="colorOnPrimary">@color/white</color>
+    <color name="colorPrimaryContainer">#e5f2f9</color>
+    <color name="colorOnPrimaryContainer">#1b90cc</color>
+    <color name="colorPrimaryInverse">#cce6f3</color>
+    <color name="colorPrimaryFixed">#e5f2f9</color>
+    <color name="colorPrimaryFixedDim">#cce6f3</color>
+    <color name="colorOnPrimaryFixed">#1b90cc</color>
+    <color name="colorOnPrimaryFixedVariant">#4da8d7</color>
+
+
+    <color name="colorSecondary">#6dbeb7</color>
+    <color name="colorOnSecondary">@color/white</color>
+    <color name="colorSecondaryContainer">#e6f4f3</color>
+    <color name="colorOnSecondaryContainer">#259e93</color>
+    <color name="colorSecondaryFixed">#e6f4f3</color>
+    <color name="colorSecondaryFixedDim">#cee9e7</color>
+    <color name="colorOnSecondaryFixed">#259e93</color>
+    <color name="colorOnSecondaryFixedVariant">#55b4ab</color>
+
+
+    <color name="colorTertiary">#6abdd0</color>
+    <color name="colorOnTertiary">@color/white</color>
+    <color name="colorTertiaryContainer">#e6f4f7</color>
+    <color name="colorOnTertiaryContainer">#209cb9</color>
+    <color name="colorTertiaryFixed">#e6f4f7</color>
+    <color name="colorTertiaryFixedDim">#cde9ef</color>
+    <color name="colorOnTertiaryFixed">#209cb9</color>
+    <color name="colorOnTertiaryFixedVariant">#52b2c9</color>-->
 
     <color name="colorPrimary">#0284c7</color>
     <color name="colorOnPrimary">@color/white</color>

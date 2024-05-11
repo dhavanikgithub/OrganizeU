@@ -16,7 +16,7 @@
         android:elevation="20dp"
         app:cardCornerRadius="10dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/colorSecondaryContainer"
+        android:backgroundTint="@color/colorSecondaryContainer2"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="@{availableClassRoomPojo.endTime}"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorSecondary"
                     android:textSize="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

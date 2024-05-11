@@ -2,6 +2,47 @@
 <resources>
     <color name="mainBk">#002C42</color>
 
+    <color name="colorPrimaryContainer2">#12212B</color>
+    <color name="colorPrimaryContainer3">#12212B</color>
+    <color name="colorPrimary2">#0284c7</color>
+
+    <color name="colorSecondary2">#0d9488</color>
+    <color name="colorSecondaryContainer2">#00281F</color>
+
+    <color name="colorTertiary2">#0891b2</color>
+    <color name="colorTertiaryContainer2">#002529</color>
+
+    <!--<color name="colorPrimary">#001a27</color>
+    <color name="colorOnPrimary">#01699f</color>
+    <color name="colorPrimaryContainer">#015c8b</color>
+    <color name="colorOnPrimaryContainer">#000d13</color>
+    <color name="colorPrimaryInverse">#014f77</color>
+    <color name="colorPrimaryFixed">#000d13</color>
+    <color name="colorPrimaryFixedDim">#001a27</color>
+    <color name="colorOnPrimaryFixed">#0176b3</color>
+    <color name="colorOnPrimaryFixedVariant">#015c8b</color>
+
+
+    <color name="colorSecondary">#021d1b</color>
+    <color name="colorOnSecondary">#0a766c</color>
+    <color name="colorSecondaryContainer">#09675f</color>
+    <color name="colorOnSecondaryContainer">#010e0d</color>
+    <color name="colorSecondaryFixed">#010e0d</color>
+    <color name="colorSecondaryFixedDim">#021d1b</color>
+    <color name="colorOnSecondaryFixed">#0b857a</color>
+    <color name="colorOnSecondaryFixedVariant">#09675f</color>
+
+
+
+    <color name="colorTertiary">#011c23</color>
+    <color name="colorOnTertiary">#06748e</color>
+    <color name="colorTertiaryContainer">#05657c</color>
+    <color name="colorOnTertiaryContainer">#000e11</color>
+    <color name="colorTertiaryFixed">#000e11</color>
+    <color name="colorTertiaryFixedDim">#011c23</color>
+    <color name="colorOnTertiaryFixed">#0782a0</color>
+    <color name="colorOnTertiaryFixedVariant">#05657c</color>-->
+
     <color name="colorPrimary">#bae6fd</color>
     <color name="colorOnPrimary">#075985</color>
     <color name="colorPrimaryContainer">#0369a1</color>

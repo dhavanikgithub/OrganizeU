@@ -25,7 +25,7 @@
         app:cardCornerRadius="10dp"
         android:layout_marginBottom="10dp"
         android:onClickListener="@{() -> listener.onClick(position)}"
-        android:backgroundTint="@color/colorPrimaryContainer">
+        android:backgroundTint="@color/colorPrimaryContainer2">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                     android:text="@{timeConverter.Companion.convert24HourTo12Hour(lessonPojo.startTime)}"
                     tools:text="@string/textStartTime"
                     android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimary2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +55,7 @@
                 <View
                     android:layout_width="2dp"
                     android:layout_height="0dp"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/colorPrimary2"
                     app:layout_constraintBottom_toTopOf="@+id/txtEndTime"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +69,7 @@
                     android:text="@{timeConverter.Companion.convert24HourTo12Hour(lessonPojo.endTime)}"
                     tools:text="@string/textEndTime"
                     android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="@color/colorPrimary2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -86,7 +86,7 @@
                     android:id="@+id/txtLessonNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorPrimary2"
                     android:text='@{"Lesson: "+(position+1)}'
                     tools:text="@string/textLessonNumber"
                     android:textSize="@dimen/_10sdp" />
@@ -107,7 +107,7 @@
                         tools:text="@string/textSubjectName"
                         android:textSize="@dimen/_10sdp"
                         android:layout_weight="50"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary2" />
 
                     <TextView
                         android:id="@+id/txtLessonClassName"
@@ -118,7 +118,7 @@
                         tools:text="@string/textClassName"
                         android:textSize="@dimen/_10sdp"
                         android:layout_weight="50"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary2" />
 
                 </LinearLayout>
 
@@ -137,7 +137,7 @@
                         tools:text="@string/textFacultyName"
                         android:textSize="@dimen/_10sdp"
                         android:layout_weight="50"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary2" />
 
                     <TextView
                         android:id="@+id/txtLessonDuration"
@@ -147,7 +147,7 @@
                         tools:text="@string/textDuration"
                         android:textSize="@dimen/_10sdp"
                         android:layout_weight="25"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary2" />
 
                     <TextView
                         android:id="@+id/txtLessonType"
@@ -158,7 +158,7 @@
                         android:layout_weight="25"
                         android:gravity="end"
                         android:textSize="@dimen/_10sdp"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary2" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -176,7 +176,7 @@
                     android:layout_height="0dp"
                     android:layout_weight=".5"
                     android:onClickListener="@{() -> listener.onEditClick(position)}"
-                    android:background="@color/colorTertiaryContainer"
+                    android:background="@color/colorTertiaryContainer2"
                     android:gravity="center">
 
                     <ImageView
@@ -192,7 +192,7 @@
                     android:layout_height="0dp"
                     android:layout_weight=".5"
                     android:onClickListener="@{() -> listener.onDeleteClick(position)}"
-                    android:background="@color/colorSecondaryContainer"
+                    android:background="@color/colorSecondaryContainer2"
                     android:gravity="center">
 
                     <ImageView

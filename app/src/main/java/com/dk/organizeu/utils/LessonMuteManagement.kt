@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.dk.organizeu.broadcast_receiver.LessonReminderReceiver
-import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
+import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat24H
 import java.util.Calendar
 
 class LessonMuteManagement {
@@ -32,7 +32,7 @@ class LessonMuteManagement {
             val newPendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
             val calendar = Calendar.getInstance()
-            calendar.time = timeFormat12H.parse(lessonTime)!!
+            calendar.time = timeFormat24H.parse(lessonTime)!!
 
             // Set the time of the lesson
             val lessonHour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -107,7 +107,7 @@ class LessonMuteManagement {
             val newPendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
             val calendar = Calendar.getInstance()
-            calendar.time = timeFormat12H.parse(lessonTime)!!
+            calendar.time = timeFormat24H.parse(lessonTime)!!
 
             // Set calendar to today's date but with the time from lessonTime
             val now = Calendar.getInstance()
