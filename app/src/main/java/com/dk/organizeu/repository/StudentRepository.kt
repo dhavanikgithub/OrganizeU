@@ -91,5 +91,26 @@ class StudentRepository {
             val hashBytes = digest.digest(bytes)
             return hashBytes.joinToString("") { "%02x".format(it) }
         }
+
+        fun changePassword(studentId: String,password: String,newPassword:String, isChanged:(Boolean)->Unit, isPasswordMatch:(Boolean)->Unit){
+            studentCollectionRef().whereEqualTo("id",studentId).whereEqualTo("password",password.toSHA256())
+                .get()
+                .addOnSuccessListener {
+                    if (it.isEmpty)
+                    {
+                        isPasswordMatch(false)
+                        return@addOnSuccessListener
+                    }
+                    studentDocumentRef(studentId).update("password",newPassword.toSHA256()).addOnSuccessListener {
+                        isChanged(true)
+                    }
+                    .addOnFailureListener {
+                        isChanged(false)
+                    }
+                }
+                .addOnFailureListener {
+                    isChanged(false)
+                }
+        }
     }
 }

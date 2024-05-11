@@ -42,6 +42,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_student)
         viewModel = ViewModelProvider(this)[StudentViewModel::class.java]
         navHeader = binding.navigationViewStudent.getHeaderView(0)
+        SharedPreferencesManager.addValue(this,"activeFragment",0)
         binding.apply {
             studentNameTextView = navHeader.findViewById(R.id.txtStudentName)
             studentOtherDetailsTextView = navHeader.findViewById(R.id.txtStudentOtherDetails)
@@ -82,7 +83,10 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     when(destination.id)
                     {
-                        R.id.settingsFragmentStudent -> {
+                        R.id.settingsFragmentStudent,
+                        R.id.changePasswordFragment,
+                        R.id.studentProfileFragment,
+                        R.id.settingsFragmentAdmin -> {
                             setDrawerEnabled(false)
                             supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
                         }
@@ -141,7 +145,6 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                 }
                 if(isMenuSelect)
                 {
-                    viewModel.selectedMenu = menuItem.itemId
                     toggleDrawerMenu()
                 }
                 isMenuSelect
@@ -151,9 +154,14 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
     }
     // Override the onOptionsItemSelected method to handle options menu item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (viewModel.selectedMenu) {
-            R.id.nav_settings -> {
-                viewModel.selectedMenu = 0
+        val selectedFragment = SharedPreferencesManager.getInt(this,"activeFragment",0)
+
+        return when (selectedFragment) {
+            R.id.settingsFragmentStudent,
+            R.id.settingsFragmentAdmin,
+            R.id.changePasswordFragment,
+            R.id.studentProfileFragment -> {
+                SharedPreferencesManager.addValue(this,"activeFragment",0)
                 super.onOptionsItemSelected(item)
             }
             else -> {

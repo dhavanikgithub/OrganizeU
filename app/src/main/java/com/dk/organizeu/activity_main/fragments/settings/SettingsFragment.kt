@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_main.MainActivity
 import com.dk.organizeu.databinding.FragmentSettingsBinding
@@ -62,14 +63,32 @@ class SettingsFragment : Fragment() {
         }
 
         binding.layoutEditDetails.setOnClickListener {
-            underConstructionDialog(requireContext())
+            if(viewModel.isStudent)
+            {
+                findNavController().navigate(R.id.studentProfileFragment)
+            }
+            else{
+                underConstructionDialog(requireContext())
+            }
         }
         binding.txtChangePassword.setOnClickListener {
-            underConstructionDialog(requireContext())
+            if(viewModel.isStudent)
+            {
+                findNavController().navigate(R.id.changePasswordFragment)
+            }
+            else{
+                underConstructionDialog(requireContext())
+            }
         }
 
         binding.txtEditProfile.setOnClickListener {
-            underConstructionDialog(requireContext())
+            if(viewModel.isStudent)
+            {
+                findNavController().navigate(R.id.studentProfileFragment)
+            }
+            else{
+                underConstructionDialog(requireContext())
+            }
         }
 
         binding.logout.setOnClickListener {
@@ -96,6 +115,13 @@ class SettingsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if(viewModel.isStudent)
+        {
+            SharedPreferencesManager.addValue(requireContext(),"activeFragment",R.id.settingsFragmentStudent)
+        }
+        else{
+            SharedPreferencesManager.addValue(requireContext(),"activeFragment",R.id.settingsFragmentAdmin)
+        }
         val editor = sharedPreferences.edit()
         // Toggle night mode
         binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -125,6 +151,9 @@ class SettingsFragment : Fragment() {
         SharedPreferencesManager.removeValue(requireContext(),AdminLocalDBKey.ID.displayName)
         SharedPreferencesManager.removeValue(requireContext(),AdminLocalDBKey.NAME.displayName)
     }
+
+
+
 
     fun gotoMainActivity()
     {

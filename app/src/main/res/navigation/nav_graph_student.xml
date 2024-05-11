@@ -20,9 +20,25 @@
     <fragment
         android:id="@+id/settingsFragmentStudent"
         android:name="com.dk.organizeu.activity_main.fragments.settings.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings" >
+        <action
+            android:id="@+id/action_settingsFragmentStudent_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_settingsFragmentStudent_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/availableClassRoomFragment"
         android:name="com.dk.organizeu.activity_student.fragments.available_classroom.AvailableClassRoomFragment"
         android:label="Available Class Room" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.ChangePasswordFragment"
+        android:label="Change Password"
+        tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/studentProfileFragment"
+        android:name="com.dk.organizeu.activity_student.fragments.profile.StudentProfileFragment"
+        android:label="Profile" />
 </navigation>

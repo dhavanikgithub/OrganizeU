@@ -44,6 +44,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_admin)
         viewModel = ViewModelProvider(this)[AdminViewModel::class.java]
         navHeader = binding.adminNV.getHeaderView(0)
+        SharedPreferencesManager.addValue(this,"activeFragment",0)
         binding.apply {
             try {
                 // Set the toolbar as the action bar
@@ -91,6 +92,10 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 when(destination.id)
                 {
                     R.id.settingsFragmentAdmin -> {
+                        setDrawerEnabled(false)
+                        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
+                    }
+                    R.id.changePasswordFragment -> {
                         setDrawerEnabled(false)
                         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_left_arrow)
                     }
@@ -208,7 +213,6 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 {
                     // Toggle the drawer menu after handling the click event
                     toggleDrawerMenu()
-                    viewModel.selectedMenu = menuItem.itemId
                 }
                 // Indicate that the event has been handled successfully
                 isMenuSelect
@@ -220,9 +224,13 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
 
     // Override the onOptionsItemSelected method to handle action bar item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(viewModel.selectedMenu) {
-            R.id.nav_settings -> {
-                viewModel.selectedMenu = 0
+        val selectedFragment = SharedPreferencesManager.getInt(this,"activeFragment",0)
+        return when(selectedFragment) {
+            R.id.settingsFragmentStudent,
+            R.id.settingsFragmentAdmin,
+            R.id.changePasswordFragment,
+            R.id.studentProfileFragment -> {
+                SharedPreferencesManager.addValue(this,"activeFragment",0)
                 super.onOptionsItemSelected(item)
             }
             else -> {
