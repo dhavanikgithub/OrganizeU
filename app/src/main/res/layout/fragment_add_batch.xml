@@ -100,7 +100,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/constraintLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -116,18 +116,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="Select Sem"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tlAcademicClass"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_weight=".4"
                     android:layout_marginEnd="5dp">
 
                     <AutoCompleteTextView
                         android:id="@+id/actAcademicSem"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:inputType="none"
                         android:drawableStart="@drawable/ic_semester"
                         android:drawablePadding="10dp"
@@ -141,11 +136,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="Select Class"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/tlAcademicSem"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_weight=".6"
                     android:layout_marginStart="5dp">
 
                     <AutoCompleteTextView
@@ -159,7 +150,7 @@
                         android:drawableTint="@color/colorPrimary"
                         tools:text="CEIT-A" />
                 </com.google.android.material.textfield.TextInputLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutAddFaculty"

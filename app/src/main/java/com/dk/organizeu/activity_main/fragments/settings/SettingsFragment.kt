@@ -1,8 +1,10 @@
 package com.dk.organizeu.activity_main.fragments.settings
 
+import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,8 +48,22 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.isDarkMode = sharedPreferences.getBoolean("isDark",false)
-        binding.darkModeSwitch.isChecked = viewModel.isDarkMode
+        viewModel.uiMode = sharedPreferences.getInt("uiMode",-1)
+        if(viewModel.uiMode == -1)
+        {
+            // Check if the system default mode is dark
+            val systemNightMode =
+                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                    UiModeManager.MODE_NIGHT_YES
+                } else {
+                    UiModeManager.MODE_NIGHT_NO
+                }
+            binding.darkModeSwitch.isChecked = systemNightMode == UiModeManager.MODE_NIGHT_YES
+        }
+        else{
+            binding.darkModeSwitch.isChecked = viewModel.uiMode == 0
+        }
+
         viewModel.isStudent = requireArguments().getBoolean("isStudent")
 
         if(viewModel.isStudent)
@@ -130,7 +146,7 @@ class SettingsFragment : Fragment() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-            editor.putBoolean("isDark",isChecked)
+            editor.putInt("uiMode",if(isChecked) 0 else 1 )
             editor.apply()
         }
     }

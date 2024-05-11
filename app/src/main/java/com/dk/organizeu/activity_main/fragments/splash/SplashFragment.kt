@@ -3,6 +3,7 @@ package com.dk.organizeu.activity_main.fragments.splash
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -44,12 +45,32 @@ class SplashFragment : Fragment() {
         binding = FragmentSplashBinding.bind(view)
         viewModel = ViewModelProvider(this)[SplashViewModel::class.java]
         sharedPreferences = requireContext().getSharedPreferences("organizeu_settings", Context.MODE_PRIVATE)
+        var uiMode = sharedPreferences.getInt("uiMode",-1)
+        if (uiMode == -1) {
+            uiMode = if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                0
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                1
+            }
+            val editor = sharedPreferences.edit()
+            editor.putInt("uiMode",uiMode)
+            editor.apply()
+        } else {
+            if (uiMode == 0) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
         return view
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         MainScope().launch(Dispatchers.Main) {
             Thread.sleep(2000L)
             if(permissionCheck())
@@ -161,13 +182,4 @@ class SplashFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        val isDarkMode = sharedPreferences.getBoolean("isDark",false)
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
-    }
 }
