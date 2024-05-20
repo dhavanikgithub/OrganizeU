@@ -31,7 +31,6 @@ import com.dk.organizeu.repository.BatchRepository
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.repository.LessonRepository
-import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.RoomRepository.Companion.getRoomDocumentsByField
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.SubjectRepository
@@ -719,7 +718,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                 else{
                                     // If the start and end times are the same, display an error
                                     textInput.text = ""
-                                    binding.tlSelectLessonTime.error = "End time must be not be same"
+                                    binding.tlSelectLessonTime.error = "Start time and End time must be not be same"
                                 }
                             }
                             else {
