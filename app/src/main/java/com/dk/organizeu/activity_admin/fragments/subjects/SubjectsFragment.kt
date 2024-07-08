@@ -2,7 +2,6 @@ package com.dk.organizeu.activity_admin.fragments.subjects
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +21,7 @@ import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -65,7 +65,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                     initRecyclerView()
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur during Subject RecyclerView initialization
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
 
@@ -86,7 +86,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur while showing the dialog
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -133,7 +133,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                                     hideProgressBar(rvSubjects, progressBar)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG,e.message.toString())
+                                    Logger.e(TAG,e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -141,7 +141,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -149,7 +149,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -176,7 +176,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                     requireContext().showToast("Subject Added Successfully")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -228,13 +228,13 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
                                 requireContext().showToast("Error occur while deleting subject.")
                             }
                         } catch (e: Exception) {
-                            Log.e(RoomsFragment.TAG,e.toString())
+                            Logger.e(RoomsFragment.TAG,e.toString())
                             throw e
                         }
                     }
 
                 } catch (e: Exception) {
-                    Log.e(RoomsFragment.TAG,e.toString())
+                    Logger.e(RoomsFragment.TAG,e.toString())
                     requireContext().showToast("Error occur while deleting subject.")
                 }
                 dialog.dismiss()
@@ -254,7 +254,7 @@ class SubjectsFragment : Fragment(), OnItemClickListener, SubjectDocumentListene
             dialogFragment.show(childFragmentManager, "customDialog")
         } catch (e: Exception) {
             // Log and handle any exceptions that occur while showing the dialog
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }

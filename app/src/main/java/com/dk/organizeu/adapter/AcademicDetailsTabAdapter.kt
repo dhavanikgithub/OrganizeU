@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.dk.organizeu.utils.Logger
 
 class AcademicDetailsTabAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val fragmentList: MutableList<Fragment> = ArrayList()
@@ -16,7 +17,7 @@ class AcademicDetailsTabAdapter(manager: FragmentManager) : FragmentPagerAdapter
         try {
             return fragmentList[position]
         } catch (e: Exception) {
-            Log.e(BatchAdapter.TAG,e.message.toString())
+            Logger.e(BatchAdapter.TAG,e.message.toString())
             throw e
         }
     }
@@ -34,7 +35,7 @@ class AcademicDetailsTabAdapter(manager: FragmentManager) : FragmentPagerAdapter
         try {
             return fragmentTitleList[position]
         } catch (e: Exception) {
-            Log.e(BatchAdapter.TAG,e.message.toString())
+            Logger.e(BatchAdapter.TAG,e.message.toString())
             throw e
         }
     }

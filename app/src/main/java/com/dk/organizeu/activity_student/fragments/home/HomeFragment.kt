@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_student.fragments.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +27,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.LessonMuteManagement
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
@@ -119,7 +119,7 @@ class HomeFragment : Fragment() {
                         }
                     } catch (e: Exception) {
                         // Handle any exceptions and log error messages
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -155,14 +155,14 @@ class HomeFragment : Fragment() {
                                         }
                                     } catch (e: Exception) {
                                         // Handle any exceptions that occur during the loading of timetable data
-                                        Log.e(TAG,e.message.toString())
+                                        Logger.e(TAG,e.message.toString())
                                         requireContext().unexpectedErrorMessagePrint(e)
                                     }
                                 }
                             }
                         } catch (e: Exception) {
                             // Handle any exceptions that occur during the tab selection process
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -283,12 +283,12 @@ class HomeFragment : Fragment() {
                             delay(500)
                             hideProgressBar(rvLesson, progressBar)
                         } catch (e: Exception) {
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -335,7 +335,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -368,7 +368,7 @@ class HomeFragment : Fragment() {
                         i++
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -408,7 +408,7 @@ class HomeFragment : Fragment() {
 
                     rvLesson.adapter = lessonAdapter
                 } catch (e: Exception) {
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -456,7 +456,7 @@ class HomeFragment : Fragment() {
                         tbLayoutAction.visibility= View.GONE
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -475,7 +475,7 @@ class HomeFragment : Fragment() {
             // Set the home button indicator to the menu icon
             (activity as? StudentActivity)?.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         } catch (e: Exception) {
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }

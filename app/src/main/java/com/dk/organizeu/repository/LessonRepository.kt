@@ -1,12 +1,12 @@
 package com.dk.organizeu.repository
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.WEEKDAY_COLLECTION
 import com.dk.organizeu.pojo.LessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toLessonPojo
 import com.dk.organizeu.pojo.LessonPojo.Companion.toMap
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,7 +20,7 @@ class LessonRepository {
             try {
                 return TimeTableRepository.timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).collection(WEEKDAY_COLLECTION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -28,7 +28,7 @@ class LessonRepository {
             try {
                 return lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).document(lessonDocumentId)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -37,7 +37,7 @@ class LessonRepository {
             try {
                 return lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -46,7 +46,7 @@ class LessonRepository {
             try {
                 return lessonCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).orderBy(orderBy).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -72,11 +72,11 @@ class LessonRepository {
                             failureCallback(it)
                         }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     throw e
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
 
@@ -87,7 +87,7 @@ class LessonRepository {
             try {
                 lessonDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId, id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -99,7 +99,7 @@ class LessonRepository {
                     deleteLessonDocument(academicDocumentId,semesterDocumentId,classDocumentId,timetableDocumentId,it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -114,11 +114,11 @@ class LessonRepository {
                         callback(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         callback(false) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -173,20 +173,20 @@ class LessonRepository {
                                             }
                                         }
                                     } catch (e: Exception) {
-                                        Log.e(TAG,e.message.toString())
+                                        Logger.e(TAG,e.message.toString())
                                     }
                                 }
                             } catch (e: Exception) {
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                     }
                 }
                 conflict(false)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

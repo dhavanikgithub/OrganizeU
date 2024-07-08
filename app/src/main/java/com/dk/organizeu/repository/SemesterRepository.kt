@@ -1,10 +1,10 @@
 package com.dk.organizeu.repository
 
-import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.SemesterPojo
 import com.dk.organizeu.pojo.SemesterPojo.Companion.toSemesterPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.academicDocumentRef
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -17,7 +17,7 @@ class SemesterRepository {
             try {
                 return academicDocumentRef(academicDocumentId).collection(FirebaseConfig.SEMESTER_COLLECTION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -26,7 +26,7 @@ class SemesterRepository {
             try {
                 return semesterCollectionRef(academicDocumentId).document(id)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -35,7 +35,7 @@ class SemesterRepository {
             try {
                 return semesterCollectionRef(academicDocumentId).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -46,7 +46,7 @@ class SemesterRepository {
                 ClassRepository.deleteAllClassDocuments(academicDocumentId, id)
                 semesterDocumentRef(academicDocumentId, id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -58,7 +58,7 @@ class SemesterRepository {
                     deleteSemesterDocument(academicDocumentId,it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -110,11 +110,11 @@ class SemesterRepository {
                         isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(ClassRepository.TAG,e.message.toString())
+                Logger.e(ClassRepository.TAG,e.message.toString())
                 throw e
             }
         }
@@ -129,11 +129,11 @@ class SemesterRepository {
                         isExists(!documentSnapshot.isEmpty)
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(ClassRepository.TAG,e.message.toString())
+                Logger.e(ClassRepository.TAG,e.message.toString())
                 throw e
             }
         }

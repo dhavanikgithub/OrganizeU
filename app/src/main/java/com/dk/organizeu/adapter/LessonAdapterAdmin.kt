@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemLessonAdminBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.LessonPojo
+import com.dk.organizeu.utils.Logger
 
 
 class LessonAdapterAdmin(private val lessonPojos: ArrayList<LessonPojo>, private val listener: OnItemClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -36,7 +37,7 @@ class LessonAdapterAdmin(private val lessonPojos: ArrayList<LessonPojo>, private
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
         /*val view = LayoutInflater.from(parent.context).inflate(R.layout.item_timetable, parent, false)
@@ -60,7 +61,7 @@ class LessonAdapterAdmin(private val lessonPojos: ArrayList<LessonPojo>, private
             }
 
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import com.ashiqurrahman.rangedtimepickerdialog.library.TimeRangePickerDialog
 import com.dk.organizeu.R
+import com.dk.organizeu.activity_admin.fragments.academic.AcademicFragment
 import com.dk.organizeu.activity_admin.fragments.timetable.add_lesson.AddLessonFragment
 import com.dk.organizeu.databinding.AddLessonDialogLayoutBinding
 import com.dk.organizeu.enum_class.RoomType
@@ -35,6 +36,7 @@ import com.dk.organizeu.repository.RoomRepository.Companion.getRoomDocumentsByFi
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.SubjectRepository
 import com.dk.organizeu.repository.TimeTableRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.TimeConverter.Companion.convert12HourTo24Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
 import com.dk.organizeu.utils.TimeConverter.Companion.convertTo12HourFormat
@@ -169,7 +171,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                 }
             } catch (e: Exception) {
                 // Log any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
             }
@@ -187,7 +189,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     tlBatch.visibility=View.GONE
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -205,7 +207,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     tlBatch.visibility=View.GONE
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -236,7 +238,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     initRoomDropDown()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -253,7 +255,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     selectedBatch = parent.getItemAtPosition(position).toString()
                 }  catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -270,7 +272,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     selectedRoom = parent.getItemAtPosition(position).toString()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -409,14 +411,14 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                                 listener.onConflict()
                                             }
                                         } catch (e: Exception) {
-                                            Log.e(TAG, e.message.toString())
+                                            Logger.e(TAG,e.message.toString())
                                             requireContext().unexpectedErrorMessagePrint(e)
                                         }
                                     }
                                 }
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                             }
@@ -424,7 +426,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -436,7 +438,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     showTimePicker(txtSelectLessonTime)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -446,7 +448,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                 return builder!!.create()
             } catch (e: Exception) {
                 // Log any unexpected exceptions that occur
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
                 throw e
@@ -487,14 +489,14 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                 actSubject.setAdapter(subjectAdapter)
                             } catch (e: Exception) {
                                 // Log any exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                             }
                         }
                     } catch (e: Exception) {
                         // Log any exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -532,14 +534,14 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                             actFaculty.setAdapter(facultyAdapter)
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -589,7 +591,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                                 actBatch.setAdapter(batchAdapter)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                             }
@@ -597,7 +599,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                 }
             }
         }
@@ -634,7 +636,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                             actRoom.setAdapter(roomAdapter)
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
@@ -642,7 +644,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                 }
                 catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -673,7 +675,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                     && (binding.tlSelectLessonTime.error == null)
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -728,7 +730,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -743,7 +745,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             dialog.show(requireActivity().supportFragmentManager, "Select Lesson Time")
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -770,7 +772,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the subject field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -799,7 +801,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the faculty field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -828,7 +830,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the lesson type field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -857,7 +859,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the room field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -886,7 +888,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the lesson time field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -915,7 +917,7 @@ class AddLessonDialog(private val listener: LessonListener, val lessonPojo: Less
             return isValid // Return the validity status of the batch field
         } catch (e: Exception) {
             // Log any exceptions that occur during validation
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dk.organizeu.R
 import com.dk.organizeu.activity_admin.AdminActivity
+import com.dk.organizeu.activity_admin.dialog.AddLessonDialog
 import com.dk.organizeu.activity_admin.dialog.EditBatchDialog
 import com.dk.organizeu.activity_admin.fragments.academic.add_academic.AcademicDetailsFragment
 import com.dk.organizeu.adapter.BatchAdapter
@@ -36,6 +37,7 @@ import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -146,7 +148,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     loadAcademicClassACTV()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -202,7 +204,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                             tlAcademicType.isEnabled=true
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG,e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
@@ -239,7 +241,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         tlAcademicSem.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -270,7 +272,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         tlAcademicClass.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -297,7 +299,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         tlAcademicBatch.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -364,7 +366,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                                             etAcademicBatch.setText("")
                                                         } catch (e: Exception) {
                                                             // Log any unexpected exceptions that occur
-                                                            Log.e(TAG, e.message.toString())
+                                                            Logger.e(TAG,e.message.toString())
                                                             // Display an unexpected error message to the user
                                                             requireContext().unexpectedErrorMessagePrint(e)
                                                             throw e
@@ -372,14 +374,14 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                                     },{
                                                         // Error Callback
                                                         // Log any unexpected exceptions that occur
-                                                        Log.e(TAG, it.message.toString())
+                                                        Logger.e(AddLessonDialog.TAG,it.message.toString())
                                                         // Display an unexpected error message to the user
                                                         requireContext().unexpectedErrorMessagePrint(it)
                                                         throw it
                                                     })
                                                 } catch (e: Exception) {
                                                     // Log any unexpected exceptions that occur
-                                                    Log.e(TAG, e.message.toString())
+                                                    Logger.e(TAG,e.message.toString())
                                                     // Display an unexpected error message to the user
                                                     requireContext().unexpectedErrorMessagePrint(e)
                                                     throw e
@@ -403,7 +405,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -473,7 +475,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -500,7 +502,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     actAcademicType.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -527,7 +529,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     actAcademicClass.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -553,7 +555,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     actAcademicSem.setText("")
                 } catch (e: Exception) {
                     // Log and handle any unexpected exceptions
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
                 }
@@ -593,7 +595,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                 actAcademicYear.setAdapter(academicYearItemAdapter)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG, e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                                 throw e
@@ -601,7 +603,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                         throw e
@@ -646,7 +648,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                             tlAcademicType.isEnabled = true
                         } catch (e: Exception) {
                             // Log and handle any unexpected exceptions related to database operations
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
                         }
@@ -657,7 +659,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -699,7 +701,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                 actAcademicSem.setAdapter(academicSemItemAdapter)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG, e.message.toString())
+                                Logger.e(TAG, e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                                 throw e
@@ -707,7 +709,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                         throw e
@@ -754,7 +756,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                 actAcademicClass.setAdapter(academicClassItemAdapter)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG, e.message.toString())
+                                Logger.e(TAG, e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                                 throw e
@@ -762,7 +764,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                         throw e
@@ -813,12 +815,12 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                                     requireContext().showToast("Error occur while deleting batch.")
                                 }
                             } catch (e: Exception) {
-                                Log.e(TAG,e.toString())
+                                Logger.e(TAG,e.toString())
                                 throw e
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
+                        Logger.e(TAG,e.toString())
                         requireContext().showToast("Error occur while deleting batch.")
                     }
                     dialog.dismiss()
@@ -844,7 +846,7 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                 dialogFragment.isCancelable=false
                 dialogFragment.show(childFragmentManager, "customDialog")
             } catch (e: Exception) {
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 requireContext().unexpectedErrorMessagePrint(e)
             }
         }
@@ -872,13 +874,13 @@ class AddBatchFragment : Fragment(), OnItemClickListener, BatchDocumentListener 
                         isDeleted(!it)
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.toString())
                     throw e
                 }
             }
         }
         catch (e: Exception){
-            Log.e(TAG,e.toString())
+            Logger.e(TAG,e.toString())
             throw e
         }
     }

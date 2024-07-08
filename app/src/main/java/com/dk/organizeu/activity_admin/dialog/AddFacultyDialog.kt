@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
@@ -14,6 +13,7 @@ import com.dk.organizeu.databinding.AddFacultyDialogLayoutBinding
 import com.dk.organizeu.listener.FacultyDocumentListener
 import com.dk.organizeu.pojo.FacultyPojo
 import com.dk.organizeu.repository.FacultyRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.google.firebase.firestore.FirebaseFirestore
@@ -105,7 +105,7 @@ class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment(
                                 addNewFaculty(newFacultyPojo)
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                                 throw e
@@ -113,7 +113,7 @@ class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment(
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -122,7 +122,7 @@ class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment(
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
         }
@@ -131,7 +131,7 @@ class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment(
             return builder!!.create()
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -146,14 +146,14 @@ class AddFacultyDialog(val facultyPojo: FacultyPojo?) : AppCompatDialogFragment(
                 dismiss()
             } catch (e: Exception) {
                 // Log any unexpected exceptions that occur
-                Log.e(FacultyFragment.TAG, e.message.toString())
+                Logger.e(FacultyFragment.TAG, e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
                 throw e
             }
         }, {
             // Log any unexpected exceptions that occur
-            Log.e(FacultyFragment.TAG, it.message.toString())
+            Logger.e(FacultyFragment.TAG, it.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(it)
             throw it

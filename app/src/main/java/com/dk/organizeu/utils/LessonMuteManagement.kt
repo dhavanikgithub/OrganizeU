@@ -57,7 +57,7 @@ class LessonMuteManagement {
                 newPendingIntent
             )
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }
@@ -73,7 +73,7 @@ class LessonMuteManagement {
             alarmManager.cancel(pendingIntent)
             pendingIntent.cancel()
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }
@@ -85,7 +85,7 @@ class LessonMuteManagement {
             // Schedule a new alarm with the updated time
             scheduleLessonAlarm(context, lessonTime, action, requestCode)
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }
@@ -123,7 +123,7 @@ class LessonMuteManagement {
             // Set alarm
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, newPendingIntent)
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }

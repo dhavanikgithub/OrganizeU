@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
@@ -13,6 +12,7 @@ import com.dk.organizeu.databinding.EditBatchDialogLayoutBinding
 import com.dk.organizeu.listener.BatchDocumentListener
 import com.dk.organizeu.pojo.BatchPojo
 import com.dk.organizeu.repository.BatchRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -80,21 +80,21 @@ class EditBatchDialog(val academicDocumentId: String, val semesterDocumentId: St
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
 
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
 
         try {
             return builder!!.create()
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
         }

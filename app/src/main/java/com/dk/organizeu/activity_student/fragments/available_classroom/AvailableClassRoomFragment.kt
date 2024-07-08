@@ -3,7 +3,6 @@ package com.dk.organizeu.activity_student.fragments.available_classroom
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,7 @@ import com.dk.organizeu.repository.LessonRepository
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.TimeConverter.Companion.calculateLessonDuration
 import com.dk.organizeu.utils.TimeConverter.Companion.convert24HourTo12Hour
@@ -223,7 +223,7 @@ class AvailableClassRoomFragment : Fragment() {
                     e.printStackTrace()
                 }
                 catch (e: Exception) {
-                    Log.e(HomeFragment.TAG, e.toString())
+                    Logger.e(HomeFragment.TAG, e.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }

@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddSemBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.SemesterPojo
+import com.dk.organizeu.utils.Logger
 
 class SemesterAdapter(private val semesterPojos: ArrayList<SemesterPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<SemesterAdapter.AcademicViewHolder>() {
@@ -33,7 +34,7 @@ class SemesterAdapter(private val semesterPojos: ArrayList<SemesterPojo>, privat
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

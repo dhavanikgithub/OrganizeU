@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
-import android.util.Log
-import android.widget.Toast
-import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
+import com.dk.organizeu.utils.Logger
 
 class LessonReminderReceiver : BroadcastReceiver() {
     companion object {
@@ -23,7 +21,7 @@ class LessonReminderReceiver : BroadcastReceiver() {
                 setDeviceMute(context, false)
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
     private fun setDeviceMute(context: Context?, mute: Boolean) {
@@ -35,7 +33,7 @@ class LessonReminderReceiver : BroadcastReceiver() {
                 audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 }

@@ -65,7 +65,7 @@ class TimeConverter {
                 val minuteStr = if (minute < 10) "0$minute" else "$minute"
                 return "$hour12:$minuteStr $period"
             } catch (e: Exception) {
-                Log.e(UtilFunction.TAG,e.message.toString())
+                Logger.e(UtilFunction.TAG,e.message.toString())
                 throw e
             }
         }

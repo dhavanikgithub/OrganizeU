@@ -1,9 +1,9 @@
 package com.dk.organizeu.repository
 
-import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.AcademicPojo
 import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -21,7 +21,7 @@ class AcademicRepository {
             try {
                 return db.collection(FirebaseConfig.ACADEMIC_COLLECTION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -30,7 +30,7 @@ class AcademicRepository {
             try {
                 return academicCollectionRef().document(academicDocumentId)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -39,7 +39,7 @@ class AcademicRepository {
             try {
                 return academicCollectionRef().get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -73,12 +73,12 @@ class AcademicRepository {
                             continuation.resume(documentSnapshot.exists())
                         }
                         .addOnFailureListener { exception ->
-                            Log.w("TAG", "Error checking academic document existence", exception)
+                            Logger.w("TAG", "Error checking academic document existence", exception)
                             continuation.resume(false)
                         }
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -111,11 +111,11 @@ class AcademicRepository {
                         isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking academic document existence", exception)
+                        Logger.w("TAG", "Error checking academic document existence", exception)
                         isExists(false)
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -144,11 +144,11 @@ class AcademicRepository {
                         }
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking academic document existence", exception)
+                        Logger.w("TAG", "Error checking academic document existence", exception)
                         isExists(false)
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -158,7 +158,7 @@ class AcademicRepository {
                 SemesterRepository.deleteAllSemesterDocuments(id)
                 academicDocumentRef(id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -169,7 +169,7 @@ class AcademicRepository {
                     deleteAcademicDocument(it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
@@ -13,6 +12,7 @@ import com.dk.organizeu.databinding.EditClassDialogLayoutBinding
 import com.dk.organizeu.listener.ClassDocumentListener
 import com.dk.organizeu.pojo.ClassPojo
 import com.dk.organizeu.repository.ClassRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -83,7 +83,7 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -92,7 +92,7 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
         }
@@ -101,7 +101,7 @@ class EditClassDialog(val academicDocumentId: String, val semesterDocumentId: St
             return builder!!.create()
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e

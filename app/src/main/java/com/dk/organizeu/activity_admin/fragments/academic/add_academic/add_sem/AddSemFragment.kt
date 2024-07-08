@@ -26,6 +26,7 @@ import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -111,7 +112,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -171,7 +172,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                 tlAcademicType.isEnabled = true
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                             }
@@ -182,7 +183,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -224,7 +225,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                         progressDialog.stop()
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG, e.message.toString())
+                                        Logger.e(TAG, e.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(e)
                                         throw e
@@ -232,7 +233,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                 }
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG, e.message.toString())
+                                Logger.e(TAG, e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                                 throw e
@@ -240,7 +241,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -255,7 +256,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         btnAddSem.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -282,21 +283,21 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                             requireContext().showToast("Sem Added")
                                         } catch (e: Exception) {
                                             // Log any unexpected exceptions that occur
-                                            Log.e(TAG, e.message.toString())
+                                            Logger.e(TAG, e.message.toString())
                                             // Display an unexpected error message to the user
                                             requireContext().unexpectedErrorMessagePrint(e)
                                             throw e
                                         }
                                     },{
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG,it.message.toString())
+                                        Logger.e(TAG,it.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(it)
                                         throw it
                                     })
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -306,7 +307,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -354,7 +355,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                     hideProgressBar(rvSemester,progressBar)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -362,7 +363,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -370,7 +371,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -399,7 +400,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     actAcademicType.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -427,7 +428,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     actAcademicSem.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -470,7 +471,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                     actAcademicYear.setAdapter(academicYearItemAdapter)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -478,7 +479,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -486,7 +487,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -537,7 +538,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                             tlAcademicType.isEnabled = true
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -549,7 +550,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -591,7 +592,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                     actAcademicSem.setAdapter(academicSemItemAdapter)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -643,7 +644,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
                                     }
                                 } catch (e: Exception) {
                                     // Log any exceptions that occur during deletion
-                                    Log.e(TAG,e.toString())
+                                    Logger.e(TAG,e.toString())
                                 }
                             }
                         }
@@ -651,7 +652,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
 
                 } catch (e: Exception) {
                     // Log any exceptions that occur outside the deletion process
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.toString())
                 }
                 dialog.dismiss()
             },{
@@ -686,7 +687,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
 
                 } catch (e: Exception) {
                     // Log any exceptions that occur during deletion
-                    Log.e(TAG, e.toString())
+                    Logger.e(TAG, e.toString())
 
                     // Show a toast message for deletion error
                     withContext(Dispatchers.Main) {
@@ -699,7 +700,7 @@ class AddSemFragment : Fragment(), OnItemClickListener {
             }
         } catch (e: Exception) {
             // Log any exceptions that occur outside the coroutine scope
-            Log.e(TAG, e.toString())
+            Logger.e(TAG, e.toString())
 
             // Re-throw the exception to propagate it further if needed
             throw e

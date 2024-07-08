@@ -1,5 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.academic
 
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.dk.organizeu.pojo.AcademicPojo.Companion.toAcademicPojo
 import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -65,7 +67,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                 try {
                     (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString()) // Logs any unexpected exceptions.
+                    Logger.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e) // Displays an unexpected error message.
                 }
             }
@@ -95,7 +97,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     }
 
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString()) // Logs any unexpected exceptions.
+                    Logger.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e) // Displays an unexpected error message.
                 }
 
@@ -189,7 +191,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                                     hideProgressBar(rvAcademic,progressBar)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG,e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -197,7 +199,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -205,7 +207,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -228,7 +230,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     requireContext().showToast("Academic Added Successfully")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(AcademicDetailsFragment.TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -259,7 +261,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     findNavController().navigate(R.id.addAcademicFragment, bundle)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(AcademicDetailsFragment.TAG, e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -285,7 +287,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     val academic = viewModel.academicList[position]
                     deleteAcademic(academic.id)
                 } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.message.toString())
                 }
                 dialog.dismiss()
             },{
@@ -304,7 +306,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                 val academicDocumentId = "${academic.academic}_${academic.sem}"
                 deleteAcademic(academicDocumentId)
             } catch (e: Exception) {
-                Log.e(TAG,e.toString())
+                Logger.e(TAG,e.message.toString())
             }
         }
 
@@ -348,7 +350,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
                     }
                 } catch (e: Exception) {
                     // Log any exceptions that occur during deletion
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.message.toString())
                     withContext(Dispatchers.Main) {
                         // Show a toast message for deletion error
                         requireContext().showToast("Error occur while deleting academic.")
@@ -359,8 +361,7 @@ class AcademicFragment : Fragment(), AcademicDocumentListener, OnItemClickListen
             }
         } catch (e: Exception) {
             // Log any exceptions that occur outside the coroutine scope
-            Log.e(TAG, e.toString())
-
+            Logger.e(TAG,e.toString())
             // Re-throw the exception to propagate it further if needed
             throw e
         }

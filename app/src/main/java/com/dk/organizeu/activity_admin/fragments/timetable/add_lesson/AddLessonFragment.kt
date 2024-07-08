@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.timetable.add_lesson
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.TimeTableRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -103,7 +103,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     initLesson(dayOfWeek)
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
 
@@ -132,7 +132,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur while showing the dialog
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -162,7 +162,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                             }*/
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -201,7 +201,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     tbLayoutWeekDay.selectTab(currentTab)
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -235,7 +235,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                     hideProgressBar(rvLesson, progressBar)
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -292,7 +292,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                 }
             } catch (e: Exception) {
                 // Log any unexpected exceptions that occur
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
                 throw e
@@ -312,7 +312,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
             requireContext().showToast("Lesson Added Successfully")
         } catch (e: Exception) {
             // Log and handle any exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }
@@ -375,7 +375,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
                         }
 
                     } catch (e: Exception) {
-                        Log.e(TAG,e.toString())
+                        Logger.e(TAG,e.toString())
                         requireContext().showToast("Error occur while deleting lesson.")
                     }
                     dialog.dismiss()
@@ -397,7 +397,7 @@ class AddLessonFragment : Fragment(),AddLessonDialog.LessonListener, OnItemClick
             dialogFragment.show(childFragmentManager, "customDialog")
         } catch (e: Exception) {
             // Log and handle any exceptions that occur while showing the dialog
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }

@@ -23,6 +23,7 @@ import com.dk.organizeu.enum_class.AdminLocalDBKey
 import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.utils.Constants.Companion.AUDIO_SETTING_PERMISSION
 import com.dk.organizeu.utils.Constants.Companion.NOTIFICATION_PERMISSION
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.PermissionManager.Companion.appNotificationSettingIntent
 import com.dk.organizeu.utils.PermissionManager.Companion.appSettingIntent
 import com.dk.organizeu.utils.PermissionManager.Companion.isAudioSettingsPermissionGranted
@@ -281,7 +282,7 @@ class PermissionFragment : Fragment() {
             binding.btnStart.isEnabled = permissionCheck()
         } catch (e: Exception) {
             // Log and rethrow any exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             throw e
         }
     }

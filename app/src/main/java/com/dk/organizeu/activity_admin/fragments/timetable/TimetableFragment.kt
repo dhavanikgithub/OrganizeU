@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.timetable
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ import com.dk.organizeu.repository.AcademicRepository
 import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -93,7 +93,7 @@ class TimetableFragment : Fragment() {
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -128,7 +128,7 @@ class TimetableFragment : Fragment() {
                         btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -153,7 +153,7 @@ class TimetableFragment : Fragment() {
                         btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -175,7 +175,7 @@ class TimetableFragment : Fragment() {
                         btnGoToTimetable.isEnabled = false
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -190,7 +190,7 @@ class TimetableFragment : Fragment() {
                         btnGoToTimetable.isEnabled = true
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -213,7 +213,7 @@ class TimetableFragment : Fragment() {
                         }
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -248,7 +248,7 @@ class TimetableFragment : Fragment() {
                     selectedSemesterItem = null
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -281,7 +281,7 @@ class TimetableFragment : Fragment() {
                     selectedClassItem = null
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -314,7 +314,7 @@ class TimetableFragment : Fragment() {
                     selectedAcademicTypeItem = null
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -352,13 +352,13 @@ class TimetableFragment : Fragment() {
                                     actAcademicYear.setAdapter(academicYearAdapter)
                                 } catch (e: Exception) {
                                     // Log and handle any exceptions that occur during UI update
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur during data retrieval
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -366,7 +366,7 @@ class TimetableFragment : Fragment() {
             }
         } catch (e: Exception) {
             // Log and handle any exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }
@@ -407,7 +407,7 @@ class TimetableFragment : Fragment() {
                             tlAcademicType.isEnabled = true
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur during data retrieval
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -418,7 +418,7 @@ class TimetableFragment : Fragment() {
                     }
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -463,19 +463,19 @@ class TimetableFragment : Fragment() {
                                     tlAcademicSem.isEnabled = true
                                 } catch (e: Exception) {
                                     // Log and handle any exceptions that occur during UI update
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur during data retrieval
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }
@@ -520,19 +520,19 @@ class TimetableFragment : Fragment() {
                                     classTIL.isEnabled = true
                                 } catch (e: Exception) {
                                     // Log and handle any exceptions that occur during UI update
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur during data retrieval
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
                     }
                 } catch (e: Exception) {
                     // Log and handle any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
             }

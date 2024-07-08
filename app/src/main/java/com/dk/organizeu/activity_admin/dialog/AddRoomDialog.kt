@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
@@ -14,6 +13,7 @@ import com.dk.organizeu.enum_class.RoomType
 import com.dk.organizeu.listener.RoomDocumentListener
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.repository.RoomRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -128,7 +128,7 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
 
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG,e.message.toString())
+                                        Logger.e(TAG,e.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(e)
                                     }
@@ -150,7 +150,7 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
                                     addNewRoom(newRoomPojo)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG,e.message.toString())
+                                    Logger.e(TAG,e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                 }
@@ -161,7 +161,7 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -170,7 +170,7 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
         }
@@ -180,7 +180,7 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
             return builder!!.create()
         } catch (e: Exception) {
 
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             // Propagate the exception up the call stack
@@ -200,20 +200,20 @@ class AddRoomDialog(val roomPojo: RoomPojo?, val position:Int) : AppCompatDialog
         RoomRepository.insertRoomDocument(roomPojo,{
             // Success callback
             try {
-                Log.d("TAG", "Room document added successfully with ID: ${roomPojo.id}")
+                Logger.d(TAG, "Room document added successfully with ID: ${roomPojo.id}")
                 // Notify the listener about the addition of the room document
                 roomDocumentListener?.onAdded(roomPojo)
 
                 dismiss() // Dismiss dialog
             } catch (e: Exception) {
                 // Log any exceptions that occur
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
             }
         },{
             // Error callback
-            Log.w("TAG", "Error adding room document", it)
+            Logger.w("TAG", "Error adding room document", it)
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(it)
             dismiss() // Dismiss dialog

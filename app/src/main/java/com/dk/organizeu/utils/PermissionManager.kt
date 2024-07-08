@@ -29,7 +29,7 @@ class PermissionManager {
                 val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 return notificationManager.isNotificationPolicyAccessGranted
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -39,7 +39,7 @@ class PermissionManager {
             try {
                 return isPermissionGranted(context, Constants.AUDIO_SETTING_PERMISSION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -54,7 +54,7 @@ class PermissionManager {
                     true
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -68,7 +68,7 @@ class PermissionManager {
                         return this
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

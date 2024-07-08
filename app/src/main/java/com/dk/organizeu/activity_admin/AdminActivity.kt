@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -20,6 +19,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityAdminBinding
 import com.dk.organizeu.enum_class.AdminLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -83,7 +83,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 }*/
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@AdminActivity.unexpectedErrorMessagePrint(e)
             }
 
@@ -122,7 +122,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                             isMenuSelect = false
                         }
@@ -138,7 +138,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                             isMenuSelect = false
                         }
@@ -155,7 +155,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -170,7 +170,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -185,7 +185,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -203,7 +203,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                             }
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@AdminActivity.unexpectedErrorMessagePrint(e)
                         }
                     }
@@ -263,7 +263,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 defaultMenuItem.isChecked = true
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@AdminActivity.unexpectedErrorMessagePrint(e)
             }
         }
@@ -296,7 +296,7 @@ class AdminActivity : AppCompatActivity(), DrawerLocker {
                 return defaultMenuItem.isChecked
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@AdminActivity.unexpectedErrorMessagePrint(e)
                 // Re-throw the exception to propagate it to the caller
                 throw e

@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAcademicBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.AcademicPojo
+import com.dk.organizeu.utils.Logger
 
 class AcademicAdapter(private val academicList: ArrayList<AcademicPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<AcademicAdapter.AcademicViewHolder>() {
@@ -32,7 +33,7 @@ class AcademicAdapter(private val academicList: ArrayList<AcademicPojo>, private
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

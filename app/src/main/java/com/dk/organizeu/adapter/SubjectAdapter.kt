@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemSubjectBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.SubjectPojo
+import com.dk.organizeu.utils.Logger
 
 
 class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, private val listener: OnItemClickListener) :
@@ -34,7 +35,7 @@ class SubjectAdapter(private val subjectPojoList: ArrayList<SubjectPojo>, privat
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

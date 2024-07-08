@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddBatchBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.BatchPojo
+import com.dk.organizeu.utils.Logger
 
 class BatchAdapter(private val batchPojos: ArrayList<BatchPojo>,private val listener: OnItemClickListener) :
     RecyclerView.Adapter<BatchAdapter.AcademicViewHolder>() {
@@ -35,7 +36,7 @@ class BatchAdapter(private val batchPojos: ArrayList<BatchPojo>,private val list
             binding.position = holder.adapterPosition
             binding.listener = listener
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

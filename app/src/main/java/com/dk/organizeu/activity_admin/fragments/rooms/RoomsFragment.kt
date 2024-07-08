@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.rooms
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
 import com.dk.organizeu.repository.RoomRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -64,7 +64,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                    initRecyclerView()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(FacultyFragment.TAG, e.message.toString())
+                    Logger.e(FacultyFragment.TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -74,7 +74,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                         initRecyclerView()
                     } catch (e: Exception) {
                         // Log any exceptions that occur
-                        Log.e(FacultyFragment.TAG, e.message.toString())
+                        Logger.e(FacultyFragment.TAG, e.message.toString())
 
                         // Print an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
@@ -92,7 +92,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
                         // If any exception occurs, log the error message
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
 
                         // Print an unexpected error message using a custom function
                         requireContext().unexpectedErrorMessagePrint(e)
@@ -141,7 +141,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                                     hideProgressBar(rvRooms, progressBar)
                                 } catch (e: Exception) {
                                     // If any exception occurs, log the error message
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
 
                                     // Print an unexpected error message using a custom function
                                     requireContext().unexpectedErrorMessagePrint(e)
@@ -150,7 +150,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                             }
                         } catch (e: Exception) {
                             // If any exception occurs, log the error message
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
 
                             // Print an unexpected error message using a custom function
                             requireContext().unexpectedErrorMessagePrint(e)
@@ -159,7 +159,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                     }
                 } catch (e: Exception) {
                     // If any exception occurs, log the error message
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
 
                     // Print an unexpected error message using a custom function
                     requireContext().unexpectedErrorMessagePrint(e)
@@ -190,7 +190,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                     requireContext().showToast("Room Added Successfully")
                 } catch (e: Exception) {
                     // Log any exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
 
                     // Print an unexpected error message using a custom function
                     requireContext().unexpectedErrorMessagePrint(e)
@@ -243,13 +243,13 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
                                 requireContext().showToast("Error occur while deleting room.")
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG,e.toString())
+                            Logger.e(TAG,e.toString())
                             throw e
                         }
                     }
 
                 } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.toString())
                     requireContext().showToast("Error occur while deleting room.")
                 }
                 dialog.dismiss()
@@ -268,7 +268,7 @@ class RoomsFragment : Fragment(), RoomDocumentListener, OnItemClickListener {
             dialogFragment.show(childFragmentManager, "customDialog")
         } catch (e: Exception) {
             // If any exception occurs, log the error message
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
 
             // Print an unexpected error message using a custom function
             requireContext().unexpectedErrorMessagePrint(e)

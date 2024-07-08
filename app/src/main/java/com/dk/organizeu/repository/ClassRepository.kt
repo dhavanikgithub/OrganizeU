@@ -1,11 +1,11 @@
 package com.dk.organizeu.repository
 
-import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.ClassPojo
 import com.dk.organizeu.pojo.ClassPojo.Companion.toClassPojo
 import com.dk.organizeu.pojo.ClassPojo.Companion.toMap
 import com.dk.organizeu.repository.SemesterRepository.Companion.semesterDocumentRef
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,7 +20,7 @@ class ClassRepository {
                     FirebaseConfig.CLASS_COLLECTION
                 )
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -29,7 +29,7 @@ class ClassRepository {
             try {
                 return classCollectionRef(academicDocumentId,semesterDocumentId).document(id)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -38,7 +38,7 @@ class ClassRepository {
             try {
                 return classCollectionRef(academicDocumentId, semesterDocumentId).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -49,7 +49,7 @@ class ClassRepository {
                 TimeTableRepository.deleteAllTimetableDocuments(academicDocumentId, semesterDocumentId, id)
                 classDocumentRef(academicDocumentId, semesterDocumentId, id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -61,7 +61,7 @@ class ClassRepository {
                     deleteClassDocument(academicDocumentId,semesterDocumentId,it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -97,11 +97,11 @@ class ClassRepository {
                         isExists(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -115,11 +115,11 @@ class ClassRepository {
                         isExists(!documentSnapshot.isEmpty)
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isExists(true) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

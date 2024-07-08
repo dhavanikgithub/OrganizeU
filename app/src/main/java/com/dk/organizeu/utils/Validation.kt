@@ -1,6 +1,5 @@
 package com.dk.organizeu.utils
 
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import com.dk.organizeu.utils.TimeConverter.Companion.timeFormat12H
@@ -21,7 +20,7 @@ class Validation {
 
                 return endDate.timeInMillis>=System.currentTimeMillis()
             } catch (e: Exception) {
-                Log.e(UtilFunction.TAG,e.message.toString())
+                Logger.e(UtilFunction.TAG,e.message.toString())
                 throw e
             }
         }
@@ -126,7 +125,7 @@ class Validation {
                 }
                 return false
             } catch (e: Exception) {
-                Log.e(UtilFunction.TAG,e.message.toString())
+                Logger.e(UtilFunction.TAG,e.message.toString())
                 throw e
             }
         }
@@ -145,7 +144,7 @@ class Validation {
                     false
                 }
             } catch (e: Exception) {
-                Log.e(UtilFunction.TAG,e.message.toString())
+                Logger.e(UtilFunction.TAG,e.message.toString())
                 throw e
             }
         }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemLessonStudentBinding
 import com.dk.organizeu.pojo.LessonPojo
+import com.dk.organizeu.utils.Logger
 
 
 class LessonAdapterStudent(private val lessonPojos: ArrayList<LessonPojo>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -35,7 +36,7 @@ class LessonAdapterStudent(private val lessonPojos: ArrayList<LessonPojo>) : Rec
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
         /*val view = LayoutInflater.from(parent.context).inflate(R.layout.item_timetable, parent, false)
@@ -57,7 +58,7 @@ class LessonAdapterStudent(private val lessonPojos: ArrayList<LessonPojo>) : Rec
             }
 
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
     override fun getItemCount(): Int {

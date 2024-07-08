@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_student
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -20,6 +19,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ActivityStudentBinding
 import com.dk.organizeu.enum_class.StudentLocalDBKey
 import com.dk.organizeu.listener.DrawerLocker
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.SharedPreferencesManager
 import com.dk.organizeu.utils.UtilFunction
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
@@ -98,7 +98,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                 }
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur during setup
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@StudentActivity.unexpectedErrorMessagePrint(e)
             }
 
@@ -119,7 +119,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                             true // Return true to indicate that the item selection has been handled
                         } catch (e: Exception) {
                             // Log and handle any exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             this@StudentActivity.unexpectedErrorMessagePrint(e)
                             false // Return false to indicate that the item selection has not been handled
                         }
@@ -188,7 +188,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                 }
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@StudentActivity.unexpectedErrorMessagePrint(e)
             }
         }
@@ -208,7 +208,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
             return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
         } catch (e: Exception) {
             // Log and handle any exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             this@StudentActivity.unexpectedErrorMessagePrint(e)
             // Propagate the exception
             throw e
@@ -230,7 +230,7 @@ class StudentActivity : AppCompatActivity(), DrawerLocker {
                 defaultMenuItem.isChecked = true
             } catch (e: Exception) {
                 // Log and handle any exceptions that occur
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
                 this@StudentActivity.unexpectedErrorMessagePrint(e)
             }
         }

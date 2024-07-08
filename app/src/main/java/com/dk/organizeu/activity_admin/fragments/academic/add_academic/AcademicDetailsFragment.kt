@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.academic.add_academic
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_sem.A
 import com.dk.organizeu.adapter.AcademicDetailsTabAdapter
 import com.dk.organizeu.databinding.FragmentAcademicDetailsBinding
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 
 
@@ -52,7 +52,7 @@ class AcademicDetailsFragment : Fragment() {
                     (activity as? AdminActivity)?.drawerMenuSelect(R.id.nav_academic)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -77,7 +77,7 @@ class AcademicDetailsFragment : Fragment() {
                     loadTabFragment()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -105,7 +105,7 @@ class AcademicDetailsFragment : Fragment() {
                     tbLayoutAcademicData.addTab(batchTab)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -134,7 +134,7 @@ class AcademicDetailsFragment : Fragment() {
                     tbLayoutAcademicData.setupWithViewPager(vpAcademicData)
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e

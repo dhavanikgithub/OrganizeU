@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
@@ -16,6 +15,7 @@ import com.dk.organizeu.listener.SubjectDocumentListener
 import com.dk.organizeu.pojo.SubjectPojo
 import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.SubjectRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.isValidSubjectCode
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -166,7 +166,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
 
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG,e.message.toString())
+                                        Logger.e(TAG,e.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(e)
                                         throw e
@@ -192,7 +192,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
                                     addNewSubject(newSubjectPojo)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG,e.message.toString())
+                                    Logger.e(TAG,e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -202,7 +202,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -211,7 +211,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
         }
@@ -220,7 +220,7 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
             return builder!!.create()
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -238,20 +238,20 @@ class AddSubjectDialog(val subjectPojo: SubjectPojo?, val position: Int) : AppCo
         SubjectRepository.insertSubjectDocument(subjectPojo,{
             // Success Callback
             try {
-                Log.d("TAG", "Subject document added successfully with ID: ${subjectPojo.id}")
+                Logger.d(TAG, "Subject document added successfully with ID: ${subjectPojo.id}")
                 // Notify the listener about the addition of the subject document
                 subjectDocumentListener?.onAdded(subjectPojo)
                 // Dismiss the dialog after adding the subject document
                 dismiss()
             } catch (e: Exception) {
                 // Log any unexpected exceptions that occur
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 // Display an unexpected error message to the user
                 requireContext().unexpectedErrorMessagePrint(e)
             }
         },{
             // Error Callback
-            Log.w("TAG", "Error adding subject document", it)
+            Logger.w("TAG", "Error adding subject document", it)
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(it)
             dismiss() // Dismiss the dialog

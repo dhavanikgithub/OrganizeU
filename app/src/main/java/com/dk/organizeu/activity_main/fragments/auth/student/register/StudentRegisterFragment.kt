@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_main.fragments.auth.student.register
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.repository.StudentRepository
 import com.dk.organizeu.repository.StudentRepository.Companion.toSHA256
 import com.dk.organizeu.utils.CustomProgressDialog
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.trimExtraSpaces
 import com.dk.organizeu.utils.Validation
@@ -186,11 +186,11 @@ class StudentRegisterFragment : Fragment() {
                         }
                     }
                     else{
-                        Log.e("Register",selectedAcademicYear.toString())
-                        Log.e("Register",selectedAcademicType.toString())
-                        Log.e("Register",selectedSemester.toString())
-                        Log.e("Register",selectedClass.toString())
-                        Log.e("Register",selectedBatch.toString())
+                        Logger.e("Register",selectedAcademicYear.toString())
+                        Logger.e("Register",selectedAcademicType.toString())
+                        Logger.e("Register",selectedSemester.toString())
+                        Logger.e("Register",selectedClass.toString())
+                        Logger.e("Register",selectedBatch.toString())
                     }
                 }
 

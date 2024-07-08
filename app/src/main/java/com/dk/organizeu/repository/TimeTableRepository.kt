@@ -5,6 +5,7 @@ import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.TimetablePojo
 import com.dk.organizeu.pojo.TimetablePojo.Companion.toTimetablePojo
 import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -18,7 +19,7 @@ class TimeTableRepository {
             try {
                 return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId).collection(FirebaseConfig.TIMETABLE_COLLECTION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -27,7 +28,7 @@ class TimeTableRepository {
             try {
                 return timetableCollectionRef(academicDocumentId,semesterDocumentId,classDocumentId).document(timetableDocumentId)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -37,7 +38,7 @@ class TimeTableRepository {
                 return timetableCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId)
                     .get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -47,7 +48,7 @@ class TimeTableRepository {
                 LessonRepository.deleteAllLessonDocuments(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId)
                 timetableDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, timetableDocumentId).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -58,7 +59,7 @@ class TimeTableRepository {
                     deleteTimetableDocument(academicDocumentId,semesterDocumentId,classDocumentId,it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

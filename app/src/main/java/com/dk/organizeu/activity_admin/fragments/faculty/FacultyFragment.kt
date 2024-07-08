@@ -1,7 +1,6 @@
 package com.dk.organizeu.activity_admin.fragments.faculty
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import com.dk.organizeu.pojo.FacultyPojo.Companion.toFacultyPojo
 import com.dk.organizeu.repository.FacultyRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -61,7 +61,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                     initRecyclerView()
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -72,7 +72,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                         initRecyclerView()
                     } catch (e: Exception) {
                         // Log any exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
 
                         // Print an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
@@ -94,7 +94,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                         dialogFragment.show(childFragmentManager, "customDialog")
                     } catch (e: Exception) {
                         // Log and handle any exceptions that occur while showing the dialog
-                        Log.e(SubjectsFragment.TAG, e.message.toString())
+                        Logger.e(SubjectsFragment.TAG, e.message.toString())
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
                 }
@@ -144,7 +144,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                                     hideProgressBar(rvFaculty, progressBar)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -152,7 +152,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -160,7 +160,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -196,13 +196,13 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                                 requireContext().showToast("Error occur while deleting faculty.")
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG,e.toString())
+                            Logger.e(TAG,e.toString())
                             throw e
                         }
                     }
 
                 } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.toString())
                     requireContext().showToast("Error occur while deleting faculty.")
                 }
                 dialog.dismiss()
@@ -222,7 +222,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
             dialogFragment.show(childFragmentManager, "customDialog")
         } catch (e: Exception) {
             // Log and handle any exceptions that occur while showing the dialog
-            Log.e(SubjectsFragment.TAG, e.message.toString())
+            Logger.e(SubjectsFragment.TAG, e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
         }
     }
@@ -238,12 +238,12 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                         isDeleted(!it)
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.toString())
+                    Logger.e(TAG,e.toString())
                     throw e
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.toString())
+            Logger.e(TAG,e.toString())
             throw e
         }
     }
@@ -253,7 +253,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
             viewModel.facultyAdapter.itemInsert(facultyPojo)
             requireContext().showToast("Faculty Added")
         } catch (e: Exception) {
-            Log.e(TAG,e.toString())
+            Logger.e(TAG,e.toString())
             requireContext().showToast("Operation failed to add faculty")
         }
     }
@@ -267,7 +267,7 @@ class FacultyFragment : Fragment(), com.dk.organizeu.listener.OnItemClickListene
                 requireContext().showToast("Faculty Update Successfully")
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.toString())
+            Logger.e(TAG,e.toString())
             requireContext().showToast("Operation failed to Edit faculty")
         }
     }

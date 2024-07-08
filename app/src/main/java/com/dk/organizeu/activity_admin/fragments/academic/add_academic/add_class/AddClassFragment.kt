@@ -3,7 +3,6 @@ package com.dk.organizeu.activity_admin.fragments.academic.add_academic.add_clas
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ import com.dk.organizeu.repository.ClassRepository
 import com.dk.organizeu.repository.SemesterRepository
 import com.dk.organizeu.utils.CustomProgressDialog
 import com.dk.organizeu.utils.DialogUtils
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.containsOnlyAllowedCharacters
 import com.dk.organizeu.utils.UtilFunction.Companion.hideProgressBar
 import com.dk.organizeu.utils.UtilFunction.Companion.showProgressBar
@@ -132,7 +132,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
@@ -197,7 +197,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                 tlAcademicType.isEnabled = true
                             } catch (e: Exception) {
                                 // Log any unexpected exceptions that occur
-                                Log.e(TAG,e.message.toString())
+                                Logger.e(TAG,e.message.toString())
                                 // Display an unexpected error message to the user
                                 requireContext().unexpectedErrorMessagePrint(e)
                             }
@@ -209,7 +209,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -238,7 +238,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                         tlAcademicSem.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG,e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -263,7 +263,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                         tlAcademicClass.isEnabled = true
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -279,7 +279,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             btnAddClass.isEnabled = s.toString().isNotEmpty()
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                         }
@@ -330,14 +330,14 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                                         requireContext().showToast("Class Added")
                                                     } catch (e: Exception) {
                                                         // Log any unexpected exceptions that occur
-                                                        Log.e(TAG, e.message.toString())
+                                                        Logger.e(TAG, e.message.toString())
                                                         // Display an unexpected error message to the user
                                                         requireContext().unexpectedErrorMessagePrint(e)
                                                         throw e
                                                     }
                                                 },{
                                                     // Log any unexpected exceptions that occur
-                                                    Log.e(TAG, it.message.toString())
+                                                    Logger.e(TAG, it.message.toString())
                                                     // Display an unexpected error message to the user
                                                     requireContext().unexpectedErrorMessagePrint(it)
                                                     throw it
@@ -349,7 +349,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                         }
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG, e.message.toString())
+                                        Logger.e(TAG, e.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(e)
                                         throw e
@@ -359,7 +359,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                         }
                     } catch (e: Exception) {
                         // Log any unexpected exceptions that occur
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG, e.message.toString())
                         // Display an unexpected error message to the user
                         requireContext().unexpectedErrorMessagePrint(e)
                     }
@@ -400,7 +400,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                         hideProgressBar(rvClass,progressBar)
                                     } catch (e: Exception) {
                                         // Log any unexpected exceptions that occur
-                                        Log.e(TAG, e.message.toString())
+                                        Logger.e(TAG, e.message.toString())
                                         // Display an unexpected error message to the user
                                         requireContext().unexpectedErrorMessagePrint(e)
                                         throw e
@@ -433,7 +433,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                     hideProgressBar(rvClass,progressBar)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -441,7 +441,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -452,7 +452,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -477,7 +477,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     actAcademicType.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -505,7 +505,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     actAcademicSem.setText("")
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -548,7 +548,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                     actAcademicYear.setAdapter(academicYearItemAdapter)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -556,7 +556,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -566,7 +566,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -607,7 +607,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             tlAcademicType.isEnabled=true
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -620,7 +620,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any unexpected exceptions that occur
-                    Log.e(TAG, e.message.toString())
+                    Logger.e(TAG, e.message.toString())
                     // Display an unexpected error message to the user
                     requireContext().unexpectedErrorMessagePrint(e)
                     throw e
@@ -659,7 +659,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                     actAcademicSem.setAdapter(academicSemItemAdapter)
                                 } catch (e: Exception) {
                                     // Log any unexpected exceptions that occur
-                                    Log.e(TAG, e.message.toString())
+                                    Logger.e(TAG, e.message.toString())
                                     // Display an unexpected error message to the user
                                     requireContext().unexpectedErrorMessagePrint(e)
                                     throw e
@@ -667,7 +667,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                             }
                         } catch (e: Exception) {
                             // Log any unexpected exceptions that occur
-                            Log.e(TAG, e.message.toString())
+                            Logger.e(TAG, e.message.toString())
                             // Display an unexpected error message to the user
                             requireContext().unexpectedErrorMessagePrint(e)
                             throw e
@@ -677,7 +677,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
             }
         } catch (e: Exception) {
             // Log any unexpected exceptions that occur
-            Log.e(TAG, e.message.toString())
+            Logger.e(TAG, e.message.toString())
             // Display an unexpected error message to the user
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
@@ -725,7 +725,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                                     }
                                 } catch (e: Exception) {
                                     // Log any exceptions that occur during deletion
-                                    Log.e(AddSemFragment.TAG, e.toString())
+                                    Logger.e(AddSemFragment.TAG, e.toString())
 
                                     // Re-throw the exception to propagate it further if needed
                                     throw e
@@ -736,7 +736,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any exceptions that occur outside the deletion process
-                    Log.e(AddSemFragment.TAG,e.toString())
+                    Logger.e(AddSemFragment.TAG,e.toString())
                     requireContext().showToast("Error occur while deleting class.")
                 }
                 dialog.dismiss()
@@ -764,7 +764,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                 dialogFragment.show(childFragmentManager, "customDialog")
             } catch (e: Exception) {
                 // If any exception occurs, log the error message
-                Log.e(TAG, e.message.toString())
+                Logger.e(TAG, e.message.toString())
 
                 // Print an unexpected error message using a custom function
                 requireContext().unexpectedErrorMessagePrint(e)
@@ -794,7 +794,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
                     }
                 } catch (e: Exception) {
                     // Log any exceptions that occur during deletion
-                    Log.e(TAG, e.toString())
+                    Logger.e(TAG, e.toString())
 
                     // Re-throw the exception to propagate it further if needed
                     throw e
@@ -803,7 +803,7 @@ class AddClassFragment : Fragment(), OnItemClickListener, ClassDocumentListener 
         }
         catch (e: Exception){
             // Log any exceptions that occur outside the coroutine scope
-            Log.e(TAG, e.toString())
+            Logger.e(TAG, e.toString())
 
             // Re-throw the exception to propagate it further if needed
             throw e

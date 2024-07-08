@@ -1,11 +1,11 @@
 package com.dk.organizeu.repository
 
-import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig
 import com.dk.organizeu.pojo.BatchPojo
 import com.dk.organizeu.pojo.BatchPojo.Companion.toBatchPojo
 import com.dk.organizeu.pojo.BatchPojo.Companion.toMap
 import com.dk.organizeu.repository.ClassRepository.Companion.classDocumentRef
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,7 +20,7 @@ class BatchRepository {
                 return classDocumentRef(academicDocumentId,semesterDocumentId,classDocumentId)
                     .collection(FirebaseConfig.BATCH_COLLECTION)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -30,7 +30,7 @@ class BatchRepository {
             try {
                 return batchCollectionRef(academicDocumentId,semesterDocumentId,classDocumentId).document(id)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -39,7 +39,7 @@ class BatchRepository {
             try {
                 return batchCollectionRef(academicDocumentId, semesterDocumentId, classDocumentId).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -48,7 +48,7 @@ class BatchRepository {
             try {
                 batchDocumentRef(academicDocumentId, semesterDocumentId, classDocumentId, id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -58,7 +58,7 @@ class BatchRepository {
                     deleteBatchDocument(academicDocumentId,semesterDocumentId,classDocumentId,it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -115,11 +115,11 @@ class BatchRepository {
                         callback(documentSnapshot.exists())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         callback(false) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -133,11 +133,11 @@ class BatchRepository {
                         callback(!documentSnapshot.isEmpty())
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         callback(false) // Assume document doesn't exist if there's an error
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemRoomBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.RoomPojo
+import com.dk.organizeu.utils.Logger
 
 
 class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val listener: OnItemClickListener) :
@@ -36,7 +37,7 @@ class RoomAdapter(private val roomPojoList: ArrayList<RoomPojo>, private val lis
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 

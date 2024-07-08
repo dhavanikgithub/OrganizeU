@@ -1,12 +1,11 @@
 package com.dk.organizeu.repository
 
-import android.util.Log
 import com.dk.organizeu.firebase.FirebaseConfig.Companion.ROOM_COLLECTION
 import com.dk.organizeu.pojo.RoomPojo
 import com.dk.organizeu.pojo.RoomPojo.Companion.toMap
 import com.dk.organizeu.pojo.RoomPojo.Companion.toRoomPojo
-import com.dk.organizeu.pojo.SubjectPojo.Companion.toSubjectPojo
 import com.dk.organizeu.repository.AcademicRepository.Companion.db
+import com.dk.organizeu.utils.Logger
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -20,7 +19,7 @@ class RoomRepository {
                 return db.collection(ROOM_COLLECTION)
             } catch (e: Exception)
             {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
 
@@ -30,7 +29,7 @@ class RoomRepository {
             try {
                 return roomCollectionRef().document(roomDocumentId)
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -39,7 +38,7 @@ class RoomRepository {
             try {
                 return roomCollectionRef().get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -48,7 +47,7 @@ class RoomRepository {
             try {
                 return roomDocumentRef(roomDocumentId).get().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -57,7 +56,7 @@ class RoomRepository {
             try {
                 return roomCollectionRef().whereEqualTo(fieldName,fieldValue).get().await().documents
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -91,11 +90,11 @@ class RoomRepository {
                          callback(documentSnapshot.exists())
                      }
                      .addOnFailureListener { exception ->
-                         Log.w("TAG", "Error checking document existence", exception)
+                         Logger.w("TAG", "Error checking document existence", exception)
                          callback(false)
                      }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -122,11 +121,11 @@ class RoomRepository {
                         isConflict(isConflict)
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isConflict(true)
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -138,11 +137,11 @@ class RoomRepository {
                         isExists(!documentSnapshot.isEmpty)
                     }
                     .addOnFailureListener { exception ->
-                        Log.w("TAG", "Error checking document existence", exception)
+                        Logger.w("TAG", "Error checking document existence", exception)
                         isExists(true)
                     }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -151,7 +150,7 @@ class RoomRepository {
             try {
                 roomDocumentRef(id).delete().await()
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }
@@ -162,7 +161,7 @@ class RoomRepository {
                     deleteRoomDocument(it.id)
                 }
             } catch (e: Exception) {
-                Log.e(TAG,e.message.toString())
+                Logger.e(TAG,e.message.toString())
                 throw e
             }
         }

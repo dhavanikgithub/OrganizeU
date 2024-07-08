@@ -123,7 +123,6 @@ class SettingsFragment : Fragment() {
             },{
                 logoutDialog.dismiss()
             })
-
         }
     }
 

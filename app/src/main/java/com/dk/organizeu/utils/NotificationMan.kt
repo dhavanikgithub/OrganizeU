@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.dk.organizeu.R
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
@@ -40,7 +39,7 @@ class NotificationMan {
                         try {
                             this.createNotificationChannel(channelName,channelDescription,channelId)
                         } catch (e: Exception) {
-                            Log.e(UtilFunction.TAG, e.message.toString())
+                            Logger.e(TAG,e.message.toString())
                             throw e
                         }
                     },
@@ -49,7 +48,7 @@ class NotificationMan {
                     })
             }
         } catch (e: Exception) {
-            Log.e(UtilFunction.TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }
@@ -82,7 +81,7 @@ class NotificationMan {
                     try {
                         showNotification(context, lessonName)
                     } catch (e: Exception) {
-                        Log.e(TAG, e.message.toString())
+                        Logger.e(TAG,e.message.toString())
                         throw e
                     }
                 }, {
@@ -90,7 +89,7 @@ class NotificationMan {
                 })
             }
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             throw e
         }
     }

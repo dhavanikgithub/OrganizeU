@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatDialogFragment
@@ -14,6 +13,7 @@ import com.dk.organizeu.databinding.AddAcademicDialogLayoutBinding
 import com.dk.organizeu.listener.AcademicDocumentListener
 import com.dk.organizeu.pojo.AcademicPojo
 import com.dk.organizeu.repository.AcademicRepository
+import com.dk.organizeu.utils.Logger
 import com.dk.organizeu.utils.UtilFunction.Companion.showToast
 import com.dk.organizeu.utils.UtilFunction.Companion.unexpectedErrorMessagePrint
 import com.dk.organizeu.utils.Validation.Companion.isItemSelected
@@ -64,15 +64,15 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
             } catch (e: IllegalStateException) {
                 // Handle IllegalStateException
                 requireContext().showToast("Could not initialize academic year list. Please try again later.")
-                Log.e(TAG, "An IllegalStateException occurred", e)
+                Logger.e(TAG, "An IllegalStateException occurred", e)
             } catch (e: IllegalArgumentException) {
                 // Handle IllegalArgumentException
                 requireContext().showToast("Could not initialize academic year list due to invalid arguments. Please try again later.")
-                Log.e(TAG, "An IllegalArgumentException occurred", e)
+                Logger.e(TAG, "An IllegalArgumentException occurred", e)
             } catch (e: Exception) {
                 // Handle other exceptions
                 requireContext().showToast("An unexpected error occurred. Please try again later.")
-                Log.e(TAG, "An unexpected error occurred", e)
+                Logger.e(TAG, "An unexpected error occurred", e)
             }
 
             // closed dialog box when user click on close button of dialog box
@@ -124,7 +124,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG,e.message.toString())
+                    Logger.e(TAG,e.message.toString())
                     requireContext().unexpectedErrorMessagePrint(e)
                 }
 
@@ -135,7 +135,7 @@ class AddAcademicDialog() : AppCompatDialogFragment() {
             // return the alertdialog box object
             return builder!!.create()
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
             requireContext().unexpectedErrorMessagePrint(e)
             throw e
         }

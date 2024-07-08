@@ -10,6 +10,7 @@ import com.dk.organizeu.R
 import com.dk.organizeu.databinding.ItemAddClassBinding
 import com.dk.organizeu.listener.OnItemClickListener
 import com.dk.organizeu.pojo.ClassPojo
+import com.dk.organizeu.utils.Logger
 
 class ClassAdapter(private val classPojos: ArrayList<ClassPojo>, private val listener: OnItemClickListener) :
     RecyclerView.Adapter<ClassAdapter.AcademicViewHolder>() {
@@ -33,7 +34,7 @@ class ClassAdapter(private val classPojos: ArrayList<ClassPojo>, private val lis
             binding.listener = listener
             binding.position = holder.adapterPosition
         } catch (e: Exception) {
-            Log.e(TAG,e.message.toString())
+            Logger.e(TAG,e.message.toString())
         }
     }
 
